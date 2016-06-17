@@ -2,6 +2,7 @@ package com.rj.android.nnews;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,13 +10,16 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.rj.android.nnews.data.Contract;
 import com.squareup.picasso.Picasso;
 
 public class ArticleListAdapter extends CursorAdapter {
 
+
+    private static final String LOG_TAG = ArticleListAdapter.class.getSimpleName();
     private final int MAIN_STORY = 0;
     private final int SIDE_STORY = 1;
-
+    private boolean useMainLayout;
 
     public ArticleListAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
@@ -38,10 +42,10 @@ public class ArticleListAdapter extends CursorAdapter {
         int viewType = getItemViewType(cursor.getPosition());
         int layoutId = -1;
 
-        if(viewType==MAIN_STORY)
+        if(viewType ==MAIN_STORY && !useMainLayout)
         {
             layoutId = R.layout.main_list_item;
-        }else if(viewType == SIDE_STORY)
+        }else
         {
             layoutId = R.layout.list_item_layout2;
         }
@@ -58,8 +62,18 @@ public class ArticleListAdapter extends CursorAdapter {
         ViewHolder viewHolder = (ViewHolder)view.getTag();
 
         String title = cursor.getString(MainFragment.COL_ARTICLE_TITLE);
-        String imageUrl = cursor.getString(MainFragment.COL_ARTICLE_PHOTO_URL);
+        String imageUrl;
+        int viewType = getItemViewType(cursor.getPosition());
+        if(viewType == MAIN_STORY  && !useMainLayout )
+        {
+            imageUrl = cursor.getString(cursor.getColumnIndex(Contract.Article.PHOTO_URL_HIGH));
+        }
+        else
+        {
+            imageUrl = cursor.getString(cursor.getColumnIndex(Contract.Article.PHOTO_URL));
+        }
 
+        Log.d(LOG_TAG, "  "+String.valueOf(cursor.getLong(cursor.getColumnIndex(Contract.Article._id))));
      /*   Glide.with(context)
                 .load(imageUrl)
                 .fitCenter()
@@ -74,6 +88,10 @@ public class ArticleListAdapter extends CursorAdapter {
                 .noFade()
                 .into(viewHolder.imageView);
         viewHolder.titleView.setText(title);
+    }
+
+    public void setUseMainLayout(boolean useMainLayout) {
+        this.useMainLayout = useMainLayout;
     }
 
 

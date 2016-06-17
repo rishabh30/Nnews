@@ -83,34 +83,42 @@ public class Contract {
         public static final String PUBLISH_DATE = "PUBLISH_DATE";
         //photo url is provided for image downloading
         public static final String PHOTO_URL = "PHOTO_URL";
+        //high resolution photo url is provided for image downloading
+        public static final String PHOTO_URL_HIGH = "PHOTO_URL_HIGH";
+
+
+
+
         //photo heading
+
         public static final String PHOTO_HEADING = "PHOTO_HEADING";
 
-        public static  Uri buildArticleUri(long id)
+        public static  Uri buildArticleUri(int id)
         {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
+                    return    CONTENT_URI.buildUpon().appendPath(Long.toString(id)).build();
         }
 
-        public static  Uri buildArticleWithIdUri(long id)
-        {
-            String temp  = CONTENT_URI.toString() + "/some";
-            Uri uri =   Uri.parse(temp);
-            return ContentUris.withAppendedId(uri, id);
 
-
+        public static Uri buildKeyWithStartDate(String keyName , String startDate){
+            return  CONTENT_URI.buildUpon().appendPath(keyName)
+                    .appendPath(startDate).build();
         }
 
-        public static Uri buildKeyWithStartDate(String keyId , String startDate){
-            return  CONTENT_URI.buildUpon().appendQueryParameter(KEY_ID, keyId)
-                    .appendQueryParameter(PUBLISH_DATE, startDate).build();
+        public static Uri buildUriWithKeyName(String keyName ){
+            return  CONTENT_URI.buildUpon().appendPath(keyName).build();
         }
 
         public static String getStartDateFromUri(Uri uri) {
-            return uri.getPathSegments().get(1);
+
+            String dateString = uri.getQueryParameter(PUBLISH_DATE);
+            if (null != dateString && dateString.length() > 0)
+                return dateString;
+            else
+                return null;
         }
 
         public static String getKeyNameFromUri(Uri uri) {
-            return uri.getQueryParameter(PUBLISH_DATE);
+            return uri.getPathSegments().get(1);
         }
     }
 }

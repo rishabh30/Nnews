@@ -25,6 +25,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.rj.android.nnews.data.Contract;
+import com.rj.android.nnews.sync.SyncAdapter;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -41,26 +42,30 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     public static final int COL_ARTICLE_ABSTRACT = 4;
     public static final int COL_ARTICLE_SOURCE = 5;
     public static final int COL_ARTICLE_PHOTO_HEADING = 6;
-    public static final int COL_ARTICLE_PHOTO_URL = 7;
+    public static final int COL_ARTICLE_PHOTO_URL_HIGH = 7;
     public static final int COL_ARTICLE_PUBLISH_DATE = 8;
+    public static final int COL_ARTICLE_PHOTO_URL = 9;
     private static final int FORECAST_LOADER = 0;
 
     boolean mTwoPane;
-
+    int mPosition;
+    String SELECTED_KEY="POSITION";
+    ListView main_list;
 
     String most_viewed_url = "https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
     ArticleListAdapter madapter;
     String[] textinfo = new String[15];
     String[] ArticleColumns = {
             Contract.Article._id,
-            Contract.Article.KEY_ID,
+            Contract.Article.TABLE_NAME + "." +Contract.Article.KEY_ID,
             Contract.Article.TITLE,
             Contract.Article.ARTICLE_URL,
             Contract.Article.ABSTRACT,
             Contract.Article.SOURCE,
             Contract.Article.PHOTO_HEADING,
-            Contract.Article.PHOTO_URL,
-            Contract.Article.PUBLISH_DATE
+            Contract.Article.PHOTO_URL_HIGH,
+            Contract.Article.PUBLISH_DATE,
+            Contract.Article.PHOTO_URL
     };
 
 
@@ -72,6 +77,10 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     public void setTwoPane(boolean twoPane)
     {
         mTwoPane = twoPane;
+        if(madapter!=null)
+        {
+            madapter.setUseMainLayout(mTwoPane);
+        }
     }
 
     public MainFragment() {
@@ -113,7 +122,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
 
         List<String> sample_Data = new ArrayList<String>(Arrays.asList(textinfo));
-        ListView main_list = (ListView) rootView.findViewById(com.rj.android.nnews.R.id.main_list);
+        main_list = (ListView) rootView.findViewById(com.rj.android.nnews.R.id.main_list);
 
         //madapter = new CustomAdapter(getContext(), textinfo);
          /* madapter = new SimpleCursorAdapter(
@@ -143,7 +152,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-
+                mPosition = position;
 
                 Log.d("MAIN FRAGMENT   ", "CLICKED  position  " + position + " id  " + id);
 
@@ -163,25 +172,31 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                     Intent intent = new Intent(getActivity(), DetailActivity.class);
                     startActivity(intent);
                 }
-
-
-
             }
         });
 
 
+        if(savedInstanceState!=null&&savedInstanceState.containsKey(SELECTED_KEY))
+        {
+            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+            main_list.setSelection(mPosition);
+        }
         return rootView;
     }
 
-    private void updateArticle() {
-        FetchArticleTask Task = new FetchArticleTask(getActivity());
-        URL url = null;
-        try {
-            url = new URL(most_viewed_url);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if(mPosition!=ListView.INVALID_POSITION)
+        {
+            outState.putInt(SELECTED_KEY,mPosition);
         }
-        Task.execute(url);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    private void updateArticle() {
+        SyncAdapter.syncImmediately(getActivity());
     }
 
     @Override
@@ -201,10 +216,9 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String sortOrder = Contract.Article.PUBLISH_DATE + " DESC ";
+        String sortOrder = Contract.Article.PUBLISH_DATE + " DESC LIMIT 15";
         Log.d("cursor", "onCreate: ");
-        Uri articleUri = Contract.Article.CONTENT_URI.buildUpon().
-                appendQueryParameter(Contract.Key_Type.KEY_NAME, "Most-Viewed")
+        Uri articleUri = Contract.Article.CONTENT_URI.buildUpon().appendPath("Most-Viewed")
                 .build();
         Log.d("cursor", "onCreateLoader: ");
         return new CursorLoader(
@@ -220,12 +234,16 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         madapter.swapCursor(data);
+
+        if(mPosition != ListView.INVALID_POSITION)
+        {
+            main_list.setSelection(mPosition);
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         madapter.swapCursor(null);
-
     }
 
 /*

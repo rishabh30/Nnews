@@ -11,17 +11,16 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-
 public class CustomAdapter extends ArrayAdapter {
     public CustomAdapter(Context context, String[] text ) {
-        super(context, R.layout.list_item_layout,text);
+        super(context, R.layout.list_item_layout2,text);
 
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater layoutInflater= LayoutInflater.from(getContext());
-        View customView = layoutInflater.inflate(R.layout.list_item_layout, parent, false);
+        View customView = layoutInflater.inflate(R.layout.list_item_layout2, parent, false);
         Bitmap theBitmap = null;
         TextView textView = (TextView)customView.findViewById(R.id.text);
         ImageView imageView = (ImageView)customView.findViewById(R.id.image);

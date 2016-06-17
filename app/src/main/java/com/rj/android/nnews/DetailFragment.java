@@ -1,5 +1,6 @@
 package com.rj.android.nnews;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.LoaderManager;
@@ -32,18 +33,18 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public TextView mTitle;
     public TextView mAbstract;
     public TextView mSource;
-
-
+    public TextView mNYTimes;
+    Cursor oldData=null;
 
     String[] ArticleColumns = {
             Contract.Article._id,
-            Contract.Article.KEY_ID,
+            Contract.Article.TABLE_NAME + "." +Contract.Article.KEY_ID,
             Contract.Article.TITLE,
             Contract.Article.ARTICLE_URL,
             Contract.Article.ABSTRACT,
             Contract.Article.SOURCE,
             Contract.Article.PHOTO_HEADING,
-            Contract.Article.PHOTO_URL,
+            Contract.Article.PHOTO_URL_HIGH,
             Contract.Article.PUBLISH_DATE
     };
 
@@ -81,7 +82,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         mTitle= (TextView)rootView.findViewById(R.id.detail_title);
         mAbstract= (TextView)rootView.findViewById(R.id.detail_abstract);
         mSource= (TextView)rootView.findViewById(R.id.detail_source);
-
+        mNYTimes= (TextView)rootView.findViewById(R.id.NYTimes);
         return  rootView;
 
     }
@@ -91,12 +92,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         Log.v(LOG_TAG , "on Loader Created");
 
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyPreferences",Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
         int articleId = sharedPreferences.getInt("ARTICLE_ID", 1);
 
         String sortOrder = Contract.Article.PUBLISH_DATE + " DESC ";
         Log.d(LOG_TAG, "onCreate: ");
-        Uri articleUri = Contract.Article.buildArticleWithIdUri(articleId);
+        Uri articleUri = ContentUris.withAppendedId(Contract.Article.CONTENT_URI , articleId);
         Log.d("DETAILED FRAGMENT   ", "CLICKED  position  " + articleId +   " id  "+id);
         Log.d(LOG_TAG, "onCreateLoader: ");
         Log.v(LOG_TAG, articleUri.toString());
@@ -128,16 +129,28 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onLoadFinished(Loader loader, Cursor data) {
         Log.v(LOG_TAG , "on Loader Finished");
+       if(!data.moveToFirst())
+        {
+            oldData = data;
+        }
+        else if (oldData!=null)
+        {
+            data =oldData;
+        }
+
 
         if (data.moveToFirst())
         {
+
             String imageUrl = data.getString(
-                    data.getColumnIndex(Contract.Article.PHOTO_URL));
+                    data.getColumnIndex(Contract.Article.PHOTO_URL_HIGH));
             String heading= data.getString(
                     data.getColumnIndex(Contract.Article.PHOTO_HEADING));
 
             String date  = data.getString(
                 data.getColumnIndex(Contract.Article.PUBLISH_DATE));
+
+            date = Utility.getDatabaseDate(date);
 
             String Title= data.getString(
                 data.getColumnIndex(Contract.Article.TITLE));
@@ -162,8 +175,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             mTitle.setText(Title);
             mAbstract.setText(abs);
             mSource.setText(Source);
-            mSource.setClickable(true);
-            mSource.setOnClickListener(new View.OnClickListener() {
+            mNYTimes.setClickable(true);
+            mNYTimes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent i = new Intent(Intent.ACTION_VIEW);

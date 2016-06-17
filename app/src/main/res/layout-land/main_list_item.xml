@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:background="@drawable/touch_selector"
     android:layout_height="wrap_content"
+    android:padding="25dp"
     android:minHeight="?android:attr/listPreferredItemHeight"
    >
 

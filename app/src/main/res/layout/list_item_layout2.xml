@@ -12,8 +12,8 @@
 
         <ImageView
             android:id="@+id/list_item_image"
-            android:layout_width="105dp"
-            android:layout_height="70dp"
+            android:layout_width="157dp"
+            android:layout_height="105dp"
             android:src="@drawable/loading"
             android:scaleType="centerCrop"/>
 
@@ -26,6 +26,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:paddingBottom="8dp"
+            android:textSize="18sp"
             android:fontFamily="sans-serif-condensed"
             android:textAllCaps="true"
             android:lineSpacingMultiplier="0.85"

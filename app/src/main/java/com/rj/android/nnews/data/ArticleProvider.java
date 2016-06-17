@@ -12,9 +12,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
-/**
- * Created by DELL on 6/8/2016.
- */
 public class ArticleProvider extends ContentProvider {
 
     private static final int KEY = 100;//dir
@@ -22,7 +19,7 @@ public class ArticleProvider extends ContentProvider {
     private static final int ARTICLE = 300;//dir
     private static final int ARTICLE_WITH_KEY = 301;//dir
     private static final int ARTICLE_WITH_KEY_AND_DATE = 302;//dir
-    private static final int ARTICLE_WITH_ID = 303;
+    private static final int ARTICLE_WITH_ID = 303;//ITEM
 
 
     private  static final UriMatcher sUriMatcher = buildUriMatcher();
@@ -57,7 +54,6 @@ public class ArticleProvider extends ContentProvider {
 
         String[] selectionArgs;
         String selection ;
-        Toast.makeText(getContext(),"Bullshit",Toast.LENGTH_SHORT).show();
         if(startDate == null)
         {
             Log.d("URI :"," START DATE NULL ");
@@ -89,9 +85,10 @@ public class ArticleProvider extends ContentProvider {
         matcher.addURI(authority,Contract.PATH_KEY +"/*",KEY_ID);
 
         matcher.addURI(authority,Contract.PATH_ARTICLE , ARTICLE);
-        matcher.addURI(authority,Contract.PATH_ARTICLE + "/#" , ARTICLE_WITH_KEY);
-        matcher.addURI(authority,Contract.PATH_ARTICLE + "/#/*" ,ARTICLE_WITH_KEY_AND_DATE);
-        matcher.addURI(authority,Contract.PATH_ARTICLE + "/some/#" ,ARTICLE_WITH_ID);
+        matcher.addURI(authority,Contract.PATH_ARTICLE + "/#" ,ARTICLE_WITH_ID);
+        matcher.addURI(authority,Contract.PATH_ARTICLE + "/*" , ARTICLE_WITH_KEY);
+        matcher.addURI(authority,Contract.PATH_ARTICLE + "/*/*" ,ARTICLE_WITH_KEY_AND_DATE);
+
 
         return matcher;
     }
@@ -109,19 +106,22 @@ public class ArticleProvider extends ContentProvider {
         final  int match = sUriMatcher.match(uri);
         switch (match)
         {
-            case ARTICLE:
-                return Contract.Article.CONTENT_TYPE;
-            case ARTICLE_WITH_KEY:
-                return Contract.Article.CONTENT_TYPE;
-            case ARTICLE_WITH_KEY_AND_DATE:
-                return Contract.Article.CONTENT_TYPE;
-            case ARTICLE_WITH_ID:
-                return Contract.Article.CONTENT_ITEM_TYPE;
-
             case KEY:
                 return Contract.Key_Type.CONTENT_TYPE;
             case KEY_ID:
                 return Contract.Key_Type.CONTENT_ITEM_TYPE;
+
+            case ARTICLE:
+                return Contract.Article.CONTENT_TYPE;
+            case ARTICLE_WITH_ID:
+                return Contract.Article.CONTENT_ITEM_TYPE;
+            case ARTICLE_WITH_KEY:
+                return Contract.Article.CONTENT_TYPE;
+            case ARTICLE_WITH_KEY_AND_DATE:
+                return Contract.Article.CONTENT_TYPE;
+
+
+
             default:
                 throw new UnsupportedOperationException("Unknown uri : "+ uri );
         }
@@ -150,11 +150,11 @@ public class ArticleProvider extends ContentProvider {
             }
 
             case ARTICLE_WITH_ID: {
-                Log.d("ARTICLE PROVIDER   ", "ARTICLE WITH ID"+ContentUris.parseId(uri));
+                Log.d("ARTICLE PROVIDER   ", " ARTICLE WITH ID " + ContentUris.parseId(uri));
                 retCursor=mOpenHelper.getReadableDatabase().query(
                         Contract.Article.TABLE_NAME,
                         projection,
-                        Contract.Article._id + " = '" + ContentUris.parseId(uri)+" ' ",
+                        Contract.Article._id + " = '" + uri.getLastPathSegment() +" ' ",
                         null,
                         null,
                         null,
@@ -237,7 +237,7 @@ public class ArticleProvider extends ContentProvider {
                 long id = db.insert(Contract.Article.TABLE_NAME,null,values);
                 if(id>0)
                 {
-                    returnUri = Contract.Article.buildArticleUri(id);
+                    returnUri = Contract.Article.buildArticleUri((int)id);
                 }
                 else
                 {

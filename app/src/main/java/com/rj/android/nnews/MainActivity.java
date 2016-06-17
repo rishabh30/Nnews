@@ -14,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.rj.android.nnews.sync.SyncAdapter;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
         ,MainFragment.Callback{
@@ -65,6 +67,8 @@ public class MainActivity extends AppCompatActivity
         {
             mTwoPane = false;
         }
+        // account created and content is passed safely
+        SyncAdapter.initializeSyncAdapter(this);
 
 
         MainFragment mainFragment = ((MainFragment)getSupportFragmentManager().findFragmentById(com.rj.android.nnews.R.id.myfragment));

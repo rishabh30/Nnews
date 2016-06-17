@@ -38,10 +38,11 @@ public class DbHelper extends SQLiteOpenHelper {
                           Article.SOURCE +" TEXT NOT NULL, "+
                           Article.PHOTO_HEADING +" TEXT NOT NULL, "+
                           Article.PHOTO_URL +" TEXT NOT NULL, "+
+                          Article.PHOTO_URL_HIGH +" TEXT NOT NULL, "+
                           Article.PUBLISH_DATE +" TEXT NOT NULL, "+
                           " FOREIGN KEY ( "+ Article.KEY_ID +" ) REFERENCES " +
                           Key_Type.TABLE_NAME +" ("+ Key_Type.KEY_ID +") " +
-                          " UNIQUE (" + Article.ABSTRACT + ") ON CONFLICT REPLACE "+
+                          " UNIQUE (" + Article.ABSTRACT + ") ON CONFLICT IGNORE "+
                           ");";
             Log.v("QUERY :",SQL_CREATE_ARTICLE_TABLE);
         db.execSQL(SQL_CREATE_KEY_TABLE);
