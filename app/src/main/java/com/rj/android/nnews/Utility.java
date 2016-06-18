@@ -20,8 +20,6 @@ public class Utility {
 
         mDate = mDate.substring(0, 19);
         String dateStart = mDate;
-
-        Log.d(LOG_TAG ,"INSERTED STRING "+ dateStart.toString());
         return dateStart.toString();
     }
 
@@ -59,11 +57,6 @@ public class Utility {
             long diffMinutes = diff / (60 * 1000) % 60;
             long diffHours = diff / (60 * 60 * 1000) % 24;
             long diffDays = diff / (24 * 60 * 60 * 1000);
-
-            Log.d(LOG_TAG, diffDays + " days, ");
-            Log.d(LOG_TAG, diffHours + " hours, ");
-           /* System.out.print(diffMinutes + " minutes, ");
-            System.out.print(diffSeconds + " seconds.");*/
 
 
             if(diffDays!=0)
@@ -111,8 +104,6 @@ public class Utility {
 
         String d2  = dateFormatGmt.format(cal.getTime());
 
-        //HH converts hour in 24 hours format (0-23), day calculation
-        Log.d(LOG_TAG ,"DELETED STRING "+ d2.toString());
 
         return d2.toString();
     }

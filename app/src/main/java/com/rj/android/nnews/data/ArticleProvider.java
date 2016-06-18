@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 public class ArticleProvider extends ContentProvider {
 
+
+    private static final String LOG_TAG = ArticleProvider.class.getSimpleName();
+
     private static final int KEY = 100;//dir
     private static final int KEY_ID = 101;//item
     private static final int ARTICLE = 300;//dir

@@ -161,9 +161,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Context context = getContext();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String lastNotificationKey = context.getString(R.string.pref_last_notification);
-        long lastSync = prefs.getLong(lastNotificationKey,0);
+        long lastSync = prefs.getLong(lastNotificationKey, 0);
 
-        if(System.currentTimeMillis()-lastSync  >= DAY_IN_MILLIS || true )
+        if(System.currentTimeMillis()-lastSync  >= DAY_IN_MILLIS  )
         {
 
 
@@ -171,11 +171,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
             String most_viewed_url = "https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
 
-            String Key_Name ="Most-Viewed";
+            String Key_Name ="top_stories";
             Uri uri = Contract.Article.buildUriWithKeyName(Key_Name);
 
             Cursor cursor = context.getContentResolver()
-                    .query(uri,ArticleColumns,null,null,sortOrder);
+                    .query(uri, ArticleColumns, null, null, sortOrder);
 
 
             if(cursor.moveToFirst())
@@ -252,7 +252,16 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         try {
 
-            url = new URL ("https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66");
+            Context context = getContext();
+            SharedPreferences sharedPreferences = getContext().getSharedPreferences("UrlDetails", Context.MODE_PRIVATE);
+            String urlKey = context.getString(R.string.url);
+            String KeySaved = context.getString(R.string.keySaved);
+            String urlString = sharedPreferences.getString(urlKey," ");
+            KeyName = sharedPreferences.getString(KeySaved," ");
+
+            Log.d(LOG_TAG ,"  KEYName : "+KeyName +"  UrlString : "+urlString   );
+            url =new URL(urlString);
+           // url = new URL ("https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66");
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
@@ -298,13 +307,79 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d("JSON DATA", JsonData);
         try {
             long KeyId = addKey(KeyName, String.valueOf(url));
-            String[] json =  getJsonStringArray(JsonData,KeyId);
+
+            if(!KeyName.matches("movie_reviews"))
+                getJsonStringArray(JsonData,KeyId);
+            else
+                getJsonStringArrayForMedia(JsonData,KeyId);
         } catch (JSONException e) {
             Log.e("Download Data ", "JSON ERROR");
             e.printStackTrace();
         }
 
         return;
+    }
+
+    private void getJsonStringArrayForMedia(String jsonData, long KeyId) throws JSONException {
+
+        JSONObject reader = new JSONObject(jsonData);
+        JSONArray result = reader.getJSONArray(RESULTS);
+        int length = result.length();
+
+        Vector<ContentValues> cVVector = new Vector<ContentValues>(15);
+        for (int i = 0; i < length; i++) {
+            JSONObject object = result.getJSONObject(i);
+            String title = object.getString("display_title");
+            String Abstract = object.getString("summary_short");
+            String p_date = object.getString("date_updated");
+            String source = object.getString("byline");
+
+
+                    JSONObject multimedia;
+                        multimedia = object.getJSONObject("multimedia");
+
+                    String imageUrlHigh = multimedia.getString("src");
+                    String imageUrl = multimedia.getString("src");
+                    String caption = object.getString("headline");
+
+                    //      String id = object.getString(ID);
+                    String aritcle_url = object.getJSONObject("link").getString("url");
+
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(Contract.Article.KEY_ID, KeyId);
+                    //      contentValues.put(Contract.Article.ID, id);
+                    contentValues.put(Contract.Article.TITLE, title);
+                    contentValues.put(Contract.Article.ARTICLE_URL, aritcle_url);
+                    contentValues.put(Contract.Article.ABSTRACT, Abstract);
+                    contentValues.put(Contract.Article.SOURCE, source);
+                    contentValues.put(Contract.Article.PHOTO_HEADING, caption);
+                    contentValues.put(Contract.Article.PHOTO_URL, imageUrl);
+                    contentValues.put(Contract.Article.PHOTO_URL_HIGH, imageUrlHigh);
+                    contentValues.put(Contract.Article.PUBLISH_DATE, p_date);
+
+
+                    cVVector.add(contentValues);
+
+
+            //    resultStrs [i][1] = imageURL.getString("url");
+        }
+
+        if (cVVector.size() > 0) {
+            ContentValues[] cvArray = new ContentValues[cVVector.size()];
+            cVVector.toArray(cvArray);
+            int rowsInserted = getContext().getContentResolver()
+                    .bulkInsert(Contract.Article.CONTENT_URI, cvArray);
+            Log.v(LOG_TAG, "inserted " + rowsInserted + " rows of weather data");
+
+
+            String deleteDate = Utility.getDeleteDate();
+            long id = getContext().getContentResolver().delete(Contract.Article.CONTENT_URI
+                    , Contract.Article.PUBLISH_DATE + " <= ?"
+                    , new String[]{deleteDate});
+            Log.v(LOG_TAG, "delete " + id + " rows of weather data");
+
+        }
+
     }
 
     private String[] getJsonStringArray(String jsonData,long KeyId) throws JSONException {
@@ -327,33 +402,40 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             p_date= Utility.getFriendlyDate(p_date);
             String source = object.getString(SOURCE);
 
-            JSONArray metadata = object.getJSONArray(MULTIMEDIA_ARRAY);
-
-            if(metadata.length()>1) {
-                JSONObject multimedia = metadata.getJSONObject(4);
-
-                String imageUrlHigh = multimedia.getString(PHOTO_URL);
-                String imageUrl = metadata.getJSONObject(1).getString(PHOTO_URL);
-                String caption = multimedia.getString(PHOTO_CAPTION);
-
-                //      String id = object.getString(ID);
-                String aritcle_url = object.getString(ARITCLE_URL);
+            Object metad  = object.get(MULTIMEDIA_ARRAY);
+            if(metad instanceof JSONArray) {
 
 
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(Contract.Article.KEY_ID, KeyId);
-                //      contentValues.put(Contract.Article.ID, id);
-                contentValues.put(Contract.Article.TITLE, title);
-                contentValues.put(Contract.Article.ARTICLE_URL, aritcle_url);
-                contentValues.put(Contract.Article.ABSTRACT, Abstract);
-                contentValues.put(Contract.Article.SOURCE, source);
-                contentValues.put(Contract.Article.PHOTO_HEADING, caption);
-                contentValues.put(Contract.Article.PHOTO_URL, imageUrl);
-                contentValues.put(Contract.Article.PHOTO_URL_HIGH,imageUrlHigh);
-                contentValues.put(Contract.Article.PUBLISH_DATE, p_date);
+                JSONArray metadata = object.getJSONArray(MULTIMEDIA_ARRAY);
+                if (metadata.length() > 3) {
+                    JSONObject multimedia;
+                    if (metadata.length() > 4)
+                     multimedia = metadata.getJSONObject(4);
+                    else
+                    multimedia = metadata.getJSONObject(3);
+                    String imageUrlHigh = multimedia.getString(PHOTO_URL);
+                    String imageUrl = metadata.getJSONObject(1).getString(PHOTO_URL);
+                    String caption = multimedia.getString(PHOTO_CAPTION);
+
+                    //      String id = object.getString(ID);
+                    String aritcle_url = object.getString(ARITCLE_URL);
 
 
-                cVVector.add(contentValues);
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(Contract.Article.KEY_ID, KeyId);
+                    //      contentValues.put(Contract.Article.ID, id);
+                    contentValues.put(Contract.Article.TITLE, title);
+                    contentValues.put(Contract.Article.ARTICLE_URL, aritcle_url);
+                    contentValues.put(Contract.Article.ABSTRACT, Abstract);
+                    contentValues.put(Contract.Article.SOURCE, source);
+                    contentValues.put(Contract.Article.PHOTO_HEADING, caption);
+                    contentValues.put(Contract.Article.PHOTO_URL, imageUrl);
+                    contentValues.put(Contract.Article.PHOTO_URL_HIGH, imageUrlHigh);
+                    contentValues.put(Contract.Article.PUBLISH_DATE, p_date);
+
+
+                    cVVector.add(contentValues);
+                }
             }
             //    resultStrs [i][1] = imageURL.getString("url");
         }

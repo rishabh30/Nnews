@@ -11,6 +11,9 @@ import com.rj.android.nnews.data.Contract.Key_Type;
 
 public class DbHelper extends SQLiteOpenHelper {
 
+
+    private static final String LOG_TAG = SQLiteDatabase.class.getSimpleName();
+
     private static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME="article.db";
 
@@ -42,7 +45,7 @@ public class DbHelper extends SQLiteOpenHelper {
                           Article.PUBLISH_DATE +" TEXT NOT NULL, "+
                           " FOREIGN KEY ( "+ Article.KEY_ID +" ) REFERENCES " +
                           Key_Type.TABLE_NAME +" ("+ Key_Type.KEY_ID +") " +
-                          " UNIQUE (" + Article.ABSTRACT + ") ON CONFLICT IGNORE "+
+                          " UNIQUE ( " +Article.KEY_ID +" , "+Article.ABSTRACT + " ) ON CONFLICT IGNORE "+
                           ");";
             Log.v("QUERY :",SQL_CREATE_ARTICLE_TABLE);
         db.execSQL(SQL_CREATE_KEY_TABLE);

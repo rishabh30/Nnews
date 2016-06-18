@@ -3,22 +3,24 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
-        <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/top_stories"
+            android:title="Top Stories" />
+        <!--  android:icon="@drawable/ic_menu_camera"-->
     </group>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/newswire"
+            android:title="NewsWire" />
+        <!--  android:icon="@drawable/ic_menu_gallery"-->
+    </group>
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/movie_reviews"
+            android:title="Movie Reviews" />
+        <!--     android:icon="@drawable/ic_menu_slideshow"-->
+    </group>
+
 
     <item android:title="Communicate">
         <menu>

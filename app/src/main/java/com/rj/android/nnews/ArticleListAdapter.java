@@ -73,7 +73,7 @@ public class ArticleListAdapter extends CursorAdapter {
             imageUrl = cursor.getString(cursor.getColumnIndex(Contract.Article.PHOTO_URL));
         }
 
-        Log.d(LOG_TAG, "  "+String.valueOf(cursor.getLong(cursor.getColumnIndex(Contract.Article._id))));
+       // Log.d(LOG_TAG, "  "+String.valueOf(cursor.getLong(cursor.getColumnIndex(Contract.Article._id))));
      /*   Glide.with(context)
                 .load(imageUrl)
                 .fitCenter()

@@ -1,18 +1,20 @@
 package com.rj.android.nnews;
 
 import android.annotation.TargetApi;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,8 +23,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+
 
 import com.rj.android.nnews.data.Contract;
 import com.rj.android.nnews.sync.SyncAdapter;
@@ -34,6 +39,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+
+
+    private static final String LOG_TAG = MainFragment.class.getSimpleName();
 
     public static final int COL_ARTICLE_ID = 0;
     public static final int COL_ARTICLE_KEY_ID = 1;
@@ -52,7 +60,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     String SELECTED_KEY="POSITION";
     ListView main_list;
 
-    String most_viewed_url = "https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
     ArticleListAdapter madapter;
     String[] textinfo = new String[15];
     String[] ArticleColumns = {
@@ -154,12 +161,12 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
                 mPosition = position;
 
-                Log.d("MAIN FRAGMENT   ", "CLICKED  position  " + position + " id  " + id);
+                Log.d(LOG_TAG, "CLICKED  position  " + position + " id  " + id);
 
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 int articleId = (int) id;
-                Log.d("MAIN FRAGMENT   ", "CLICKED  position  " + position + " id  " + id);
+                Log.d(LOG_TAG, "CLICKED  position  " + position + " id  " + id);
                 editor.putInt("ARTICLE_ID", articleId);
                 editor.commit();
 
@@ -187,6 +194,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        Log.d(LOG_TAG, " ON Saved instance state: ");
         if(mPosition!=ListView.INVALID_POSITION)
         {
             outState.putInt(SELECTED_KEY,mPosition);
@@ -211,16 +219,22 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         super.onActivityCreated(savedInstanceState);
 
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
-
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String sortOrder = Contract.Article.PUBLISH_DATE + " DESC LIMIT 15";
         Log.d("cursor", "onCreate: ");
-        Uri articleUri = Contract.Article.CONTENT_URI.buildUpon().appendPath("Most-Viewed")
+
+        Context context = getContext();
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("UrlDetails", Context.MODE_PRIVATE);
+
+        String KeySaved = context.getString(R.string.keySaved);
+        String KeyName = sharedPreferences.getString(KeySaved," ");
+
+        Uri articleUri = Contract.Article.CONTENT_URI.buildUpon().appendPath(KeyName)
                 .build();
-        Log.d("cursor", "onCreateLoader: ");
+        Log.d(LOG_TAG, " onCreateLoader: ");
         return new CursorLoader(
                 getActivity(),
                 articleUri,
@@ -231,11 +245,26 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         );
     }
 
+    public void callResume()
+    {
+        onResume();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+    }
+
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+        Log.d(LOG_TAG, " onLoaderFinished: ");
+
         madapter.swapCursor(data);
 
-        if(mPosition != ListView.INVALID_POSITION)
+
+        if(mPosition != ListView.INVALID_POSITION  && mTwoPane==true)
         {
             main_list.setSelection(mPosition);
         }
@@ -264,6 +293,5 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         Log.v("JSON Data : ", JsonData);
         return JsonData;
     }
-
 */
 }

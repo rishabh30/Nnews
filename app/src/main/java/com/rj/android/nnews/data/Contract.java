@@ -12,6 +12,8 @@ import android.net.Uri;
  */
 public class Contract {
 
+
+    private static final String LOG_TAG = Contract.class.getSimpleName();
     // base interface is used for linkage in the 2 tables to be join
 
     public final static String CONTENT_AUTHORITY = "com.rj.android.nnews";
