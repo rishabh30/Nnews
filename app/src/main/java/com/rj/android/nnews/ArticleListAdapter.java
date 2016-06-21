@@ -59,21 +59,18 @@ public class ArticleListAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
 
-        ViewHolder viewHolder = (ViewHolder)view.getTag();
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         String title = cursor.getString(MainFragment.COL_ARTICLE_TITLE);
         String imageUrl;
         int viewType = getItemViewType(cursor.getPosition());
-        if(viewType == MAIN_STORY  && !useMainLayout )
-        {
+        if (viewType == MAIN_STORY && !useMainLayout) {
             imageUrl = cursor.getString(cursor.getColumnIndex(Contract.Article.PHOTO_URL_HIGH));
-        }
-        else
-        {
+        } else {
             imageUrl = cursor.getString(cursor.getColumnIndex(Contract.Article.PHOTO_URL));
         }
 
-       // Log.d(LOG_TAG, "  "+String.valueOf(cursor.getLong(cursor.getColumnIndex(Contract.Article._id))));
+        // Log.d(LOG_TAG, "  "+String.valueOf(cursor.getLong(cursor.getColumnIndex(Contract.Article._id))));
      /*   Glide.with(context)
                 .load(imageUrl)
                 .fitCenter()
@@ -81,13 +78,18 @@ public class ArticleListAdapter extends CursorAdapter {
                 .centerCrop()
                 .into(viewHolder.imageView);
         */
-        Picasso.with(context)
-                .load(imageUrl)
-                .placeholder(com.rj.android.nnews.R.drawable.loading)
-                .fit().centerCrop()
-                .noFade()
-                .into(viewHolder.imageView);
-        viewHolder.titleView.setText(title);
+
+        if (imageUrl.matches("no")) {
+            viewHolder.imageView.setImageResource(R.drawable.noblogo);
+        } else {
+            Picasso.with(context)
+                    .load(imageUrl)
+                    .placeholder(com.rj.android.nnews.R.drawable.loading)
+                    .fit().centerCrop()
+                    .noFade()
+                    .into(viewHolder.imageView);
+            viewHolder.titleView.setText(title);
+        }
     }
 
     public void setUseMainLayout(boolean useMainLayout) {

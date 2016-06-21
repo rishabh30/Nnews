@@ -167,9 +167,15 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         {
 
 
+            String deleteDate = Utility.getDeleteDate();
+            long id = getContext().getContentResolver().delete(Contract.Article.CONTENT_URI
+                    , Contract.Article.PUBLISH_DATE + " <= ?"
+                    , new String[]{deleteDate});
+            Log.v(LOG_TAG, "delete " + id + " rows of weather data");
+
+
             String sortOrder = Contract.Article.PUBLISH_DATE + " DESC ";
 
-            String most_viewed_url = "https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
 
             String Key_Name ="top_stories";
             Uri uri = Contract.Article.buildUriWithKeyName(Key_Name);
@@ -308,10 +314,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         try {
             long KeyId = addKey(KeyName, String.valueOf(url));
 
-            if(!KeyName.matches("movie_reviews"))
-                getJsonStringArray(JsonData,KeyId);
-            else
+            if(KeyName.matches("movie_reviews"))
                 getJsonStringArrayForMedia(JsonData,KeyId);
+            else if(KeyName.matches("search"))
+                getJsonStringArrayForSearch(JsonData,KeyId);
+            else
+            getJsonStringArray(JsonData,KeyId);
+
         } catch (JSONException e) {
             Log.e("Download Data ", "JSON ERROR");
             e.printStackTrace();
@@ -372,11 +381,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             Log.v(LOG_TAG, "inserted " + rowsInserted + " rows of weather data");
 
 
-            String deleteDate = Utility.getDeleteDate();
-            long id = getContext().getContentResolver().delete(Contract.Article.CONTENT_URI
-                    , Contract.Article.PUBLISH_DATE + " <= ?"
-                    , new String[]{deleteDate});
-            Log.v(LOG_TAG, "delete " + id + " rows of weather data");
 
         }
 
@@ -448,12 +452,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             Log.v(LOG_TAG, "inserted " + rowsInserted + " rows of weather data");
 
 
-            String deleteDate = Utility.getDeleteDate();
-            long id = getContext().getContentResolver().delete(Contract.Article.CONTENT_URI
-                    , Contract.Article.PUBLISH_DATE + " <= ?"
-                    , new String[]{deleteDate});
-            Log.v(LOG_TAG, "delete " + id + " rows of weather data");
-
 
             notifyWeather();
         }
@@ -464,6 +462,87 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 
     }
+
+
+
+    private void getJsonStringArrayForSearch(String jsonData, long KeyId) throws JSONException {
+
+        long id = getContext().getContentResolver().delete(Contract.Article.CONTENT_URI
+                , Contract.Article.KEY_ID + " = ?"
+                , new String[]{String.valueOf(KeyId)});
+        Log.v(LOG_TAG, "delete " + id + " rows of weather data");
+
+
+
+
+        JSONObject reader = new JSONObject(jsonData);
+        JSONArray result = reader.getJSONObject("response").getJSONArray("docs");
+        int length = result.length();
+
+        Vector<ContentValues> cVVector = new Vector<ContentValues>(55);
+        for (int i = 0; i < length; i++) {
+            JSONObject object = result.getJSONObject(i);
+            String title = object.getString("snippet");
+            String Abstract = object.getString("lead_paragraph");
+            String p_date = object.getString("pub_date");
+            Object sourceObject = object.get("byline");
+            String source="";
+
+            String imageUrlHigh = "no";
+            String imageUrl = "no";
+
+            Object multimedia;
+            multimedia = object.get("multimedia");
+
+            if(multimedia instanceof JSONArray  ) {
+
+                JSONArray metadata = object.getJSONArray("multimedia");
+                if(((JSONArray) multimedia).length()>0) {
+
+                    imageUrlHigh ="https://static01.nyt.com/"+ metadata.getJSONObject(1).getString("url");
+                    imageUrl = "https://static01.nyt.com/" +metadata.getJSONObject(0).getString("url");
+                }
+            }
+            String caption = object.getJSONObject("headline").getString("main");
+
+            //      String id = object.getString(ID);
+            String aritcle_url = object.getString("web_url");
+
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(Contract.Article.KEY_ID, KeyId);
+            //      contentValues.put(Contract.Article.ID, id);
+            contentValues.put(Contract.Article.TITLE, title);
+            contentValues.put(Contract.Article.ARTICLE_URL, aritcle_url);
+            contentValues.put(Contract.Article.ABSTRACT, Abstract);
+            contentValues.put(Contract.Article.SOURCE, source);
+            contentValues.put(Contract.Article.PHOTO_HEADING, caption);
+            contentValues.put(Contract.Article.PHOTO_URL, imageUrl);
+            contentValues.put(Contract.Article.PHOTO_URL_HIGH, imageUrlHigh);
+            contentValues.put(Contract.Article.PUBLISH_DATE, p_date);
+
+
+            cVVector.add(contentValues);
+
+
+            //    resultStrs [i][1] = imageURL.getString("url");
+        }
+
+        if (cVVector.size() > 0) {
+            ContentValues[] cvArray = new ContentValues[cVVector.size()];
+            cVVector.toArray(cvArray);
+            int rowsInserted = getContext().getContentResolver()
+                    .bulkInsert(Contract.Article.CONTENT_URI, cvArray);
+            Log.v(LOG_TAG, "inserted " + rowsInserted + " rows of weather data");
+
+
+
+        }
+
+    }
+
+
+
+
 
 
 

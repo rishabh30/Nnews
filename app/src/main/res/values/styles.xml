@@ -8,7 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>-->
         <item name="actionBarStyle">@style/ActionBar.Solid.News</item>
     </style>
-    
+
     <style name="ActionBar.Solid.News" parent="Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="background">@color/blue</item>
 
@@ -22,8 +22,6 @@
         <item name="displayOptions">useLogo|showHome</item>
         <item name="logo">@drawable/logo</item>
     </style>
-
-
 
 
     <style name="AppTheme.NoActionBar">

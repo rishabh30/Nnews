@@ -4,6 +4,7 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -16,15 +17,16 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.support.v7.widget.SearchView;
 
 import com.rj.android.nnews.sync.SyncAdapter;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
-        ,MainFragment.Callback{
+        ,NestedFragment.Callback,NestedFragment2.Callback,NestedFragment3.Callback{
 
 
-    private static final String LOG_TAG = MainFragment.class.getSimpleName();
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
     static boolean mTwoPane;
 
     @Override
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity
 
 
 
-        if(findViewById(com.rj.android.nnews.R.id.fragmentDetail)!=null)
+        if(findViewById(R.id.fragmentDetail)!=null)
         {
 
             mTwoPane = true;
@@ -75,12 +77,6 @@ public class MainActivity extends AppCompatActivity
         {
             mTwoPane = false;
         }
-        // account created and content is passed safely
-        SyncAdapter.initializeSyncAdapter(this);
-
-
-        MainFragment mainFragment = ((MainFragment)getSupportFragmentManager().findFragmentById(com.rj.android.nnews.R.id.myfragment));
-        mainFragment.setTwoPane(mTwoPane);
 
 
 
@@ -91,18 +87,23 @@ public class MainActivity extends AppCompatActivity
         String KeySaved = context.getString(R.string.keySaved);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        if(savedInstanceState==null) {
 
-            String saveUrl = "", saveKeyName = "";
 
-            saveUrl="https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
-            saveKeyName="top_stories";
 
-            editor.putString(urlKey, saveUrl);
-            editor.putString(KeySaved, saveKeyName);
+        MainFragment mainFragment = ((MainFragment)getSupportFragmentManager().findFragmentById(com.rj.android.nnews.R.id.myfragment));
+        mainFragment.setTwoPane(mTwoPane);
 
-            editor.commit();
-        }
+        String saveUrl =""  , saveKeyName ="" ;
+
+        saveUrl="https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
+        saveKeyName="top_stories";
+        editor.putString(urlKey, saveUrl);
+        editor.putString(KeySaved, saveKeyName);
+
+        editor.commit();
+
+        // account created and content is passed safely
+        SyncAdapter.initializeSyncAdapter(this);
 
     }
 
@@ -119,7 +120,17 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(com.rj.android.nnews.R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
+
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+                (SearchManager)getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+
         return true;
     }
 
@@ -131,7 +142,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == com.rj.android.nnews.R.id.action_settings) {
+        if (id == R.id.action_settings) {
             return true;
         }
 
@@ -154,21 +165,27 @@ public class MainActivity extends AppCompatActivity
         String KeySaved = context.getString(R.string.keySaved);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-
+        int pos =0;
         String saveUrl =""  , saveKeyName ="" ;
 
+        if (id == R.id.home) {
+            pos =0;
+        }
 
-        if (id == com.rj.android.nnews.R.id.top_stories) {
+        else if (id == R.id.top_stories) {
+            pos =1;
             saveUrl="https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
             saveKeyName="top_stories";
-        } else if (id == com.rj.android.nnews.R.id.newswire) {
+        } else if (id == R.id.newswire) {
 
-            saveUrl="https://api.nytimes.com/svc/news/v3/content/all/all/24.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
+            pos =2;
+            saveUrl="https://api.nytimes.com/svc/news/v3/content/iht/all.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
             saveKeyName="newswire";
 
-        } else if (id == com.rj.android.nnews.R.id.movie_reviews) {
+        } else if (id == R.id.movie_reviews) {
 
-            saveUrl="https://api.nytimes.com/svc/movies/v2/reviews/all.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
+            pos=3;
+            saveUrl="https://api.nytimes.com/svc/movies/v2/reviews/picks.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
             saveKeyName="movie_reviews";
 
         } else if (id == com.rj.android.nnews.R.id.nav_share) {
@@ -186,11 +203,16 @@ public class MainActivity extends AppCompatActivity
 
 
         MainFragment mainFragment = (MainFragment)getSupportFragmentManager().findFragmentById(R.id.myfragment);
-        mainFragment.onResume();
+        mainFragment.setCurrentTab(pos);
+
+
         DrawerLayout drawer = (DrawerLayout) findViewById(com.rj.android.nnews.R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+
 
     @Override
     public void onItemSelected() {

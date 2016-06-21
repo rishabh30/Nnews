@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,7 +59,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -116,6 +117,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public void onResume() {
         super.onResume();
         getLoaderManager().initLoader(DETAIL_LOADER,null,this);
+        onCreateLoader(DETAIL_LOADER , null );
     }
 
     @Override
@@ -163,13 +165,18 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                     data.getColumnIndex(Contract.Article.ARTICLE_URL)
             );
 
-            Glide.with(getActivity())
-                    .load(imageUrl)
-                    .fitCenter()
-                    .placeholder(com.rj.android.nnews.R.drawable.loading)
-                    .centerCrop()
-                    .into(mImage);
-
+            if(imageUrl.matches("no"))
+            {
+                mImage.setImageResource(R.drawable.noblogo);
+            }
+            else {
+                Glide.with(getActivity())
+                        .load(imageUrl)
+                        .fitCenter()
+                        .placeholder(com.rj.android.nnews.R.drawable.loading)
+                        .centerCrop()
+                        .into(mImage);
+            }
             mHeading.setText(heading);
             mDate.setText(date);
             mTitle.setText(Title);

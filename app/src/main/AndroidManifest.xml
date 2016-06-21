@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.rj.android.nnews">
-        <!--This permisiion is neccesary in order for Sunshine to perform network access-->
+
+    <!-- This permisiion is neccesary in order for Sunshine to perform network access -->
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!--Permission required by the sync adapter-->
-    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
-    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
-
+    <!-- Permission required by the sync adapter -->
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
 
     <application
         android:allowBackup="true"
@@ -16,60 +16,97 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+
         <activity
-            android:name="com.rj.android.nnews.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
+
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".SearchResultsActivity"
+                />
+
+
         </activity>
 
         <provider
-            android:name="com.rj.android.nnews.data.ArticleProvider"
+            android:name=".data.ArticleProvider"
             android:authorities="com.rj.android.nnews"
-
             android:exported="false"
-            android:syncable="true">
-        </provider>
-
-
+            android:syncable="true"></provider>
 
         <activity
-            android:name="com.rj.android.nnews.DetailActivity"
-            android:label="@string/title_activity_detail"
+            android:name=".DetailActivity"
             android:configChanges="orientation|keyboard"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:label="@string/title_activity_detail"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".MainActivity"
+            >
 
-        <!--SyncAdapter dummy authenticator service-->
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+
+        </activity>
+
+        <!-- SyncAdapter dummy authenticator service -->
         <service android:name=".sync.AuthenticatorService">
             <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator"
-                />
+                <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
 
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator"/>
-
-
+                android:resource="@xml/authenticator" />
         </service>
-
-
-        <service android:name=".sync.SyncService"
-            android:exported="true"
-            >
+        <service
+            android:name=".sync.SyncService"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.content.SyncAdapter"></action>
+                <action android:name="android.content.SyncAdapter" />
             </intent-filter>
+
             <meta-data
                 android:name="android.content.SyncAdapter"
-                android:resource="@xml/syncadapter"/>
+                android:resource="@xml/syncadapter"
 
+                />
         </service>
 
+        <activity
+            android:name=".SearchResultsActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".MainActivity"
+            >
+
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT"></category>
+            </intent-filter>
+            <!-- This metadata entry provides further configuration details for searches -->
+            <!-- that are handled by this activity. -->
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+
+        </activity>
 
     </application>
 
