@@ -14,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -99,6 +100,7 @@ public class NestedFragment3 extends Fragment implements LoaderManager.LoaderCal
         getUrlString = getArguments().getString("saveUrl", "");
         getKeyName = getArguments().getString("saveKeyName","");
     }
+    SwipeRefreshLayout mySwipeRefreshLayout;
 
     @TargetApi(Build.VERSION_CODES.M)
     @Nullable
@@ -106,6 +108,19 @@ public class NestedFragment3 extends Fragment implements LoaderManager.LoaderCal
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.nesyed_fragment3, container, false);
 
+        mySwipeRefreshLayout =(SwipeRefreshLayout)rootView.findViewById(R.id.swiperefresh);
+        mySwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        Log.i(LOG_TAG, "onRefresh called from SwipeRefreshLayout");
+
+                        // This method performs the actual data-refresh operation.
+                        // The method calls setRefreshing(false) when it's finished.
+                        callResume();
+                    }
+                }
+        );
         List<String> sample_Data = new ArrayList<String>(Arrays.asList(textinfo));
         main_list = (ListView) rootView.findViewById(com.rj.android.nnews.R.id.main_list);
 
@@ -157,18 +172,16 @@ public class NestedFragment3 extends Fragment implements LoaderManager.LoaderCal
         {
             outState.putInt(SELECTED_KEY, mPosition);
         }
-
         super.onSaveInstanceState(outState);
     }
 
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String sortOrder = Contract.Article.PUBLISH_DATE + " DESC LIMIT 15";
+        String sortOrder = Contract.Article.PUBLISH_DATE + " DESC ";
         Log.d("cursor", "onCreate: ");
 
         updateArticle();
-
 
         String KeyName = "movie_reviews";
 
@@ -234,12 +247,13 @@ public class NestedFragment3 extends Fragment implements LoaderManager.LoaderCal
 
     public void callResume() {
         updateArticle();onResume();
+        mySwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+        getLoaderManager().initLoader(FORECAST_LOADER, null, this);
     }
 
 }

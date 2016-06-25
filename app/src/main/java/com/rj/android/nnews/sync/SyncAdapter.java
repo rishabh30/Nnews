@@ -163,7 +163,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         String lastNotificationKey = context.getString(R.string.pref_last_notification);
         long lastSync = prefs.getLong(lastNotificationKey, 0);
 
-        if(System.currentTimeMillis()-lastSync  >= DAY_IN_MILLIS  )
+        if(System.currentTimeMillis()-lastSync  >= DAY_IN_MILLIS ||true )
         {
 
 
@@ -345,7 +345,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 
                     JSONObject multimedia;
-                        multimedia = object.getJSONObject("multimedia");
+                    multimedia = object.getJSONObject("multimedia");
 
                     String imageUrlHigh = multimedia.getString("src");
                     String imageUrl = multimedia.getString("src");
@@ -368,9 +368,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 
                     cVVector.add(contentValues);
-
-
-            //    resultStrs [i][1] = imageURL.getString("url");
         }
 
         if (cVVector.size() > 0) {
@@ -497,7 +494,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             if(multimedia instanceof JSONArray  ) {
 
                 JSONArray metadata = object.getJSONArray("multimedia");
-                if(((JSONArray) multimedia).length()>0) {
+                if(((JSONArray) multimedia).length()>1) {
 
                     imageUrlHigh ="https://static01.nyt.com/"+ metadata.getJSONObject(1).getString("url");
                     imageUrl = "https://static01.nyt.com/" +metadata.getJSONObject(0).getString("url");

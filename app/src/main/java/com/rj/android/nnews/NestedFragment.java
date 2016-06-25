@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -87,12 +88,26 @@ public class NestedFragment extends Fragment implements LoaderManager.LoaderCall
         getUrlString = getArguments().getString("saveUrl", "");
         getKeyName = getArguments().getString("saveKeyName", "");
     }
-
+    SwipeRefreshLayout mySwipeRefreshLayout;
     @TargetApi(Build.VERSION_CODES.M)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.nested_fragment, container, false);
+
+         mySwipeRefreshLayout =(SwipeRefreshLayout)rootView.findViewById(R.id.swiperefresh);
+        mySwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        Log.i(LOG_TAG, "onRefresh called from SwipeRefreshLayout");
+
+                        // This method performs the actual data-refresh operation.
+                        // The method calls setRefreshing(false) when it's finished.
+                        callResume();
+                    }
+                }
+        );
 
         List<String> sample_Data = new ArrayList<String>(Arrays.asList(textinfo));
         main_list = (ListView) rootView.findViewById(com.rj.android.nnews.R.id.main_list);
@@ -192,7 +207,6 @@ public class NestedFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
     }
 
@@ -210,6 +224,9 @@ public class NestedFragment extends Fragment implements LoaderManager.LoaderCall
         SyncAdapter.syncImmediately(getActivity());
     }
 
+
+
+
     @Override
     public void onStart() {
 
@@ -224,11 +241,12 @@ public class NestedFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+        getLoaderManager().initLoader(FORECAST_LOADER, null, this);
+        mySwipeRefreshLayout.setRefreshing(false);
     }
 
     public interface Callback {
-        public void onItemSelected();
+         void onItemSelected();
     }
 
 }

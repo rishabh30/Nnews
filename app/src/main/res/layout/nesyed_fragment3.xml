@@ -7,10 +7,19 @@
     android:id="@+id/fragmentNested3"
     tools:context="com.rj.android.nnews.NestedFragment3">
 
-    <ListView
-        android:id="@+id/main_list"
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swiperefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/main_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 
 </FrameLayout>

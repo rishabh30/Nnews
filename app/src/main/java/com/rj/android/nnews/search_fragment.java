@@ -23,10 +23,6 @@ import android.widget.ListView;
 import com.rj.android.nnews.data.Contract;
 import com.rj.android.nnews.sync.SyncAdapter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 
 public class search_fragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 

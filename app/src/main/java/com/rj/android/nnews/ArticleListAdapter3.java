@@ -52,14 +52,14 @@ public class ArticleListAdapter3 extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
 
-        ViewHolder viewHolder = (ViewHolder)view.getTag();
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         String title = cursor.getString(MainFragment.COL_ARTICLE_TITLE);
         String imageUrl;
-         imageUrl = cursor.getString(cursor.getColumnIndex(Contract.Article.PHOTO_URL));
+        imageUrl = cursor.getString(cursor.getColumnIndex(Contract.Article.PHOTO_URL));
 
 
-       // Log.d(LOG_TAG, "  "+String.valueOf(cursor.getLong(cursor.getColumnIndex(Contract.Article._id))));
+        // Log.d(LOG_TAG, "  "+String.valueOf(cursor.getLong(cursor.getColumnIndex(Contract.Article._id))));
      /*   Glide.with(context)
                 .load(imageUrl)
                 .fitCenter()
@@ -67,13 +67,17 @@ public class ArticleListAdapter3 extends CursorAdapter {
                 .centerCrop()
                 .into(viewHolder.imageView);
         */
-        Picasso.with(context)
-                .load(imageUrl)
-                .placeholder(R.drawable.loading)
-                .fit().centerCrop()
-                .noFade()
-                .into(viewHolder.imageView);
-        viewHolder.titleView.setText(title);
+        if (imageUrl.matches("no")) {
+            viewHolder.imageView.setImageResource(R.drawable.noblogo);
+        } else {
+            Picasso.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.loading)
+                    .fit().centerCrop()
+                    .noFade()
+                    .into(viewHolder.imageView);
+            viewHolder.titleView.setText(title);
+        }
     }
 
     public void setUseMainLayout(boolean useMainLayout) {
