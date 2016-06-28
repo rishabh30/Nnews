@@ -37,8 +37,8 @@
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"
                     android:src="@drawable/notific_photo"
-
                     />
+
                 <TextView
 
                     android:id="@+id/detail_photo_heading"

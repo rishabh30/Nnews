@@ -58,15 +58,13 @@ public class ArticleListAdapter3 extends CursorAdapter {
         String imageUrl;
         imageUrl = cursor.getString(cursor.getColumnIndex(Contract.Article.PHOTO_URL));
 
+        String date = cursor.getString(
+                cursor.getColumnIndex(Contract.Article.PUBLISH_DATE));
 
-        // Log.d(LOG_TAG, "  "+String.valueOf(cursor.getLong(cursor.getColumnIndex(Contract.Article._id))));
-     /*   Glide.with(context)
-                .load(imageUrl)
-                .fitCenter()
-                .placeholder(R.drawable.loading)
-                .centerCrop()
-                .into(viewHolder.imageView);
-        */
+        date = Utility.getDatabaseDate(date);
+
+        viewHolder.friendlyday.setText(date);
+
         if (imageUrl.matches("no")) {
             viewHolder.imageView.setImageResource(R.drawable.noblogo);
         } else {
@@ -88,9 +86,12 @@ public class ArticleListAdapter3 extends CursorAdapter {
     public static class ViewHolder{
         TextView titleView ;
         ImageView imageView ;
+        TextView friendlyday;
 
         public ViewHolder(View view)
         {
+
+            friendlyday = (TextView) view.findViewById(R.id.friendlyday);
              titleView = (TextView)view.findViewById(R.id.list_item_title);
              imageView = (ImageView)view.findViewById(R.id.list_item_image);
         }

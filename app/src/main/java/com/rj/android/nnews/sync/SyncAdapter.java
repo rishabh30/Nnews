@@ -10,7 +10,6 @@ import android.app.TaskStackBuilder;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -162,8 +161,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String lastNotificationKey = context.getString(R.string.pref_last_notification);
         long lastSync = prefs.getLong(lastNotificationKey, 0);
-
-        if(System.currentTimeMillis()-lastSync  >= DAY_IN_MILLIS ||true )
+        Boolean notific_enabled = Utility.get_notification_status(context);
+        if (System.currentTimeMillis() - lastSync >= DAY_IN_MILLIS && notific_enabled )
         {
 
 

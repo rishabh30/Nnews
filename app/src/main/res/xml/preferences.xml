@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+        <ListPreference
+            android:key="@string/noi_key"
+            android:title="@string/noi_title"
+            android:dialogTitle="@string/noi"
+            android:entries="@array/noi_entries"
+            android:summary="%s"
+            android:entryValues="@array/noi_entries_values"
+            android:defaultValue="@string/noi_default" />
+        <CheckBoxPreference
+            android:key="@string/key_notific"
+            android:title="@string/notific"
+            android:summaryOff="@string/notific_off"
+            android:summaryOn="@string/notific_on"
+            android:defaultValue="true" />
+</PreferenceScreen>

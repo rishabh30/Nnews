@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:background="@drawable/touch_selector"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-   >
+    android:minHeight="?android:attr/listPreferredItemHeight">
 
 
     <ImageView
@@ -24,9 +23,20 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="hello how u doing "
         android:id="@+id/list_item_title"
-        android:padding="16dp"
+        android:layout_weight="1"
         android:textSize="22sp"
-        android:layout_weight="1" />
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp" />
 
+    <TextView
+        android:id="@+id/friendlyday"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="right"
+        android:layout_weight="1"
+        android:paddingBottom="16dp"
+        android:paddingRight="16dp"
+        android:text=""
+        android:textSize="12sp" />
 
 </LinearLayout>

@@ -16,14 +16,11 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-
         <activity
             android:name=".MainActivity"
+            android:launchMode="singleTop"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-
-
+            android:theme="@style/ArticleTheme2">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,31 +29,24 @@
 
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value=".SearchResultsActivity"
-                />
-
-
+                android:value=".SearchResultsActivity" />
         </activity>
 
         <provider
             android:name=".data.ArticleProvider"
             android:authorities="com.rj.android.nnews"
             android:exported="false"
-            android:syncable="true"></provider>
+            android:syncable="true" />
 
         <activity
             android:name=".DetailActivity"
             android:configChanges="orientation|keyboard"
             android:label="@string/title_activity_detail"
-            android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".MainActivity"
-            >
-
-
+            android:theme="@style/ArticleTheme2">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
-
         </activity>
 
         <!-- SyncAdapter dummy authenticator service -->
@@ -78,26 +68,23 @@
 
             <meta-data
                 android:name="android.content.SyncAdapter"
-                android:resource="@xml/syncadapter"
-
-                />
+                android:resource="@xml/syncadapter" />
         </service>
+
 
         <activity
             android:name=".SearchResultsActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".MainActivity"
-            >
-
-
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
 
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
-                <category android:name="android.intent.category.DEFAULT"></category>
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <!-- This metadata entry provides further configuration details for searches -->
             <!-- that are handled by this activity. -->
@@ -105,9 +92,16 @@
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
-
         </activity>
-
+        <activity
+            android:name=".SettingsActivity"
+            android:label="Settings"
+            android:theme="@style/ArticleTheme2"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
     </application>
 
 </manifest>

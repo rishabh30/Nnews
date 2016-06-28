@@ -1,52 +1,25 @@
 package com.rj.android.nnews;
 
-
-
-import com.rj.android.nnews.view.SlidingTabLayout;
 import android.annotation.TargetApi;
-import android.app.DialogFragment;
-import android.app.SearchManager;
-import android.content.ContentUris;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.view.PagerAdapter;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.rj.android.nnews.data.Contract;
 import com.rj.android.nnews.sync.SyncAdapter;
+import com.rj.android.nnews.view.SlidingTabLayout;
 import com.rj.android.nnews.view.SmartFragmentStatePagerAdapter;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class MainFragment extends Fragment  {
 
@@ -168,10 +141,10 @@ public class MainFragment extends Fragment  {
             @Override
             public void onPageSelected(int pos) {
 
-
+/*
 
                     Toast.makeText(getContext(),
-                        "Selected page position: " + pos, Toast.LENGTH_SHORT).show();
+                        "Selected page position: " + pos, Toast.LENGTH_SHORT).show();*/
             }
 
             // This method will be invoked when the current page is scrolled

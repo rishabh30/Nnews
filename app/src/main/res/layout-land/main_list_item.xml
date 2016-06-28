@@ -1,33 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:background="@drawable/touch_selector"
     android:layout_height="wrap_content"
-    android:padding="25dp"
+    android:background="@drawable/touch_selector"
     android:minHeight="?android:attr/listPreferredItemHeight"
-   >
+    android:orientation="horizontal"
+    android:padding="16dp">
 
 
     <ImageView
         android:id="@+id/list_item_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
-        android:src="@drawable/loading"
-        android:layout_gravity="center_horizontal" />
+        android:src="@drawable/loading" />
 
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="hello how u doing "
-        android:id="@+id/list_item_title"
-        android:padding="16dp"
-        android:layout_weight="1" />
+        <TextView
+            android:id="@+id/list_item_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text=""
+            android:padding="32dp"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
+        <TextView
+            android:id="@+id/friendlyday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="right"
+            android:paddingRight="10dp"
+            android:text=""
+            android:textSize="12sp" />
+
+    </RelativeLayout>
 
 </LinearLayout>

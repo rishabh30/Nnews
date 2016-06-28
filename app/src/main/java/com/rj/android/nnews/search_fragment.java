@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,7 +87,9 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
             getKeyName = getArguments().getString("saveKeyName","");
         }
 
-        @TargetApi(Build.VERSION_CODES.M)
+    SwipeRefreshLayout mySwipeRefreshLayout;
+
+    @TargetApi(Build.VERSION_CODES.M)
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -95,7 +98,19 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
             main_list = (ListView) rootView.findViewById(com.rj.android.nnews.R.id.main_list);
 
 
+        mySwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
+        mySwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        Log.i(LOG_TAG, "onRefresh called from SwipeRefreshLayout");
 
+                        // This method performs the actual data-refresh operation.
+                        // The method calls setRefreshing(false) when it's finished.
+                        callResume();
+                    }
+                }
+        );
             madapter = new ArticleListAdapter3(getActivity(), null, 0);
 
             main_list.setAdapter(madapter);
@@ -146,7 +161,6 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            String sortOrder = Contract.Article.PUBLISH_DATE ;
             Log.d("cursor", "onCreate: ");
 
             updateArticle();
@@ -164,7 +178,7 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
                     ArticleColumns,
                     null,
                     null,
-                    sortOrder
+                    null
             );
         }
         @Override
@@ -207,6 +221,7 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
             editor.putString(Ks, getKeyName);
             editor.commit();
             SyncAdapter.syncImmediately(getActivity());
+
         }
         @Override
         public void onStart() {
@@ -222,5 +237,7 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
         public void onResume() {
             super.onResume();
             getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+
+            mySwipeRefreshLayout.setRefreshing(false);
         }
 }

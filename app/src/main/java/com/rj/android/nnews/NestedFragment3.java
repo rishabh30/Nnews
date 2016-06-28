@@ -1,7 +1,6 @@
 package com.rj.android.nnews;
 
 import android.annotation.TargetApi;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,41 +24,7 @@ import android.widget.ListView;
 import com.rj.android.nnews.data.Contract;
 import com.rj.android.nnews.sync.SyncAdapter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-
 public class NestedFragment3 extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
-
-    public interface  Callback {
-        public void onItemSelected();
-    }
-
-    String getUrlString , getKeyName;
-
-
-    public static NestedFragment3 newInstance(int pos, String title) {
-        NestedFragment3 fragmentFirst = new NestedFragment3();
-
-        Bundle args = new Bundle();
-
-
-
-        String saveUrl =""  , saveKeyName ="" ;
-        if (pos == 2) {
-
-            saveUrl = "https://api.nytimes.com/svc/movies/v2/reviews/picks.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
-            saveKeyName = "movie_reviews";
-        }
-        args.putString("saveUrl", saveUrl);
-        args.putString("saveKeyName", saveKeyName);
-
-
-        fragmentFirst.setArguments(args);
-        return fragmentFirst;
-    }
-    private static final String LOG_TAG = MainFragment.class.getSimpleName();
 
     public static final int COL_ARTICLE_ID = 0;
     public static final int COL_ARTICLE_KEY_ID = 1;
@@ -71,13 +36,13 @@ public class NestedFragment3 extends Fragment implements LoaderManager.LoaderCal
     public static final int COL_ARTICLE_PHOTO_URL_HIGH = 7;
     public static final int COL_ARTICLE_PUBLISH_DATE = 8;
     public static final int COL_ARTICLE_PHOTO_URL = 9;
+    private static final String LOG_TAG = MainFragment.class.getSimpleName();
     private static final int FORECAST_LOADER = 2;
-
+    String getUrlString, getKeyName;
     boolean mTwoPane;
     int mPosition;
     String SELECTED_KEY="POSITION";
     ListView main_list;
-
     ArticleListAdapter3 madapter;
     String[] textinfo = new String[15];
     String[] ArticleColumns = {
@@ -92,7 +57,39 @@ public class NestedFragment3 extends Fragment implements LoaderManager.LoaderCal
             Contract.Article.PUBLISH_DATE,
             Contract.Article.PHOTO_URL
     };
+    SwipeRefreshLayout mySwipeRefreshLayout;
 
+    public static NestedFragment3 newInstance(int pos, String title) {
+        NestedFragment3 fragmentFirst = new NestedFragment3();
+
+        Bundle args = new Bundle();
+
+        String saveUrl =""  , saveKeyName ="" ;
+        if (pos == 2) {
+
+            saveUrl = "https://api.nytimes.com/svc/movies/v2/reviews/all.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
+            saveKeyName = "movie_reviews";
+        }
+        args.putString("saveUrl", saveUrl);
+        args.putString("saveKeyName", saveKeyName);
+
+
+        fragmentFirst.setArguments(args);
+        return fragmentFirst;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+        Log.d(LOG_TAG, " onLoaderFinished: ");
+
+        madapter.swapCursor(data);
+
+
+        if (mPosition != ListView.INVALID_POSITION && mTwoPane) {
+            main_list.setSelection(mPosition);
+        }
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,7 +97,6 @@ public class NestedFragment3 extends Fragment implements LoaderManager.LoaderCal
         getUrlString = getArguments().getString("saveUrl", "");
         getKeyName = getArguments().getString("saveKeyName","");
     }
-    SwipeRefreshLayout mySwipeRefreshLayout;
 
     @TargetApi(Build.VERSION_CODES.M)
     @Nullable
@@ -121,7 +117,6 @@ public class NestedFragment3 extends Fragment implements LoaderManager.LoaderCal
                     }
                 }
         );
-        List<String> sample_Data = new ArrayList<String>(Arrays.asList(textinfo));
         main_list = (ListView) rootView.findViewById(com.rj.android.nnews.R.id.main_list);
 
 
@@ -198,18 +193,19 @@ public class NestedFragment3 extends Fragment implements LoaderManager.LoaderCal
                 sortOrder
         );
     }
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
-        Log.d(LOG_TAG, " onLoaderFinished: ");
+    private void updateArticle() {
+        Log.d("FUCK ", String.valueOf(2));
+        Context context = getContext();
+        SharedPreferences SP = context.getSharedPreferences("UrlDetails", Context.MODE_PRIVATE);
+        String urlKey = context.getString(R.string.url);
+        String Ks = context.getString(R.string.keySaved);
 
-        madapter.swapCursor(data);
-
-
-        if(mPosition != ListView.INVALID_POSITION  && mTwoPane==true)
-        {
-            main_list.setSelection(mPosition);
-        }
+        SharedPreferences.Editor editor = SP.edit();
+        editor.putString(urlKey, getUrlString);
+        editor.putString(Ks, getKeyName);
+        editor.apply();
+        SyncAdapter.syncImmediately(getActivity());
     }
 
     @Override
@@ -224,21 +220,6 @@ public class NestedFragment3 extends Fragment implements LoaderManager.LoaderCal
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
     }
 
-
-    private void updateArticle()
-    {
-        Log.d("FUCK ", String.valueOf(2));
-        Context context = getContext();
-        SharedPreferences SP = context.getSharedPreferences("UrlDetails", Context.MODE_PRIVATE);
-        String urlKey = context.getString(R.string.url);
-        String Ks = context.getString(R.string.keySaved);
-
-        SharedPreferences.Editor editor = SP.edit();
-        editor.putString(urlKey, getUrlString);
-        editor.putString(Ks, getKeyName);
-        editor.commit();
-        SyncAdapter.syncImmediately(getActivity());
-    }
     @Override
     public void onStart() {
 
@@ -254,6 +235,10 @@ public class NestedFragment3 extends Fragment implements LoaderManager.LoaderCal
     public void onResume() {
         super.onResume();
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
+    }
+
+    public interface Callback {
+        void onItemSelected();
     }
 
 }

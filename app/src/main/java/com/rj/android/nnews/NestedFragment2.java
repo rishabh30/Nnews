@@ -183,7 +183,7 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String sortOrder = Contract.Article.PUBLISH_DATE + " DESC LIMIT 15";
+        String sortOrder = Contract.Article.PUBLISH_DATE + " DESC LIMIT " + Utility.get_noi_list(getContext());
         Log.d("cursor", "onCreate: ");
 
         updateArticle();

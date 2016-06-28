@@ -2,7 +2,6 @@ package com.rj.android.nnews;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,15 +69,12 @@ public class ArticleListAdapter extends CursorAdapter {
             imageUrl = cursor.getString(cursor.getColumnIndex(Contract.Article.PHOTO_URL));
         }
 
-        // Log.d(LOG_TAG, "  "+String.valueOf(cursor.getLong(cursor.getColumnIndex(Contract.Article._id))));
-     /*   Glide.with(context)
-                .load(imageUrl)
-                .fitCenter()
-                .placeholder(R.drawable.loading)
-                .centerCrop()
-                .into(viewHolder.imageView);
-        */
+        String date = cursor.getString(
+                cursor.getColumnIndex(Contract.Article.PUBLISH_DATE));
 
+        date = Utility.getDatabaseDate(date);
+
+        viewHolder.friendlyday.setText(date);
         if (imageUrl.matches("no")) {
             viewHolder.imageView.setImageResource(R.drawable.noblogo);
         } else {
@@ -99,12 +95,14 @@ public class ArticleListAdapter extends CursorAdapter {
 
     public static class ViewHolder{
         TextView titleView ;
+        TextView friendlyday;
         ImageView imageView ;
 
         public ViewHolder(View view)
         {
-             titleView = (TextView)view.findViewById(com.rj.android.nnews.R.id.list_item_title);
-             imageView = (ImageView)view.findViewById(com.rj.android.nnews.R.id.list_item_image);
+            titleView = (TextView) view.findViewById(R.id.list_item_title);
+            friendlyday = (TextView) view.findViewById(R.id.friendlyday);
+            imageView = (ImageView) view.findViewById(R.id.list_item_image);
         }
     }
 }

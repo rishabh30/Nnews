@@ -3,16 +3,14 @@ package com.rj.android.nnews;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -177,6 +175,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                         .centerCrop()
                         .into(mImage);
             }
+
             mHeading.setText(heading);
             mDate.setText(date);
             mTitle.setText(Title);

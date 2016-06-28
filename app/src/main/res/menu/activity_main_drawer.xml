@@ -4,7 +4,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/home"
-            android:title="HOME" />
+            android:title="Home" />
         <!--  android:icon="@drawable/ic_menu_camera"-->
     </group>
     <group android:checkableBehavior="single">
@@ -27,7 +27,7 @@
         <!--     android:icon="@drawable/ic_menu_slideshow"-->
     </group>
 
-
+<!--
     <item android:title="Communicate">
         <menu>
             <item
@@ -39,6 +39,6 @@
                 android:icon="@drawable/ic_menu_send"
                 android:title="Send" />
         </menu>
-    </item>
+    </item>-->
 
 </menu>

@@ -1,8 +1,10 @@
 package com.rj.android.nnews;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -42,8 +44,8 @@ public class Utility {
             d1 = dateFormatGmt.parse(dateStart);
             d2 = dateFormatGmt.parse(dateStop);
 
-            Log.d(LOG_TAG ,"START STRING "+ d1.toString());
-            Log.d(LOG_TAG ,"STOP STRING "+ d2.toString());
+            Log.d(LOG_TAG, "START STRING " + d1.toString());
+            Log.d(LOG_TAG, "STOP STRING " + d2.toString());
 
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(d1);
@@ -58,7 +60,6 @@ public class Utility {
             long diffHours = diff / (60 * 60 * 1000) % 24;
             long diffDays = diff / (24 * 60 * 60 * 1000);
 
-
             if(diffDays!=0)
             {
                 Diff=Long.toString(diffDays) ;
@@ -70,6 +71,7 @@ public class Utility {
             }else
             if(diffHours!=0)
             {
+                diffHours = Math.abs(diffHours);
                 Diff=Long.toString(diffHours) ;
                 if(diffHours>1)
                     Diff += " hrs ago";
@@ -77,6 +79,7 @@ public class Utility {
                     Diff += " hr ago";
             }else
             {
+                diffMinutes = Math.abs(diffMinutes);
                 Diff=Long.toString(diffMinutes) ;
                 if(diffMinutes>1)
                     Diff += " mins ago";
@@ -106,6 +109,19 @@ public class Utility {
 
 
         return d2.toString();
+    }
+
+
+    public static boolean get_notification_status(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String lastNotificationKey = context.getString(R.string.key_notific);
+        return prefs.getBoolean(lastNotificationKey, true);
+    }
+
+    public static String get_noi_list(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String noi = context.getString(R.string.noi_key);
+        return prefs.getString(noi, "15");
     }
 
 }

@@ -20,5 +20,13 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="noi">NO. OF NEWS FEED IN THE LIST</string>
+    <string name="noi_default">15</string>
+    <string name="noi_title">News Feed Size</string>
+    <string name="notific">Notification</string>
+    <string name="notific_on">Enabled</string>
+    <string name="notific_off">Not Enabled</string>
+    <string name="noi_key">noi</string>
+    <string name="key_notific">key_notific</string>
 
 </resources>

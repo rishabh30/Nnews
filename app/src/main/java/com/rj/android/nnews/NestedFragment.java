@@ -164,7 +164,7 @@ public class NestedFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String sortOrder = Contract.Article.PUBLISH_DATE + " DESC LIMIT 15";
+        String sortOrder = Contract.Article.PUBLISH_DATE + " DESC LIMIT " + Utility.get_noi_list(getContext());
         Log.d("cursor", "onCreate: ");
 
 
@@ -192,6 +192,7 @@ public class NestedFragment extends Fragment implements LoaderManager.LoaderCall
         Log.d(LOG_TAG, " onLoaderFinished: ");
 
         madapter.swapCursor(data);
+
 
 
         if (mPosition != ListView.INVALID_POSITION && mTwoPane == true) {
@@ -222,6 +223,7 @@ public class NestedFragment extends Fragment implements LoaderManager.LoaderCall
         editor.putString(Ks, getKeyName);
         editor.commit();
         SyncAdapter.syncImmediately(getActivity());
+        mySwipeRefreshLayout.setRefreshing(false);
     }
 
 
@@ -229,7 +231,6 @@ public class NestedFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onStart() {
-
         super.onStart();
     }
 
@@ -242,7 +243,7 @@ public class NestedFragment extends Fragment implements LoaderManager.LoaderCall
     public void onResume() {
         super.onResume();
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
-        mySwipeRefreshLayout.setRefreshing(false);
+
     }
 
     public interface Callback {

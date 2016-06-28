@@ -6,6 +6,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -13,11 +14,11 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.support.v7.widget.SearchView;
 
 import com.rj.android.nnews.sync.SyncAdapter;
 
@@ -37,11 +38,11 @@ public class MainActivity extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(com.rj.android.nnews.R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(com.rj.android.nnews.R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, com.rj.android.nnews.R.string.navigation_drawer_open, com.rj.android.nnews.R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -143,6 +144,8 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -188,11 +191,11 @@ public class MainActivity extends AppCompatActivity
             saveUrl="https://api.nytimes.com/svc/movies/v2/reviews/picks.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
             saveKeyName="movie_reviews";
 
-        } else if (id == com.rj.android.nnews.R.id.nav_share) {
+        } /*else if (id == com.rj.android.nnews.R.id.nav_share) {
 
         } else if (id == com.rj.android.nnews.R.id.nav_send) {
 
-        }
+        }*/
 
         editor.putString(urlKey, saveUrl);
         editor.putString(KeySaved, saveKeyName);
