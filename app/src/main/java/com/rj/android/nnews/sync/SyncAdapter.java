@@ -33,6 +33,7 @@ import com.rj.android.nnews.MainActivity;
 import com.rj.android.nnews.R;
 import com.rj.android.nnews.Utility;
 import com.rj.android.nnews.data.Contract;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,7 +67,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             Contract.Article.TITLE,
             Contract.Article.ARTICLE_URL,
             Contract.Article.PHOTO_URL,
-            Contract.Article.PUBLISH_DATE
+            Contract.Article.PUBLISH_DATE,
+            Contract.Article.PHOTO_URL_HIGH
     };
     public static final int COL_ARTICLE_ID = 0;
     public static final int COL_ARTICLE_KEY_ID = 1;
@@ -74,7 +76,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public static final int COL_ARTICLE_URL = 3;
     public static final int COL_ARTICLE_PHOTO_URL = 4;
     public static final int COL_ARTICLE_PUBLISH_DATE = 5;
-
+    public static final int COL_ARTICLE_PHOTO_URL_HIGH = 6;
 
 
     ArrayAdapter madapter;
@@ -167,6 +169,31 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 
             String deleteDate = Utility.getDeleteDate();
+            Cursor cv = getContext().getContentResolver().query(Contract.Article.CONTENT_URI,
+                    ArticleColumns
+                    , Contract.Article.PUBLISH_DATE + " <= ?"
+                    , new String[]{deleteDate}
+                    ,null);
+
+            if(cv.moveToFirst())
+            {
+                do{
+                    String url_low = cv.getString(COL_ARTICLE_PHOTO_URL);
+                    String url_high = cv.getString(COL_ARTICLE_PHOTO_URL_HIGH);
+
+                    Picasso.with(context).invalidate(url_low);
+                    Picasso.with(context).invalidate(url_high);
+
+                }while (cv.moveToNext());
+            }
+
+
+
+
+
+
+
+
             long id = getContext().getContentResolver().delete(Contract.Article.CONTENT_URI
                     , Contract.Article.PUBLISH_DATE + " <= ?"
                     , new String[]{deleteDate});

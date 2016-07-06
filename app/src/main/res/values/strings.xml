@@ -15,7 +15,7 @@
     <string name="url">Saved_url</string>
     <string name="keySaved">keySaved</string>
     <string name="search_title">Search</string>
-    <string name="search_hint">Search IT</string>
+    <string name="search_hint">Search</string>
     <string name="title_activity_search_results">SearchResultsActivity</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -28,5 +28,9 @@
     <string name="notific_off">Not Enabled</string>
     <string name="noi_key">noi</string>
     <string name="key_notific">key_notific</string>
+    <string name="transition_image">transition</string>
+    <string name="no_network">No News Information Available .\n\nNetwork is not Available is to fetch the News.</string>
+    <string name="no_info_available">No News Information Available</string>
+    <string name="action_share">Share</string>
 
 </resources>

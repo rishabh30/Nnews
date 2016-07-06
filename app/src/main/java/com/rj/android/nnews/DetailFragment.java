@@ -1,4 +1,4 @@
-package com.rj.android.nnews;
+ package com.rj.android.nnews;
 
 import android.content.ContentUris;
 import android.content.Context;
@@ -11,8 +11,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -36,6 +41,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public TextView mNYTimes;
     Cursor oldData=null;
 
+    String mMessage = null;
+
     String[] ArticleColumns = {
             Contract.Article._id,
             Contract.Article.TABLE_NAME + "." +Contract.Article.KEY_ID,
@@ -50,7 +57,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
 
 
+
     public DetailFragment() {
+        setHasOptionsMenu(true);
     }
 
 
@@ -63,6 +72,26 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
+
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu , MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.fragment_detail, menu);
+        MenuItem menuItem = menu.findItem(R.id.action_share);
+
+        ShareActionProvider mShareActionProvider
+                =  (ShareActionProvider)MenuItemCompat.getActionProvider(menuItem);
+
+        if(mShareActionProvider!=null)
+        {
+            mShareActionProvider.setShareIntent(createShareIntent());
+        }
+    }
+
+
+
 
 
     @Override
@@ -115,7 +144,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public void onResume() {
         super.onResume();
         getLoaderManager().initLoader(DETAIL_LOADER,null,this);
-        onCreateLoader(DETAIL_LOADER , null );
+        onCreateLoader(DETAIL_LOADER, null);
     }
 
     @Override
@@ -128,7 +157,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onLoadFinished(Loader loader, Cursor data) {
-        Log.v(LOG_TAG , "on Loader Finished");
+        Log.v(LOG_TAG, "on Loader Finished");
        if(!data.moveToFirst())
         {
             oldData = data;
@@ -159,19 +188,23 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             String Source= data.getString(
                 data.getColumnIndex(Contract.Article.SOURCE));
 
+
+
             final String articleUrl = data.getString(
                     data.getColumnIndex(Contract.Article.ARTICLE_URL)
             );
-
+            mImage.setVisibility(View.VISIBLE);
+            mMessage = Title + "  " + articleUrl + "  #Nnews";
             if(imageUrl.matches("no"))
             {
                 mImage.setImageResource(R.drawable.noblogo);
             }
             else {
+
                 Glide.with(getActivity())
                         .load(imageUrl)
                         .fitCenter()
-                        .placeholder(com.rj.android.nnews.R.drawable.loading)
+                        .placeholder(R.drawable.progress_animation)
                         .centerCrop()
                         .into(mImage);
             }
@@ -200,6 +233,15 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onLoaderReset(Loader loader) {
 
+    }
+
+    private Intent createShareIntent()
+    {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT ,  mMessage);
+        return shareIntent;
     }
 
 }

@@ -1,6 +1,7 @@
 package com.rj.android.nnews;
 
 import android.annotation.TargetApi;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,7 +20,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.rj.android.nnews.data.Contract;
 import com.rj.android.nnews.sync.SyncAdapter;
@@ -43,7 +46,7 @@ public class NestedFragment3 extends Fragment implements LoaderManager.LoaderCal
     int mPosition;
     String SELECTED_KEY="POSITION";
     ListView main_list;
-    ArticleListAdapter3 madapter;
+    ArticleListAdapterCompact madapter;
     String[] textinfo = new String[15];
     String[] ArticleColumns = {
             Contract.Article._id,
@@ -59,17 +62,15 @@ public class NestedFragment3 extends Fragment implements LoaderManager.LoaderCal
     };
     SwipeRefreshLayout mySwipeRefreshLayout;
 
-    public static NestedFragment3 newInstance(int pos, String title) {
+    public static NestedFragment3 newInstance() {
         NestedFragment3 fragmentFirst = new NestedFragment3();
 
         Bundle args = new Bundle();
 
         String saveUrl =""  , saveKeyName ="" ;
-        if (pos == 2) {
 
-            saveUrl = "https://api.nytimes.com/svc/movies/v2/reviews/all.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
-            saveKeyName = "movie_reviews";
-        }
+        saveUrl = "https://api.nytimes.com/svc/movies/v2/reviews/all.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
+        saveKeyName = "movie_reviews";
         args.putString("saveUrl", saveUrl);
         args.putString("saveKeyName", saveKeyName);
 
@@ -89,6 +90,24 @@ public class NestedFragment3 extends Fragment implements LoaderManager.LoaderCal
         if (mPosition != ListView.INVALID_POSITION && mTwoPane) {
             main_list.setSelection(mPosition);
         }
+        setEmptyInfo();
+    }
+
+    private void setEmptyInfo() {
+
+        if (main_list.getCount() == 0) {
+            TextView errorTextView;
+            int message = R.string.no_info_available;
+            errorTextView = (TextView) getView().findViewById(R.id.ErrorInfo);
+            if (errorTextView != null) {
+                if (!Utility.isNetworkAvailable(getContext())) {
+                    message = R.string.no_network;
+                }
+            }
+
+            errorTextView.setText(message);
+        }
+
     }
 
     @Override
@@ -120,9 +139,11 @@ public class NestedFragment3 extends Fragment implements LoaderManager.LoaderCal
         main_list = (ListView) rootView.findViewById(com.rj.android.nnews.R.id.main_list);
 
 
+        View errorTextView;
+        errorTextView = rootView.findViewById(R.id.ErrorInfo);
 
-        madapter = new ArticleListAdapter3(getActivity(), null, 0);
-
+        madapter = new ArticleListAdapterCompact(getActivity(), null, 0);
+        main_list.setEmptyView(errorTextView);
         main_list.setAdapter(madapter);
 
         main_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -140,12 +161,23 @@ public class NestedFragment3 extends Fragment implements LoaderManager.LoaderCal
                 editor.putInt("ARTICLE_ID", articleId);
                 editor.commit();
 
+                ImageView sharedView = (ImageView) view.findViewById(R.id.list_item_image);
+
                 if (MainActivity.mTwoPane) {
                     ((Callback) getParentFragment().getActivity()).onItemSelected();
                 } else {
 
-                    Intent intent = new Intent(getActivity(), DetailActivity.class);
-                    startActivity(intent);
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+                        Bundle bundle = ActivityOptions.makeSceneTransitionAnimation
+                                (getParentFragment().getActivity(),
+                                        sharedView, sharedView.getTransitionName()
+                                )
+                                .toBundle();
+                        Intent intent = new Intent(getActivity(), DetailActivity.class);
+                        startActivity(intent, bundle);
+                    }
                 }
             }
         });
@@ -173,7 +205,7 @@ public class NestedFragment3 extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String sortOrder = Contract.Article.PUBLISH_DATE + " DESC ";
+        String sortOrder = Contract.Article.PUBLISH_DATE + " DESC LIMIT " + Utility.get_noi_list(getContext());
         Log.d("cursor", "onCreate: ");
 
         updateArticle();
@@ -234,11 +266,10 @@ public class NestedFragment3 extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(FORECAST_LOADER, null, this);
+        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
     }
 
     public interface Callback {
         void onItemSelected();
     }
-
 }

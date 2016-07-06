@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -17,8 +18,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.rj.android.nnews.data.Contract;
 import com.rj.android.nnews.sync.SyncAdapter;
@@ -27,10 +32,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static android.content.pm.ActivityInfo.*;
+
 
 public class NestedHome extends Fragment {
 
-    public static NestedHome newInstance(int pos, String title) {
+    public static NestedHome newInstance() {
         NestedHome fragmentFirst = new NestedHome();
 
         Bundle args = new Bundle();
@@ -71,6 +78,10 @@ public class NestedHome extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
     }
-
+ /*   public void animate(View view) {
+        TextView imageView = (TextView)view;
+        Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.hyperspace_jump);
+        imageView.startAnimation(hyperspaceJumpAnimation);
+    }*/
 
 }

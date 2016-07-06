@@ -2,16 +2,28 @@
 <resources>
 
 
-    <color name="colorPrimary">#3F51B5</color>
+  <!--  <color name="colorPrimary">#303F9F</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#536DFE</color>
-    <color name="primaryText">#212121</color>
-    <color name="secondaryText">#727272</color>
+    <color name="colorAccent">#536DFE</color>-->
+    <color name="primaryText2">#212121</color>
+    <color name="secondaryText2">#727272</color>
 
+
+
+
+ <color name="colorPrimary">#035d70</color>
+    <color name="colorPrimaryDark">#023b47</color>
+    <color name="colorAccent">#035d70</color>
+    <color name="primaryText">#FFFF</color>
+    <color name="secondaryText">#FFFF</color>
 
 
     <color name="white" >#FFFF</color>
     <color name="blue" >#FF33B5E5</color>
+    <color name="secondary_text_material_light">#141313</color>
+    <color name="secondary_text_material_dark">#363333</color>
+    <color name="primary_text_material_dark">#292727</color>
+    <color name="colorBackground">#1b1a1a</color>
     <item name="purple" type="color">#FFAA66CC</item>
     <item name="green" type="color">#FF99CC00</item>
     <item name="orange" type="color">#FFFFBB33</item>
@@ -21,7 +33,7 @@
     <item name="darkgreen" type="color">#FF669900</item>
     <item name="darkorange" type="color">#FFFF8800</item>
     <item name="darkred" type="color">#FFCC0000</item>
-
+    <item name="black" type="color">#000</item>
     <integer-array name="androidcolors">
         <item>@color/blue</item>
         <item>@color/purple</item>
@@ -32,6 +44,7 @@
         <item>@color/darkpurple</item>
         <item>@color/darkgreen</item>
         <item>@color/darkorange</item>
+        <item>@color/black</item>
         <item>@color/darkred</item>
     </integer-array>
 

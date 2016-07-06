@@ -1,6 +1,7 @@
 package com.rj.android.nnews;
 
 import android.annotation.TargetApi;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,7 +20,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.rj.android.nnews.data.Contract;
 import com.rj.android.nnews.sync.SyncAdapter;
@@ -64,7 +67,7 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
         String SELECTED_KEY="POSITION";
         ListView main_list;
 
-        ArticleListAdapter3 madapter;
+        ArticleListAdapterCompact madapter;
         String[] textinfo = new String[15];
         String[] ArticleColumns = {
                 Contract.Article._id,
@@ -111,10 +114,11 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
                     }
                 }
         );
-            madapter = new ArticleListAdapter3(getActivity(), null, 0);
-
+            madapter = new ArticleListAdapterCompact(getActivity(), null, 0);
+        View errorTextView;
+        errorTextView =  rootView.findViewById(R.id.ErrorInfo);
             main_list.setAdapter(madapter);
-
+        main_list.setEmptyView(errorTextView);
             main_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -129,10 +133,18 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
                     Log.d(LOG_TAG, "CLICKED  position  " + position + " id  " + id);
                     editor.putInt("ARTICLE_ID", articleId);
                     editor.commit();
+                    ImageView sharedView = (ImageView) view.findViewById(R.id.list_item_image);
 
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
+                        Bundle bundle = ActivityOptions.makeSceneTransitionAnimation
+                                (getParentFragment().getActivity(),
+                                        sharedView, sharedView.getTransitionName()
+                                )
+                                .toBundle();
                         Intent intent = new Intent(getActivity(), DetailActivity.class);
-                        startActivity(intent);
+                        startActivity(intent, bundle);
+                    }
 
                 }
             });
@@ -193,7 +205,24 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
             {
                 main_list.setSelection(mPosition);
             }
+            setEmptyInfo();
         }
+
+    private void setEmptyInfo() {
+
+        if (main_list.getCount() == 0) {
+            TextView errorTextView;
+            int message = R.string.no_info_available;
+            errorTextView = (TextView) getView().findViewById(R.id.ErrorInfo);
+            if (errorTextView != null) {
+                if (!Utility.isNetworkAvailable(getContext())) {
+                    message = R.string.no_network;
+                }
+            }
+
+            errorTextView.setText(message);
+        }
+    }
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
@@ -225,7 +254,6 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
         }
         @Override
         public void onStart() {
-
             super.onStart();
         }
 

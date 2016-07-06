@@ -22,4 +22,14 @@
     </android.support.v4.widget.SwipeRefreshLayout>
 
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/ErrorInfo"
+        android:textSize="30sp"
+        android:text="@string/no_info_available"
+        android:padding="32dp"
+        />
+
+
 </FrameLayout>

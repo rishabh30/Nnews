@@ -1,6 +1,7 @@
 package com.rj.android.nnews;
 
 import android.annotation.TargetApi;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,7 +20,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.rj.android.nnews.data.Contract;
 import com.rj.android.nnews.sync.SyncAdapter;
@@ -31,16 +34,7 @@ import java.util.List;
 
 public class NestedFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static final int COL_ARTICLE_ID = 0;
-    public static final int COL_ARTICLE_KEY_ID = 1;
-    public static final int COL_ARTICLE_TITLE = 2;
-    public static final int COL_ARTICLE_URL = 3;
-    public static final int COL_ARTICLE_ABSTRACT = 4;
-    public static final int COL_ARTICLE_SOURCE = 5;
-    public static final int COL_ARTICLE_PHOTO_HEADING = 6;
-    public static final int COL_ARTICLE_PHOTO_URL_HIGH = 7;
-    public static final int COL_ARTICLE_PUBLISH_DATE = 8;
-    public static final int COL_ARTICLE_PHOTO_URL = 9;
+
     private static final String LOG_TAG = MainFragment.class.getSimpleName();
     private static final int FORECAST_LOADER = 0;
     String getUrlString, getKeyName;
@@ -63,7 +57,7 @@ public class NestedFragment extends Fragment implements LoaderManager.LoaderCall
             Contract.Article.PHOTO_URL
     };
 
-    public static NestedFragment newInstance(int pos, String title) {
+    public static NestedFragment newInstance() {
         NestedFragment fragmentFirst = new NestedFragment();
 
         Bundle args = new Bundle();
@@ -113,9 +107,11 @@ public class NestedFragment extends Fragment implements LoaderManager.LoaderCall
         main_list = (ListView) rootView.findViewById(com.rj.android.nnews.R.id.main_list);
 
         callResume();
+        View errorTextView;
+        errorTextView =  rootView.findViewById(R.id.ErrorInfo);
 
         madapter = new ArticleListAdapter(getActivity(), null, 0);
-
+        main_list.setEmptyView(errorTextView);
         main_list.setAdapter(madapter);
 
         main_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -133,12 +129,22 @@ public class NestedFragment extends Fragment implements LoaderManager.LoaderCall
                 editor.putInt("ARTICLE_ID", articleId);
                 editor.commit();
 
+                ImageView sharedView = (ImageView) view.findViewById(R.id.list_item_image);
                 if (MainActivity.mTwoPane) {
                     ((Callback) getParentFragment().getActivity()).onItemSelected();
                 } else {
 
-                    Intent intent = new Intent(getActivity(), DetailActivity.class);
-                    startActivity(intent);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+                        sharedView.setVisibility(View.VISIBLE);
+                        Bundle bundle = ActivityOptions.makeSceneTransitionAnimation
+                                (getParentFragment().getActivity(),
+                                        sharedView, sharedView.getTransitionName()
+                                )
+                                .toBundle();
+                        Intent intent = new Intent(getActivity(), DetailActivity.class);
+                        startActivity(intent, bundle);
+                    }
                 }
             }
         });
@@ -198,6 +204,27 @@ public class NestedFragment extends Fragment implements LoaderManager.LoaderCall
         if (mPosition != ListView.INVALID_POSITION && mTwoPane == true) {
             main_list.setSelection(mPosition);
         }
+
+        setEmptyInfo();
+    }
+
+    private void setEmptyInfo() {
+
+        if(main_list.getCount() == 0) {
+            TextView errorTextView;
+            int message = R.string.no_info_available;
+            errorTextView = (TextView)getView().findViewById(R.id.ErrorInfo);
+            if(errorTextView!=null)
+            {
+                if(!Utility.isNetworkAvailable(getContext()))
+                {
+                    message = R.string.no_network;
+                }
+            }
+
+            errorTextView.setText(message);
+        }
+
     }
 
     @Override
@@ -242,8 +269,7 @@ public class NestedFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(FORECAST_LOADER, null, this);
-
+        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
     }
 
     public interface Callback {

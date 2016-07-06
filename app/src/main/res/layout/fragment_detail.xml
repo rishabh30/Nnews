@@ -22,11 +22,12 @@
 
             <ImageView
                 android:id="@+id/detail_image"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/notific_photo"
+                android:src="@drawable/loading2"
+                android:transitionName="@string/transition_image"
                 />
 
             <TextView
@@ -34,6 +35,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
+
+                android:fontFamily="sans-serif-medium"
                 android:text="Britney Spears performing at Jones Beach Theater in Wantagh, N.Y., in 2000. "
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
@@ -62,6 +65,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
+                android:fontFamily="sans-serif"
                 android:text="Is Britney Spears Ready to Stand on Her Own?"
                 android:textColor="#000000" />
             <TextView
@@ -72,7 +76,7 @@
                 android:textSize="18sp"
                 android:text="For years, the life of one of the world’s most successful pop stars has been controlled by a court‐approved conservatorship, designed for people who cannot take care of themselves."
                 android:textColor="#888888"
-                android:fontFamily="sans-serif-condensed"
+                android:fontFamily="sans-serif"
                 />
 
 
@@ -89,6 +93,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Source :"
+                android:fontFamily="sans-serif"
                 android:textSize="10sp"
                 android:textColor="#ffffff" />
 
@@ -97,6 +102,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="The New York Times"
+                android:fontFamily="sans-serif-medium"
                 android:textSize="18sp"
                 android:gravity="center_horizontal"
                 android:layout_marginTop="5dp"
@@ -110,7 +116,7 @@
                 android:textSize="10sp"
                 android:gravity="center_horizontal"
                 android:layout_marginTop="5dp"
-                android:textColor="#7172e8"
+                android:textColor="#FFF"
                 android:layout_gravity="right" />
 
 

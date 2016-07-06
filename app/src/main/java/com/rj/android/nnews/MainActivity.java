@@ -191,9 +191,11 @@ public class MainActivity extends AppCompatActivity
             saveUrl="https://api.nytimes.com/svc/movies/v2/reviews/picks.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
             saveKeyName="movie_reviews";
 
-        } /*else if (id == com.rj.android.nnews.R.id.nav_share) {
+        } else if (id == R.id.action_setting) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
 
-        } else if (id == com.rj.android.nnews.R.id.nav_send) {
+        }/* else if (id == com.rj.android.nnews.R.id.nav_send) {
 
         }*/
 

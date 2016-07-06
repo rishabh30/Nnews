@@ -12,9 +12,6 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.util.Log;
 
-/**
- * Created by DELL on 6/25/2016.
- */
 public class SettingsFragment extends PreferenceFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
     // since we use the preference change initially to populate the summary
@@ -33,7 +30,6 @@ public class SettingsFragment extends PreferenceFragment
         super.onResume();
         getPreferenceScreen().getSharedPreferences()
                 .registerOnSharedPreferenceChangeListener((this));
-
     }
 
     @Override
@@ -42,12 +38,12 @@ public class SettingsFragment extends PreferenceFragment
         getPreferenceScreen().getSharedPreferences()
                 .unregisterOnSharedPreferenceChangeListener(this);
     }
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getString(R.string.noi_key))) {
             Preference connectionPref = findPreference(key);
             Log.d("SettingsActivity :", "noi key");
-
             // Set summary to be the user-description for the selected value
             connectionPref.setSummary(sharedPreferences.getString(key, ""));
         }

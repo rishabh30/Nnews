@@ -13,7 +13,9 @@
             android:layout_width="157dp"
             android:layout_height="105dp"
             android:paddingLeft="16dp"
-            android:src="@drawable/loading"
+
+            android:transitionName="@string/transition_image"
+            android:src="@drawable/loading2"
             android:scaleType="centerCrop" />
 
     <RelativeLayout
@@ -28,9 +30,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-condensed"
+            android:fontFamily="sans-serif"
             android:id="@+id/list_item_title"
-            android:paddingLeft="32dp"
             android:textSize="18sp"
             android:text="" />
 
@@ -40,6 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
+            android:fontFamily="sans-serif-light"
             android:layout_alignParentRight="true"
             android:layout_gravity="bottom|right"
             android:text=""

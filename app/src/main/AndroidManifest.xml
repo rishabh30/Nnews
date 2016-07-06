@@ -4,7 +4,7 @@
 
     <!-- This permisiion is neccesary in order for Sunshine to perform network access -->
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- Permission required by the sync adapter -->
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
@@ -96,7 +96,7 @@
         <activity
             android:name=".SettingsActivity"
             android:label="Settings"
-            android:theme="@style/ArticleTheme2"
+            android:theme="@style/ArticleTheme4"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

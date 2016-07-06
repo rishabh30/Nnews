@@ -30,6 +30,7 @@
         android:layout_height="match_parent"
         android:name="com.rj.android.nnews.SettingsFragment"
         android:id="@+id/fragment"
+        android:theme="@style/ArticleTheme3"
         android:layout_below="@+id/view"
         android:layout_centerHorizontal="true" />
 

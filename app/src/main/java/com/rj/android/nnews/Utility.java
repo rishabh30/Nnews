@@ -2,6 +2,8 @@ package com.rj.android.nnews;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -44,8 +46,8 @@ public class Utility {
             d1 = dateFormatGmt.parse(dateStart);
             d2 = dateFormatGmt.parse(dateStop);
 
-            Log.d(LOG_TAG, "START STRING " + d1.toString());
-            Log.d(LOG_TAG, "STOP STRING " + d2.toString());
+         /*   Log.d(LOG_TAG, "START STRING " + d1.toString());
+            Log.d(LOG_TAG, "STOP STRING " + d2.toString());*/
 
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(d1);
@@ -122,6 +124,14 @@ public class Utility {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String noi = context.getString(R.string.noi_key);
         return prefs.getString(noi, "15");
+    }
+
+
+    static public boolean isNetworkAvailable(Context c)
+    {
+        ConnectivityManager cm =(ConnectivityManager)c.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork!=null && activeNetwork.isConnectedOrConnecting();
     }
 
 }

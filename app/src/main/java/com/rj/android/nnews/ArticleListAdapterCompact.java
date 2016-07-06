@@ -12,14 +12,14 @@ import android.widget.TextView;
 import com.rj.android.nnews.data.Contract;
 import com.squareup.picasso.Picasso;
 
-public class ArticleListAdapter3 extends CursorAdapter {
+public class ArticleListAdapterCompact extends CursorAdapter {
 
 
-    private static final String LOG_TAG = ArticleListAdapter3.class.getSimpleName();
+    private static final String LOG_TAG = ArticleListAdapterCompact.class.getSimpleName();
     private final int SIDE_STORY = 1;
     private boolean useMainLayout;
 
-    public ArticleListAdapter3(Context context, Cursor c, int flags) {
+    public ArticleListAdapterCompact(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
 
@@ -40,7 +40,7 @@ public class ArticleListAdapter3 extends CursorAdapter {
         int layoutId = -1;
 
 
-            layoutId = R.layout.list_item_layout2;
+            layoutId = R.layout.list_item_layout;
 
 
         View view = LayoutInflater.from(context).inflate(layoutId  ,parent,false);
@@ -70,7 +70,7 @@ public class ArticleListAdapter3 extends CursorAdapter {
         } else {
             Picasso.with(context)
                     .load(imageUrl)
-                    .placeholder(R.drawable.loading)
+                    .placeholder(R.drawable.progress_animation)
                     .fit().centerCrop()
                     .noFade()
                     .into(viewHolder.imageView);

@@ -1,6 +1,7 @@
 package com.rj.android.nnews;
 
 import android.annotation.TargetApi;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,7 +20,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.rj.android.nnews.data.Contract;
 import com.rj.android.nnews.sync.SyncAdapter;
@@ -63,7 +66,7 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
     boolean mTwoPane;
     int mPosition;
 
-    public static NestedFragment2 newInstance(int pos, String title) {
+    public static NestedFragment2 newInstance() {
         NestedFragment2 fragmentFirst = new NestedFragment2();
 
         Bundle args = new Bundle();
@@ -72,7 +75,7 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
         String saveUrl = "", saveKeyName = "";
 
 
-        saveUrl = "https://api.nytimes.com/svc/news/v3/content/iht/all.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
+        saveUrl = "https://api.nytimes.com/svc/news/v3/content/all/all.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
         saveKeyName = "newswire";
 
 
@@ -118,9 +121,11 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
         List<String> sample_Data = new ArrayList<String>(Arrays.asList(textinfo));
         main_list = (ListView) rootView.findViewById(R.id.main_list);
 
+        View errorTextView;
+        errorTextView =  rootView.findViewById(R.id.ErrorInfo);
 
         madapter = new ArticleListAdapter(getActivity(), null, 0);
-
+        main_list.setEmptyView(errorTextView);
         main_list.setAdapter(madapter);
 
 
@@ -139,12 +144,20 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
                 editor.putInt("ARTICLE_ID", articleId);
                 editor.commit();
 
+                ImageView sharedView = (ImageView) view.findViewById(R.id.list_item_image);
                 if (MainActivity.mTwoPane) {
                     ((Callback) getParentFragment().getActivity()).onItemSelected();
                 } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-                    Intent intent = new Intent(getActivity(), DetailActivity.class);
-                    startActivity(intent);
+                        Bundle bundle = ActivityOptions.makeSceneTransitionAnimation
+                                (getParentFragment().getActivity(),
+                                        sharedView, sharedView.getTransitionName()
+                                )
+                                .toBundle();
+                        Intent intent = new Intent(getActivity(), DetailActivity.class);
+                        startActivity(intent, bundle);
+                    }
                 }
             }
         });
@@ -156,6 +169,8 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
         }
         return rootView;
     }
+
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -178,7 +193,28 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
         if (mPosition != ListView.INVALID_POSITION && mTwoPane == true) {
             main_list.setSelection(mPosition);
         }
+        setEmptyInfo();
     }
+
+    private void setEmptyInfo() {
+
+        if(main_list.getCount() == 0) {
+            TextView errorTextView;
+            int message = R.string.no_info_available;
+            errorTextView = (TextView)getView().findViewById(R.id.ErrorInfo);
+            if(errorTextView!=null)
+            {
+                if(!Utility.isNetworkAvailable(getContext()))
+                {
+                    message = R.string.no_network;
+                }
+            }
+
+            errorTextView.setText(message);
+        }
+
+    }
+
 
 
     @Override

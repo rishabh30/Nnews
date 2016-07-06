@@ -46,7 +46,7 @@ public class ArticleListAdapter extends CursorAdapter {
             layoutId = R.layout.main_list_item;
         }else
         {
-            layoutId = R.layout.list_item_layout2;
+            layoutId = R.layout.list_item_layout;
         }
 
         View view = LayoutInflater.from(context).inflate(layoutId  ,parent,false);
@@ -80,7 +80,7 @@ public class ArticleListAdapter extends CursorAdapter {
         } else {
             Picasso.with(context)
                     .load(imageUrl)
-                    .placeholder(com.rj.android.nnews.R.drawable.loading)
+                    .placeholder(R.drawable.progress_animation)
                     .fit().centerCrop()
                     .noFade()
                     .into(viewHolder.imageView);
