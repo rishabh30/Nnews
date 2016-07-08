@@ -19,7 +19,6 @@
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
-            android:label="@string/app_name"
             android:theme="@style/ArticleTheme2">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -102,6 +101,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-    </application>
+       </application>
 
 </manifest>
