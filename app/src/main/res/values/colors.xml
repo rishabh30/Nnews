@@ -24,6 +24,7 @@
     <color name="secondary_text_material_dark">#363333</color>
     <color name="primary_text_material_dark">#292727</color>
     <color name="colorBackground">#1b1a1a</color>
+    <color name="holo_white">#E0E0E0</color>
     <item name="purple" type="color">#FFAA66CC</item>
     <item name="green" type="color">#FF99CC00</item>
     <item name="orange" type="color">#FFFFBB33</item>

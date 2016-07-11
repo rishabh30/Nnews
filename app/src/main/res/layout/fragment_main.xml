@@ -2,15 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:elevation="10dp"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <com.rj.android.nnews.view.SlidingTabLayout
 
-
+        android:elevation="2dp"
         android:id="@+id/sliding_tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
         custom:tabGravity="center"
         />
 

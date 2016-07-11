@@ -240,7 +240,6 @@ public class NestedFragment extends Fragment implements LoaderManager.LoaderCall
 
     private void updateArticle() {
         Context context = getContext();
-        Log.d("FUCK ", String.valueOf(0));
         SharedPreferences SP = context.getSharedPreferences("UrlDetails", Context.MODE_PRIVATE);
         String urlKey = context.getString(R.string.url);
         String Ks = context.getString(R.string.keySaved);

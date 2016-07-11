@@ -16,6 +16,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,6 +41,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setElevation(0);
+        getSupportActionBar() .setTitle(Html.fromHtml("<font color=\"@color/white\">" + "Nnews" + "</font>"));
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -187,9 +190,15 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
 
-        }/* else if (id == com.rj.android.nnews.R.id.nav_send) {
-
-        }*/
+        } else if (id == R.id.feedback) {
+            Intent Email = new Intent(Intent.ACTION_SEND);
+            Email.setType("text/email");
+            Email.putExtra(Intent.EXTRA_EMAIL, new String[] { "rishabhjainps2@gmail.com" });
+            Email.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
+            Email.putExtra(Intent.EXTRA_TEXT, "Hello Rishabh ," + "");
+            startActivity(Intent.createChooser(Email, "Send Feedback:"));
+            return true;
+        }
 
         editor.putString(urlKey, saveUrl);
         editor.putString(KeySaved, saveKeyName);

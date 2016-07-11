@@ -241,7 +241,6 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
     }
 
     private void updateArticle() {
-        Log.d("FUCK ", String.valueOf(1));
 
         Context context = getContext();
         SharedPreferences SP = context.getSharedPreferences("UrlDetails", Context.MODE_PRIVATE);

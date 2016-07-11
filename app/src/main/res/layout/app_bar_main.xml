@@ -4,38 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:context="com.rj.android.nnews.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ArticleTheme2">
-        <!--android:theme="@style/AppTheme.AppBarOverlay"-->
-
+        app:elevation="0dp"
+        android:theme="@style/ArticleTheme3">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+
             android:background="@color/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" >
+            app:popupTheme="@style/AppTheme.PopupOverlay">
 
-            <ImageView
-                android:id="@+id/imageView"
 
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="6dp"
-                android:padding="12dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/notic" />
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
-
     <include layout="@layout/content_main" />
-
 
 </android.support.design.widget.CoordinatorLayout>
