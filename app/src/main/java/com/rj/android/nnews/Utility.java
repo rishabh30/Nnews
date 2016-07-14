@@ -31,7 +31,7 @@ public class Utility {
 
 
         // GET THE DATE DIFF TO SIMPLIFY READABILITY FROM 2016-06-14T11:25:08-04:00 to 3 days ago
-    public static String getDatabaseDate(String mDate) {
+    public static String getDatabaseDate(String mDate) throws Exception {
         String dateStart = mDate;
         SimpleDateFormat dateFormatGmt =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));

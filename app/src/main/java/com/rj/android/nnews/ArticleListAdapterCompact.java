@@ -61,7 +61,12 @@ public class ArticleListAdapterCompact extends CursorAdapter {
         String date = cursor.getString(
                 cursor.getColumnIndex(Contract.Article.PUBLISH_DATE));
 
-        date = Utility.getDatabaseDate(date);
+        try {
+            date = Utility.getDatabaseDate(date);
+        } catch (Exception e) {
+            e.printStackTrace();
+            date = "";
+        }
 
         viewHolder.friendlyday.setText(date);
 

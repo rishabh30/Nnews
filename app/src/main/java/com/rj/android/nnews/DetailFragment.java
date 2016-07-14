@@ -175,11 +175,17 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                     data.getColumnIndex(Contract.Article.PHOTO_URL_HIGH));
             String heading= data.getString(
                     data.getColumnIndex(Contract.Article.PHOTO_HEADING));
-
+            if(heading=="null")
+                heading="";
             String date  = data.getString(
                 data.getColumnIndex(Contract.Article.PUBLISH_DATE));
 
-            date = Utility.getDatabaseDate(date);
+            try {
+                date = Utility.getDatabaseDate(date);
+            } catch (Exception e) {
+                e.printStackTrace();
+                date = null;
+            }
 
             String Title= data.getString(
                 data.getColumnIndex(Contract.Article.TITLE));
@@ -188,13 +194,14 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             String Source= data.getString(
                 data.getColumnIndex(Contract.Article.SOURCE));
 
-
+            if(Title=="null")
+                Title="";
 
             final String articleUrl = data.getString(
                     data.getColumnIndex(Contract.Article.ARTICLE_URL)
             );
             mImage.setVisibility(View.VISIBLE);
-            mMessage = Title + "  " + articleUrl + "  #Nnews";
+            mMessage = Title + " - " + articleUrl;
             if(imageUrl.matches("no"))
             {
                 mImage.setImageResource(R.drawable.noblogo);

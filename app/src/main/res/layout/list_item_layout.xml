@@ -3,7 +3,6 @@
     android:layout_height="wrap_content"
     android:background="@drawable/touch_selector"
     android:gravity="center_vertical"
-    android:minHeight="?android:attr/listPreferredItemHeight"
     android:orientation="horizontal"
     android:paddingBottom="5dp"
     android:paddingTop="12dp">
@@ -18,11 +17,13 @@
             android:src="@drawable/loading2"
             android:scaleType="centerCrop" />
 
-    <RelativeLayout
+    <GridLayout
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
+
+        android:minHeight="105dp"
         android:layout_weight="1"
         android:orientation="vertical"
         android:paddingBottom="8dp">
@@ -43,9 +44,9 @@
             android:layout_alignParentEnd="true"
             android:fontFamily="sans-serif-light"
             android:layout_alignParentRight="true"
-            android:layout_gravity="bottom|right"
             android:text=""
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:layout_gravity="bottom|right" />
 
-    </RelativeLayout>
+    </GridLayout>
 </LinearLayout>

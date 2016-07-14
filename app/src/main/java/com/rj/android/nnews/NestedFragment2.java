@@ -1,10 +1,13 @@
 package com.rj.android.nnews;
 
+import android.accounts.Account;
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SyncStatusObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -31,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     String getUrlString, getKeyName;
@@ -51,19 +53,11 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
 
     private static final String LOG_TAG = MainFragment.class.getSimpleName();
 
-    public static final int COL_ARTICLE_ID = 0;
-    public static final int COL_ARTICLE_KEY_ID = 1;
-    public static final int COL_ARTICLE_TITLE = 2;
-    public static final int COL_ARTICLE_URL = 3;
-    public static final int COL_ARTICLE_ABSTRACT = 4;
-    public static final int COL_ARTICLE_SOURCE = 5;
-    public static final int COL_ARTICLE_PHOTO_HEADING = 6;
-    public static final int COL_ARTICLE_PHOTO_URL_HIGH = 7;
-    public static final int COL_ARTICLE_PUBLISH_DATE = 8;
-    public static final int COL_ARTICLE_PHOTO_URL = 9;
     private static final int FORECAST_LOADER = 1;
 
     boolean mTwoPane;
+
+    boolean isRefresh = true;
     int mPosition;
 
     public static NestedFragment2 newInstance() {
@@ -71,17 +65,13 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
 
         Bundle args = new Bundle();
 
-
         String saveUrl = "", saveKeyName = "";
-
 
         saveUrl = "https://api.nytimes.com/svc/news/v3/content/all/all.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
         saveKeyName = "newswire";
 
-
         args.putString("saveUrl", saveUrl);
         args.putString("saveKeyName", saveKeyName);
-
 
         fragmentFirst.setArguments(args);
         return fragmentFirst;
@@ -94,14 +84,28 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.v(LOG_TAG," onCreate");
         getUrlString = getArguments().getString("saveUrl", "");
         getKeyName = getArguments().getString("saveKeyName", "");
+
+        ContentResolver.addStatusChangeListener(
+                ContentResolver.SYNC_OBSERVER_TYPE_PENDING
+                        | ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE,
+                new
+
+                        MySyncStatusObserver()
+
+        );
+
     }
     SwipeRefreshLayout mySwipeRefreshLayout;
     @TargetApi(Build.VERSION_CODES.M)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        Log.v(LOG_TAG," onCreateView");
         View rootView = inflater.inflate(R.layout.nesyed_fragment2, container, false);
 
         mySwipeRefreshLayout =(SwipeRefreshLayout)rootView.findViewById(R.id.swiperefresh);
@@ -118,10 +122,9 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
                 }
         );
 
-        List<String> sample_Data = new ArrayList<String>(Arrays.asList(textinfo));
         main_list = (ListView) rootView.findViewById(R.id.main_list);
-
         View errorTextView;
+        callResume();
         errorTextView =  rootView.findViewById(R.id.ErrorInfo);
 
         madapter = new ArticleListAdapter(getActivity(), null, 0);
@@ -157,6 +160,9 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
                                 .toBundle();
                         Intent intent = new Intent(getActivity(), DetailActivity.class);
                         startActivity(intent, bundle);
+                    } else {
+                        Intent intent = new Intent(getActivity(), DetailActivity.class);
+                        startActivity(intent);
                     }
                 }
             }
@@ -186,7 +192,7 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
         Log.d(LOG_TAG, " onLoaderFinished: ");
-
+        setRefereshLayout();
         madapter.swapCursor(data);
 
 
@@ -220,14 +226,15 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String sortOrder = Contract.Article.PUBLISH_DATE + " DESC LIMIT " + Utility.get_noi_list(getContext());
-        Log.d("cursor", "onCreate: ");
 
-        updateArticle();
+        Log.v(LOG_TAG," onCreateLoader");
+
 
         String KeyName = "newswire";
 
         Uri articleUri = Contract.Article.CONTENT_URI.buildUpon().appendPath(KeyName)
                 .build();
+
 
         Log.d(LOG_TAG, " onCreateLoader: ");
         return new CursorLoader(
@@ -241,6 +248,8 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
     }
 
     private void updateArticle() {
+
+        Log.v(LOG_TAG," UpdateArticle");
 
         Context context = getContext();
         SharedPreferences SP = context.getSharedPreferences("UrlDetails", Context.MODE_PRIVATE);
@@ -256,36 +265,97 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+
+        Log.v(LOG_TAG," onLoader Reset");
         madapter.swapCursor(null);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
 
+        Log.v(LOG_TAG," Activity Created ");
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
     }
 
     public void callResume() {
+        Log.i(LOG_TAG,  "  CALL RESUME 2");
         updateArticle();
         onResume();
     }
 
-    public interface Callback {
-        public void onItemSelected();
+    void setRefereshLayout() {
+        if (isRefresh == false) {
+            mySwipeRefreshLayout.setRefreshing(false);
+            Log.i("REFRESH ", "END");
+            isRefresh = true;
+        }
     }
 
     @Override
     public void onStart() {
 
+        Log.v(LOG_TAG," START");
         super.onStart();
     }
 
     @Override
     public void onResume() {
+        Log.v(LOG_TAG," RESUME");
+
+        String KeyName = "newswire";
+
+        Uri articleUri = Contract.Article.CONTENT_URI.buildUpon().appendPath(KeyName)
+                .build();
+
+
+        Log.d(LOG_TAG, " onCreateLoader: ");
+            Cursor cursor = getContext().getContentResolver().query(
+                articleUri,
+                ArticleColumns,
+                null,
+                null,
+                null
+        );
+        if(!cursor.moveToFirst())
+        {
+            updateArticle();
+        }
+
         super.onResume();
         getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
-        mySwipeRefreshLayout.setRefreshing(false);
     }
 
+    public interface Callback {
+        void onItemSelected();
+    }
+
+    private class MySyncStatusObserver implements SyncStatusObserver {
+        @Override
+        public void onStatusChanged(int which) {
+
+
+            String MY_AUTHORITY = "com.rj.android.nnews";
+            Account mAccount = new Account("Nnews", "android.rj.com");
+            if (which == ContentResolver.SYNC_OBSERVER_TYPE_PENDING) {
+                // 'Pending' state changed.
+                if (ContentResolver.isSyncPending(mAccount, MY_AUTHORITY)) {
+                    // There is now a pending sync.
+                } else {
+                    // There is no longer a pending sync.
+                }
+            } else if (which == ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE) {
+                // 'Active' state changed.
+                if (ContentResolver.isSyncActive(mAccount, MY_AUTHORITY)) {
+                    // There is now an active sync.zzz
+                    Log.i("Sync Adapter ", "Start");
+                } else {
+                    Log.i("Sync Adapter ", "End");
+                    isRefresh = false;
+                    ;
+                    // There is no longer an active sync.
+                }
+            }
+        }
+    }
 }

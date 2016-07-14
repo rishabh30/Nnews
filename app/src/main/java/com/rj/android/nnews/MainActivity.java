@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
         Log.d(LOG_TAG, " ON CREATE: ");
 
         super.onCreate(savedInstanceState);
@@ -53,11 +52,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
-
         navigationView.setNavigationItemSelectedListener(this);
-
-
-
 
         if (findViewById(R.id.fragmentDetail) != null) {
 
@@ -99,7 +94,8 @@ public class MainActivity extends AppCompatActivity
         editor.putString(KeySaved, saveKeyName);
 
         editor.commit();
-
+        mainFragment.setCurrentTab(1);
+        //navigationView.getMenu().getItem(1).setChecked(true);
         // account created and content is passed safely
         SyncAdapter.initializeSyncAdapter(this);
 
@@ -120,7 +116,6 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
 
-
         // Associate searchable configuration with the SearchView
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -128,7 +123,6 @@ public class MainActivity extends AppCompatActivity
                 (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
-
         return true;
     }
 
@@ -146,14 +140,12 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
-
         return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-
 
         Log.d(LOG_TAG, " ON NAVIGATION ITEM SELECTED : ");
         // Handle navigation view item clicks here.
@@ -181,7 +173,6 @@ public class MainActivity extends AppCompatActivity
             saveKeyName = "newswire";
 
         } else if (id == R.id.movie_reviews) {
-
             pos = 3;
             saveUrl = "https://api.nytimes.com/svc/movies/v2/reviews/picks.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
             saveKeyName = "movie_reviews";
@@ -206,18 +197,13 @@ public class MainActivity extends AppCompatActivity
         editor.commit();
 
         SyncAdapter.syncImmediately(this);
-
-
         MainFragment mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.myfragment);
         mainFragment.setCurrentTab(pos);
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-
 
 
     @Override
@@ -227,5 +213,4 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.fragmentDetail, fragment)
                 .commit();
     }
-
 }

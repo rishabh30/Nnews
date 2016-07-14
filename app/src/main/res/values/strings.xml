@@ -30,7 +30,11 @@
     <string name="key_notific">key_notific</string>
     <string name="transition_image">transition</string>
     <string name="no_network">No News Information Available .\n\nNetwork is not Available is to fetch the News.</string>
-    <string name="no_info_available">No News Information Available</string>
+    <string name="no_info_available">Loading Please Wait..</string>
     <string name="action_share">Share</string>
+    <string name="dialog_message">Do you want Cache ?</string>
+    <string name="dialog_title">Erase Cache ?</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

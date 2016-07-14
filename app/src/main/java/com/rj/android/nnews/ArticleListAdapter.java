@@ -61,6 +61,8 @@ public class ArticleListAdapter extends CursorAdapter {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         String title = cursor.getString(MainFragment.COL_ARTICLE_TITLE);
+        if(title=="null")
+            title="";
         String imageUrl;
         int viewType = getItemViewType(cursor.getPosition());
         if (viewType == MAIN_STORY && !useMainLayout) {
@@ -72,7 +74,12 @@ public class ArticleListAdapter extends CursorAdapter {
         String date = cursor.getString(
                 cursor.getColumnIndex(Contract.Article.PUBLISH_DATE));
 
-        date = Utility.getDatabaseDate(date);
+        try {
+            date = Utility.getDatabaseDate(date);
+        } catch (Exception e) {
+            e.printStackTrace();
+            date = "";
+        }
 
         viewHolder.friendlyday.setText(date);
         if (imageUrl.matches("no")) {

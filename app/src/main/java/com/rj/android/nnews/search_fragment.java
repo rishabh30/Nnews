@@ -42,8 +42,6 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
 
             Bundle args = new Bundle();
 
-
-
             String saveUrl =""  , saveKeyName ="" ;
 
 
@@ -138,12 +136,16 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
                         Bundle bundle = ActivityOptions.makeSceneTransitionAnimation
-                                (getParentFragment().getActivity(),
+                                (getActivity(),
                                         sharedView, sharedView.getTransitionName()
                                 )
                                 .toBundle();
                         Intent intent = new Intent(getActivity(), DetailActivity.class);
                         startActivity(intent, bundle);
+                    } else
+                    {
+                        Intent intent = new Intent(getActivity(), DetailActivity.class);
+                        startActivity(intent);
                     }
 
                 }
@@ -239,7 +241,6 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
 
         private void updateArticle()
         {
-            Log.d("FUCK ", String.valueOf(2));
             Context context = getContext();
             SharedPreferences SP = context.getSharedPreferences("UrlDetails", Context.MODE_PRIVATE);
             String urlKey = context.getString(R.string.url);

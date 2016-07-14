@@ -28,7 +28,6 @@ public class SearchResultsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setIcon(R.drawable.news_web);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         handleIntent(getIntent());
@@ -44,8 +43,6 @@ public class SearchResultsActivity extends AppCompatActivity {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 
             String query = intent.getStringExtra(SearchManager.QUERY);
-            Toast.makeText(this, query, Toast.LENGTH_SHORT).show();
-
 
             getUrlString = "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66&q=" + query;
             getKeyName = "search";

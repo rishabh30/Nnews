@@ -20,9 +20,14 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:context="com.rj.android.nnews.DetailActivity"
             tools:showIn="@layout/activity_detail"
-            android:padding="40dp"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#eeeeee"
+                android:orientation="vertical"
+                android:padding="20dp">
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -67,11 +72,12 @@
                 android:layout_gravity="right"
                 android:layout_marginTop="12dp"
                 android:layout_marginRight="30dp" />
-
+            </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:background="#f5f5f5"
                 android:padding="24dp">
 
                 <TextView
@@ -109,7 +115,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Source :"
+                android:text="Link :"
                 android:fontFamily="sans-serif"
                 android:textSize="10sp"
                 android:textColor="#ffffff" />
@@ -123,7 +129,7 @@
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center_horizontal"
                 android:layout_marginTop="5dp"
-                android:textColor="#7172e8" />
+                android:textColor="#0645AD" />
 
             <TextView
                 android:id="@+id/detail_source"
