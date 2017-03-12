@@ -8,14 +8,10 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
-import android.widget.TextView;
+
+import com.rj.android.nnews.Settings.SettingsActivity;
 
 public class DetailActivity extends AppCompatActivity {
-
 
     private static final String LOG_TAG = DetailActivity.class.getSimpleName();
     @Override
@@ -59,8 +55,6 @@ public class DetailActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
         }
-
-
         return super.onOptionsItemSelected(item);
     }
 }

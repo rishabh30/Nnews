@@ -19,18 +19,13 @@ public class Utility {
     // GET THE DATE DIFF TO SIMPLIFY READABILITY FROM 2016-06-14T11:25:08-04:00
     public static String getFriendlyDate(String mDate) {
 
-
         mDate = mDate.replace('T', ' ');
-
         mDate = mDate.substring(0, 19);
         String dateStart = mDate;
         return dateStart.toString();
     }
 
-
-
-
-        // GET THE DATE DIFF TO SIMPLIFY READABILITY FROM 2016-06-14T11:25:08-04:00 to 3 days ago
+    // GET THE DATE DIFF TO SIMPLIFY READABILITY FROM 2016-06-14T11:25:08-04:00 to 3 days ago
     public static String getDatabaseDate(String mDate) throws Exception {
         String dateStart = mDate;
         SimpleDateFormat dateFormatGmt =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -92,15 +87,10 @@ public class Utility {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
        return Diff;
     }
 
-
-
-    public static String getDeleteDate()
-    {
-
+    public static String getDeleteDate() {
         SimpleDateFormat dateFormatGmt =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
        // dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
 
@@ -109,10 +99,8 @@ public class Utility {
 
         String d2  = dateFormatGmt.format(cal.getTime());
 
-
         return d2.toString();
     }
-
 
     public static boolean get_notification_status(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -126,9 +114,7 @@ public class Utility {
         return prefs.getString(noi, "15");
     }
 
-
-    static public boolean isNetworkAvailable(Context c)
-    {
+    static public boolean isNetworkAvailable(Context c) {
         ConnectivityManager cm =(ConnectivityManager)c.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork!=null && activeNetwork.isConnectedOrConnecting();

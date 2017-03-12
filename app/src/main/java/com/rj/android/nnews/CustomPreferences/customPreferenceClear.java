@@ -1,4 +1,4 @@
-package com.rj.android.nnews.custom;
+package com.rj.android.nnews.CustomPreferences;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -7,11 +7,7 @@ import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 
-import com.rj.android.nnews.R;
 
-/**
- * Created by DELL on 7/13/2016.
- */
 public class customPreferenceClear extends DialogPreference {
 
     Boolean DEFAULT_VALUE=false;

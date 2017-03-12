@@ -1,4 +1,4 @@
-package com.rj.android.nnews;
+package com.rj.android.nnews.Adapter;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -10,44 +10,36 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rj.android.nnews.data.Contract;
+import com.rj.android.nnews.MainFragment;
+import com.rj.android.nnews.R;
+import com.rj.android.nnews.Utility;
 import com.squareup.picasso.Picasso;
 
-public class ArticleListAdapter extends CursorAdapter {
+public class ArticleListAdapterCompact extends CursorAdapter {
 
-
-    private static final String LOG_TAG = ArticleListAdapter.class.getSimpleName();
-    private final int MAIN_STORY = 0;
+    private static final String LOG_TAG = ArticleListAdapterCompact.class.getSimpleName();
     private final int SIDE_STORY = 1;
     private boolean useMainLayout;
 
-    public ArticleListAdapter(Context context, Cursor c, int flags) {
+    public ArticleListAdapterCompact(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
 
-
     @Override
     public int getItemViewType(int position) {
-      return (position==0) ? MAIN_STORY : SIDE_STORY ;
+      return SIDE_STORY ;
     }
 
     @Override
     public int getViewTypeCount() {
-        return 2;
+        return 1;
     }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
 
-        int viewType = getItemViewType(cursor.getPosition());
         int layoutId = -1;
-
-        if(viewType ==MAIN_STORY && !useMainLayout)
-        {
-            layoutId = R.layout.main_list_item;
-        }else
-        {
-            layoutId = R.layout.list_item_layout;
-        }
+        layoutId = R.layout.list_item_layout;
 
         View view = LayoutInflater.from(context).inflate(layoutId  ,parent,false);
         ViewHolder viewHolder = new ViewHolder(view);
@@ -61,15 +53,8 @@ public class ArticleListAdapter extends CursorAdapter {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         String title = cursor.getString(MainFragment.COL_ARTICLE_TITLE);
-        if(title=="null")
-            title="";
         String imageUrl;
-        int viewType = getItemViewType(cursor.getPosition());
-        if (viewType == MAIN_STORY && !useMainLayout) {
-            imageUrl = cursor.getString(cursor.getColumnIndex(Contract.Article.PHOTO_URL_HIGH));
-        } else {
-            imageUrl = cursor.getString(cursor.getColumnIndex(Contract.Article.PHOTO_URL));
-        }
+        imageUrl = cursor.getString(cursor.getColumnIndex(Contract.Article.PHOTO_URL));
 
         String date = cursor.getString(
                 cursor.getColumnIndex(Contract.Article.PUBLISH_DATE));
@@ -82,6 +67,7 @@ public class ArticleListAdapter extends CursorAdapter {
         }
 
         viewHolder.friendlyday.setText(date);
+
         if (imageUrl.matches("no")) {
             viewHolder.imageView.setImageResource(R.drawable.noblogo);
         } else {
@@ -99,17 +85,17 @@ public class ArticleListAdapter extends CursorAdapter {
         this.useMainLayout = useMainLayout;
     }
 
-
     public static class ViewHolder{
         TextView titleView ;
-        TextView friendlyday;
         ImageView imageView ;
+        TextView friendlyday;
 
         public ViewHolder(View view)
         {
-            titleView = (TextView) view.findViewById(R.id.list_item_title);
+
             friendlyday = (TextView) view.findViewById(R.id.friendlyday);
-            imageView = (ImageView) view.findViewById(R.id.list_item_image);
+             titleView = (TextView)view.findViewById(R.id.list_item_title);
+             imageView = (ImageView)view.findViewById(R.id.list_item_image);
         }
     }
 }

@@ -21,15 +21,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.rj.android.nnews.sync.SyncAdapter;
+import com.rj.android.nnews.NestedFragment.MostViwedFragment;
+import com.rj.android.nnews.NestedFragment.MoviesFragment;
+import com.rj.android.nnews.NestedFragment.TopNewsFragment;
+import com.rj.android.nnews.Settings.SettingsActivity;
+import com.rj.android.nnews.Sync.SyncAdapter;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
-        , NestedFragment.Callback, NestedFragment2.Callback, NestedFragment3.Callback{
-
+        , TopNewsFragment.Callback, MostViwedFragment.Callback, MoviesFragment.Callback{
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
-    static boolean mTwoPane;
+    public static boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +45,6 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setElevation(0);
         getSupportActionBar() .setTitle(Html.fromHtml("<font color=\"@color/white\">" + "Nnews" + "</font>"));
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -74,14 +76,12 @@ public class MainActivity extends AppCompatActivity
             mTwoPane = false;
         }
 
-
         Context context = this;
         SharedPreferences sharedPreferences = context.getSharedPreferences("UrlDetails", Context.MODE_PRIVATE);
 
         String urlKey = context.getString(R.string.url);
         String KeySaved = context.getString(R.string.keySaved);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-
 
         MainFragment mainFragment = ((MainFragment) getSupportFragmentManager().findFragmentById(R.id.myfragment));
         mainFragment.setTwoPane(mTwoPane);
@@ -98,7 +98,6 @@ public class MainActivity extends AppCompatActivity
         //navigationView.getMenu().getItem(1).setChecked(true);
         // account created and content is passed safely
         SyncAdapter.initializeSyncAdapter(this);
-
     }
 
     @Override

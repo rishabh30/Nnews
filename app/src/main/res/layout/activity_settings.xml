@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.rj.android.nnews.SettingsActivity">
+    tools:context=".Settings.SettingsActivity">
 
 
     <android.support.design.widget.AppBarLayout
@@ -28,7 +28,7 @@
     <fragment
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.rj.android.nnews.SettingsFragment"
+        android:name="com.rj.android.nnews.Settings.SettingsFragment"
         android:id="@+id/fragment"
         android:theme="@style/ArticleTheme3"
         android:layout_below="@+id/view"

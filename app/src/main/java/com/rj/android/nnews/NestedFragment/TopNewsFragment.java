@@ -1,4 +1,4 @@
-package com.rj.android.nnews;
+package com.rj.android.nnews.NestedFragment;
 
 import android.accounts.Account;
 import android.annotation.TargetApi;
@@ -27,17 +27,29 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.rj.android.nnews.Adapter.ArticleListAdapter;
+import com.rj.android.nnews.DetailActivity;
+import com.rj.android.nnews.MainActivity;
+import com.rj.android.nnews.MainFragment;
+import com.rj.android.nnews.R;
+import com.rj.android.nnews.Utility;
 import com.rj.android.nnews.data.Contract;
-import com.rj.android.nnews.sync.SyncAdapter;
+import com.rj.android.nnews.Sync.SyncAdapter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class TopNewsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+
+    private static final String LOG_TAG = MainFragment.class.getSimpleName();
+    private static final int FORECAST_LOADER = 0;
     String getUrlString, getKeyName;
+    boolean isRefresh = true;
+    boolean mTwoPane;
+    int mPosition;
     String SELECTED_KEY = "POSITION";
+    ListView main_list;
+    ArticleListAdapter madapter;
+    String[] textinfo = new String[15];
     String[] ArticleColumns = {
             Contract.Article._id,
             Contract.Article.TABLE_NAME + "." + Contract.Article.KEY_ID,
@@ -51,24 +63,16 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
             Contract.Article.PHOTO_URL
     };
 
-    private static final String LOG_TAG = MainFragment.class.getSimpleName();
-
-    private static final int FORECAST_LOADER = 1;
-
-    boolean mTwoPane;
-
-    boolean isRefresh = true;
-    int mPosition;
-
-    public static NestedFragment2 newInstance() {
-        NestedFragment2 fragmentFirst = new NestedFragment2();
+    public static TopNewsFragment newInstance() {
+        TopNewsFragment fragmentFirst = new TopNewsFragment();
 
         Bundle args = new Bundle();
 
+
         String saveUrl = "", saveKeyName = "";
 
-        saveUrl = "https://api.nytimes.com/svc/news/v3/content/all/all.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
-        saveKeyName = "newswire";
+        saveUrl = "https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
+        saveKeyName = "top_stories";
 
         args.putString("saveUrl", saveUrl);
         args.putString("saveKeyName", saveKeyName);
@@ -76,18 +80,13 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
         fragmentFirst.setArguments(args);
         return fragmentFirst;
     }
-    ListView main_list;
-
-    ArticleListAdapter madapter;
-    String[] textinfo = new String[15];
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Log.v(LOG_TAG," onCreate");
         getUrlString = getArguments().getString("saveUrl", "");
         getKeyName = getArguments().getString("saveKeyName", "");
+
 
         ContentResolver.addStatusChangeListener(
                 ContentResolver.SYNC_OBSERVER_TYPE_PENDING
@@ -97,18 +96,17 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
                         MySyncStatusObserver()
 
         );
-
     }
+
     SwipeRefreshLayout mySwipeRefreshLayout;
+
     @TargetApi(Build.VERSION_CODES.M)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.nested_fragment, container, false);
 
-        Log.v(LOG_TAG," onCreateView");
-        View rootView = inflater.inflate(R.layout.nesyed_fragment2, container, false);
-
-        mySwipeRefreshLayout =(SwipeRefreshLayout)rootView.findViewById(R.id.swiperefresh);
+        mySwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
         mySwipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -122,15 +120,15 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
                 }
         );
 
-        main_list = (ListView) rootView.findViewById(R.id.main_list);
-        View errorTextView;
+        main_list = (ListView) rootView.findViewById(com.rj.android.nnews.R.id.main_list);
+
         callResume();
-        errorTextView =  rootView.findViewById(R.id.ErrorInfo);
+        View errorTextView;
+        errorTextView = rootView.findViewById(R.id.ErrorInfo);
 
         madapter = new ArticleListAdapter(getActivity(), null, 0);
         main_list.setEmptyView(errorTextView);
         main_list.setAdapter(madapter);
-
 
         main_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -151,8 +149,10 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
                 if (MainActivity.mTwoPane) {
                     ((Callback) getParentFragment().getActivity()).onItemSelected();
                 } else {
+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
+                        sharedView.setVisibility(View.VISIBLE);
                         Bundle bundle = ActivityOptions.makeSceneTransitionAnimation
                                 (getParentFragment().getActivity(),
                                         sharedView, sharedView.getTransitionName()
@@ -176,8 +176,6 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
         return rootView;
     }
 
-
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.d(LOG_TAG, " ON Saved instance state: ");
@@ -185,7 +183,50 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
             outState.putInt(SELECTED_KEY, mPosition);
         }
 
+        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
         super.onSaveInstanceState(outState);
+    }
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String sortOrder = Contract.Article.PUBLISH_DATE + " DESC LIMIT " + Utility.get_noi_list(getContext());
+        Log.d("cursor", "onCreate: ");
+
+        String KeyName = "top_stories";
+
+        Uri articleUri = Contract.Article.CONTENT_URI.buildUpon().appendPath(KeyName)
+                .build();
+
+        Log.d(LOG_TAG, " onCreateLoader: ");
+        return new CursorLoader(
+                getActivity(),
+                articleUri,
+                ArticleColumns,
+                null,
+                null,
+                sortOrder
+        );
+    }
+
+
+    private void updateArticle() {
+
+        Context context = getContext();
+        SharedPreferences SP = context.getSharedPreferences("UrlDetails", Context.MODE_PRIVATE);
+        String urlKey = context.getString(R.string.url);
+        String Ks = context.getString(R.string.keySaved);
+
+        SharedPreferences.Editor editor = SP.edit();
+        editor.putString(urlKey, getUrlString);
+        editor.putString(Ks, getKeyName);
+        editor.commit();
+        SyncAdapter.syncImmediately(getActivity());
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        madapter.swapCursor(null);
     }
 
     @Override
@@ -204,84 +245,38 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
 
     private void setEmptyInfo() {
 
-        if(main_list.getCount() == 0) {
+        if (main_list.getCount() == 0) {
             TextView errorTextView;
             int message = R.string.no_info_available;
-            errorTextView = (TextView)getView().findViewById(R.id.ErrorInfo);
-            if(errorTextView!=null)
-            {
-                if(!Utility.isNetworkAvailable(getContext()))
-                {
+            errorTextView = (TextView) getView().findViewById(R.id.ErrorInfo);
+            if (errorTextView != null) {
+                if (!Utility.isNetworkAvailable(getContext())) {
                     message = R.string.no_network;
                 }
             }
-
             errorTextView.setText(message);
         }
-
     }
 
 
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String sortOrder = Contract.Article.PUBLISH_DATE + " DESC LIMIT " + Utility.get_noi_list(getContext());
-
-        Log.v(LOG_TAG," onCreateLoader");
-
-
-        String KeyName = "newswire";
-
-        Uri articleUri = Contract.Article.CONTENT_URI.buildUpon().appendPath(KeyName)
-                .build();
-
-
-        Log.d(LOG_TAG, " onCreateLoader: ");
-        return new CursorLoader(
-                getActivity(),
-                articleUri,
-                ArticleColumns,
-                null,
-                null,
-                sortOrder
-        );
-    }
-
-    private void updateArticle() {
-
-        Log.v(LOG_TAG," UpdateArticle");
-
-        Context context = getContext();
-        SharedPreferences SP = context.getSharedPreferences("UrlDetails", Context.MODE_PRIVATE);
-        String urlKey = context.getString(R.string.url);
-        String Ks = context.getString(R.string.keySaved);
-
-        SharedPreferences.Editor editor = SP.edit();
-        editor.putString(urlKey, getUrlString);
-        editor.putString(Ks, getKeyName);
-        editor.commit();
-        SyncAdapter.syncImmediately(getActivity());
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
-        Log.v(LOG_TAG," onLoader Reset");
-        madapter.swapCursor(null);
-    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-
-        Log.v(LOG_TAG," Activity Created ");
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
+
     public void callResume() {
-        Log.i(LOG_TAG,  "  CALL RESUME 2");
+        Log.i(LOG_TAG,  "  CALL RESUME 1");
         updateArticle();
         onResume();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
     }
 
     void setRefereshLayout() {
@@ -290,40 +285,6 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
             Log.i("REFRESH ", "END");
             isRefresh = true;
         }
-    }
-
-    @Override
-    public void onStart() {
-
-        Log.v(LOG_TAG," START");
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        Log.v(LOG_TAG," RESUME");
-
-        String KeyName = "newswire";
-
-        Uri articleUri = Contract.Article.CONTENT_URI.buildUpon().appendPath(KeyName)
-                .build();
-
-
-        Log.d(LOG_TAG, " onCreateLoader: ");
-            Cursor cursor = getContext().getContentResolver().query(
-                articleUri,
-                ArticleColumns,
-                null,
-                null,
-                null
-        );
-        if(!cursor.moveToFirst())
-        {
-            updateArticle();
-        }
-
-        super.onResume();
-        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
     }
 
     public interface Callback {
@@ -347,10 +308,10 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
             } else if (which == ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE) {
                 // 'Active' state changed.
                 if (ContentResolver.isSyncActive(mAccount, MY_AUTHORITY)) {
-                    // There is now an active sync.zzz
-                    Log.i("Sync Adapter ", "Start");
+                    // There is now an active sync.
+                    Log.i("Sync Adapter 1", "Start");
                 } else {
-                    Log.i("Sync Adapter ", "End");
+                    Log.i("Sync Adapter 1", "End");
                     isRefresh = false;
                     ;
                     // There is no longer an active sync.
@@ -358,4 +319,5 @@ public class NestedFragment2 extends Fragment implements LoaderManager.LoaderCal
             }
         }
     }
+
 }

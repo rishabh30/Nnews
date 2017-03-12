@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 public class ArticleProvider extends ContentProvider {
 
@@ -28,7 +27,6 @@ public class ArticleProvider extends ContentProvider {
     private  static final UriMatcher sUriMatcher = buildUriMatcher();
 
     private DbHelper mOpenHelper;
-
 
     private static SQLiteQueryBuilder sArticleByKeyNameQueryBuilder;
     static {
@@ -50,35 +48,6 @@ public class ArticleProvider extends ContentProvider {
             Contract.Key_Type.TABLE_NAME + "." + Contract.Key_Type.KEY_NAME + " = ? AND " +
                     Contract.Article.PUBLISH_DATE +" >= ? ";
 
-    private Cursor getArticleByKeyName(Uri uri , String[] projection , String sortOrder)
-    {
-        String KeyName = Contract.Article.getKeyNameFromUri(uri);
-        String startDate = Contract.Article.getStartDateFromUri(uri);
-
-        String[] selectionArgs;
-        String selection ;
-        if(startDate == null)
-        {
-            Log.d("URI :"," START DATE NULL ");
-            selection = sArticleSelectionByKey;
-            selectionArgs = new String[]{KeyName};
-        }else
-        {
-            Log.d("URI :"," START DATE ");
-            selectionArgs=new String []{KeyName,startDate};
-            selection = sArticleSelectionByKeyAndDate;
-        }
-        return sArticleByKeyNameQueryBuilder.query(mOpenHelper.getWritableDatabase(),
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                sortOrder);
-    }
-
-
-
     private static UriMatcher buildUriMatcher()
     {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -96,6 +65,33 @@ public class ArticleProvider extends ContentProvider {
         return matcher;
     }
 
+    // Select Articles according to Key Name and StartDate if present
+    private Cursor getArticleByKeyName(Uri uri , String[] projection , String sortOrder)
+    {
+        String KeyName = Contract.Article.getKeyNameFromUri(uri);
+        String startDate = Contract.Article.getStartDateFromUri(uri);
+
+        String[] selectionArgs;
+        String selection ;
+        if(startDate == null)
+        {
+            Log.d(LOG_TAG," START DATE NULL ");
+            selection = sArticleSelectionByKey;
+            selectionArgs = new String[]{KeyName};
+        }else
+        {
+            Log.d(LOG_TAG," START DATE ");
+            selectionArgs=new String []{KeyName,startDate};
+            selection = sArticleSelectionByKeyAndDate;
+        }
+        return sArticleByKeyNameQueryBuilder.query(mOpenHelper.getWritableDatabase(),
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder);
+    }
 
     @Override
     public boolean onCreate() {
@@ -130,16 +126,17 @@ public class ArticleProvider extends ContentProvider {
         }
     }
 
+    // Return Rows Queried
     @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
        Cursor retCursor;
-        Log.d("ARTICLE PROVIDER   ", uri.toString());
+        Log.d(LOG_TAG, uri.toString());
         switch (sUriMatcher.match(uri))
         {
             case ARTICLE:
             {
-                Log.d("ARTICLE PROVIDER   ", "ARTICLE");
+                Log.d(LOG_TAG, "ARTICLE");
                 retCursor=mOpenHelper.getReadableDatabase().query(
                         Contract.Article.TABLE_NAME,
                         projection,
@@ -153,7 +150,7 @@ public class ArticleProvider extends ContentProvider {
             }
 
             case ARTICLE_WITH_ID: {
-                Log.d("ARTICLE PROVIDER   ", " ARTICLE WITH ID " + ContentUris.parseId(uri));
+                Log.d(LOG_TAG, " ARTICLE WITH ID " + ContentUris.parseId(uri));
                 retCursor=mOpenHelper.getReadableDatabase().query(
                         Contract.Article.TABLE_NAME,
                         projection,
@@ -167,13 +164,13 @@ public class ArticleProvider extends ContentProvider {
             }
 
             case ARTICLE_WITH_KEY:
-            {       Log.d("ARTICLE PROVIDER   ", "ARTICLE WITH key");
+            {       Log.d(LOG_TAG, "ARTICLE WITH key");
                 retCursor=getArticleByKeyName(uri,projection,sortOrder);
                 break;
             }
             case ARTICLE_WITH_KEY_AND_DATE:
             {
-                Log.d("ARTICLE PROVIDER   ", "ARTICLE WITH ID");
+                Log.d(LOG_TAG, "ARTICLE WITH ID");
                 retCursor=getArticleByKeyName(uri,projection,sortOrder);
                 break;
             }
@@ -213,7 +210,7 @@ public class ArticleProvider extends ContentProvider {
     }
 
 
-
+    // Insert Rows
     @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues values) {
@@ -256,6 +253,7 @@ public class ArticleProvider extends ContentProvider {
         return returnUri;
     }
 
+    // Delete Rows on basics of selectionArgs
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
@@ -280,6 +278,7 @@ public class ArticleProvider extends ContentProvider {
         return  rowDeleted;
     }
 
+    // TO Update on basics of selectionArgs
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
@@ -304,7 +303,7 @@ public class ArticleProvider extends ContentProvider {
         return  rowUpdated;
     }
 
-
+    // To Insert Multiple Rows Efficiently
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
 
@@ -333,9 +332,5 @@ public class ArticleProvider extends ContentProvider {
             default:
                 return super.bulkInsert(uri, values);
         }
-
-
-
-
     }
 }

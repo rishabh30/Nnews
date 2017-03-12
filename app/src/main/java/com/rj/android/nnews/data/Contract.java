@@ -7,8 +7,6 @@ import android.net.Uri;
  * Contract is used here to store 2 tables
  * Key_type
  * Article
- *
- *
  */
 public class Contract {
 
@@ -28,11 +26,9 @@ public class Contract {
         public static final String KEY_ID = "KEY_ID";
     }
 
-    //for storing key type in the storage like most viwed key, top newskey, lastest news key they
-    //all have different key
+    //for storing key type in the storage like Most Viewed , TopNews, Movies
     public static final class Key_Type implements Base_Column
     {
-
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_KEY).build();
         public static final String CONTENT_TYPE =
                 "vnd.android.cursor.dir/" + CONTENT_AUTHORITY +"/" +
@@ -53,7 +49,6 @@ public class Contract {
         public static long getKeyNameFromUri(Uri uri) {
             return Long.parseLong(uri.getQueryParameter(KEY_ID));
         }
-
     }
 
     //stores article information for a particular news
@@ -87,9 +82,6 @@ public class Contract {
         public static final String PHOTO_URL = "PHOTO_URL";
         //high resolution photo url is provided for image downloading
         public static final String PHOTO_URL_HIGH = "PHOTO_URL_HIGH";
-
-
-
 
         //photo heading
 

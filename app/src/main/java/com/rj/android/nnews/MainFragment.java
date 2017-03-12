@@ -13,11 +13,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.Toast;
 
-import com.rj.android.nnews.data.Contract;
-import com.rj.android.nnews.sync.SyncAdapter;
+import com.rj.android.nnews.Adapter.ArticleListAdapter;
+import com.rj.android.nnews.NestedFragment.HomeFagment;
+import com.rj.android.nnews.NestedFragment.MostViwedFragment;
+import com.rj.android.nnews.NestedFragment.MoviesFragment;
+import com.rj.android.nnews.NestedFragment.TopNewsFragment;
+import com.rj.android.nnews.Sync.SyncAdapter;
 import com.rj.android.nnews.view.SlidingTabLayout;
 import com.rj.android.nnews.view.SmartFragmentStatePagerAdapter;
 
@@ -162,13 +164,13 @@ public class MainFragment extends Fragment  {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return NestedHome.newInstance();
+                    return HomeFagment.newInstance();
                 case 1: // Fragment # 0 - This will show FirstFragment
-                    return NestedFragment.newInstance();
+                    return TopNewsFragment.newInstance();
                 case 2: // Fragment # 0 - This will show FirstFragment different title
-                    return NestedFragment2.newInstance();
+                    return MostViwedFragment.newInstance();
                 case 3: // Fragment # 1 - This will show SecondFragment
-                    return NestedFragment3.newInstance();
+                    return MoviesFragment.newInstance();
                 default:
                     return null;
             }

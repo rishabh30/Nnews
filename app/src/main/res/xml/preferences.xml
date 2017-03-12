@@ -17,7 +17,7 @@
             android:summaryOn="@string/notific_on"
             android:defaultValue="true" />
 
-    <com.rj.android.nnews.custom.MyPreference
+    <com.rj.android.nnews.CustomPreferences.MyPreference
         android:key="clear_key"
         android:title="Clear Cache"
         android:defaultValue="true"

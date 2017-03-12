@@ -1,28 +1,19 @@
-package com.rj.android.nnews.custom;
+package com.rj.android.nnews.CustomPreferences;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.TypedArray;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.preference.Preference;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.rj.android.nnews.ArticleListAdapter;
-import com.rj.android.nnews.MainActivity;
 import com.rj.android.nnews.R;
-import com.rj.android.nnews.SettingsActivity;
 import com.rj.android.nnews.data.Contract;
-import com.rj.android.nnews.sync.SyncAdapter;
-import com.squareup.picasso.Picasso;
+import com.rj.android.nnews.Sync.SyncAdapter;
 
 /**
  * This is an example of a custom preference type. The preference counts the

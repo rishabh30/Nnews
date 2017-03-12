@@ -1,4 +1,4 @@
-package com.rj.android.nnews;
+package com.rj.android.nnews.Settings;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -16,13 +16,15 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 
+import com.rj.android.nnews.R;
+
 public class SettingsActivity extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         // Display the fragment as the main content.
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

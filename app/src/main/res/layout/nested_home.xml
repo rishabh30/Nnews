@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/fragmentHome"
     android:background="#000000"
-    tools:context="com.rj.android.nnews.NestedHome">
+    tools:context=".NestedFragment.HomeFagment">
 
 
     <LinearLayout

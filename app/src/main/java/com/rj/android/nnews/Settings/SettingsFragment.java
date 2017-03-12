@@ -1,4 +1,4 @@
-package com.rj.android.nnews;
+package com.rj.android.nnews.Settings;
 
 import android.annotation.TargetApi;
 import android.app.NotificationManager;
@@ -14,6 +14,7 @@ import android.preference.PreferenceFragment;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
+import com.rj.android.nnews.R;
 
 public class SettingsFragment extends PreferenceFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {

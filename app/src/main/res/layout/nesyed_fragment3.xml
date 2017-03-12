@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/fragmentNested3"
-    tools:context="com.rj.android.nnews.NestedFragment3">
+    tools:context=".NestedFragment.MoviesFragment">
 
 
     <android.support.v4.widget.SwipeRefreshLayout

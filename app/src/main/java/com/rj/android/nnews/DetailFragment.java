@@ -55,13 +55,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             Contract.Article.PUBLISH_DATE
     };
 
-
-
-
     public DetailFragment() {
         setHasOptionsMenu(true);
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,8 +68,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
-
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu , MenuInflater inflater) {
@@ -90,15 +84,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         }
     }
 
-
-
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
 
         // Inflate the layout for this fragment
         View rootView =  inflater.inflate(com.rj.android.nnews.R.layout.fragment_detail, container, false);
@@ -126,7 +114,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         String sortOrder = Contract.Article.PUBLISH_DATE + " DESC ";
         Log.d(LOG_TAG, "onCreate: ");
         Uri articleUri = ContentUris.withAppendedId(Contract.Article.CONTENT_URI , articleId);
-        Log.d("DETAILED FRAGMENT   ", "CLICKED  position  " + articleId +   " id  "+id);
+        Log.d(LOG_TAG, "CLICKED  position  " + articleId +   " id  "+id);
         Log.d(LOG_TAG, "onCreateLoader: ");
         Log.v(LOG_TAG, articleUri.toString());
         return new CursorLoader(
@@ -138,7 +126,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 sortOrder
         );
     }
-
 
     @Override
     public void onResume() {
@@ -152,7 +139,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         super.onActivityCreated(savedInstanceState);
         Log.v(LOG_TAG, "on Activity created");
         getLoaderManager().initLoader(DETAIL_LOADER, null, this);
-
     }
 
     @Override
@@ -166,7 +152,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         {
             data =oldData;
         }
-
 
         if (data.moveToFirst())
         {
@@ -239,7 +224,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onLoaderReset(Loader loader) {
-
     }
 
     private Intent createShareIntent()
@@ -250,5 +234,4 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         shareIntent.putExtra(Intent.EXTRA_TEXT ,  mMessage);
         return shareIntent;
     }
-
 }

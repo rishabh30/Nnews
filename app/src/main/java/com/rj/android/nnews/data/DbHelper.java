@@ -50,7 +50,6 @@ public class DbHelper extends SQLiteOpenHelper {
             Log.v("QUERY :",SQL_CREATE_ARTICLE_TABLE);
         db.execSQL(SQL_CREATE_KEY_TABLE);
         db.execSQL( SQL_CREATE_ARTICLE_TABLE);
-
     }
 
     @Override

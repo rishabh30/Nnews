@@ -233,6 +233,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
             mTabStrip.addView(tabView);
             if (i == mViewPager.getCurrentItem()) {
+
                 tabView.setSelected(true);
             }
 

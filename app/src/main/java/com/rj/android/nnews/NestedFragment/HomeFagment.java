@@ -1,4 +1,4 @@
-package com.rj.android.nnews;
+package com.rj.android.nnews.NestedFragment;
 
 import android.annotation.TargetApi;
 import android.os.Build;
@@ -9,11 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.rj.android.nnews.R;
 
-public class NestedHome extends Fragment {
 
-    public static NestedHome newInstance() {
-        NestedHome fragmentFirst = new NestedHome();
+public class HomeFagment extends Fragment {
+
+    public static HomeFagment newInstance() {
+        HomeFagment fragmentFirst = new HomeFagment();
 
         Bundle args = new Bundle();
 
