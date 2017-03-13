@@ -19,6 +19,7 @@ import com.rj.android.nnews.NestedFragment.HomeFagment;
 import com.rj.android.nnews.NestedFragment.MostViwedFragment;
 import com.rj.android.nnews.NestedFragment.MoviesFragment;
 import com.rj.android.nnews.NestedFragment.TopNewsFragment;
+import com.rj.android.nnews.NestedFragment.TopNewsFragmentRecycle;
 import com.rj.android.nnews.Sync.SyncAdapter;
 import com.rj.android.nnews.view.SlidingTabLayout;
 import com.rj.android.nnews.view.SmartFragmentStatePagerAdapter;
@@ -166,7 +167,7 @@ public class MainFragment extends Fragment  {
                 case 0:
                     return HomeFagment.newInstance();
                 case 1: // Fragment # 0 - This will show FirstFragment
-                    return TopNewsFragment.newInstance();
+                    return TopNewsFragmentRecycle.newInstance();
                 case 2: // Fragment # 0 - This will show FirstFragment different title
                     return MostViwedFragment.newInstance();
                 case 3: // Fragment # 1 - This will show SecondFragment

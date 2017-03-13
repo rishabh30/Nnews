@@ -29,6 +29,7 @@
         android:textSize="30sp"
         android:text="@string/no_info_available"
         android:padding="32dp"
+        android:background="#0e748a"
         />
 
 

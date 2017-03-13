@@ -9,11 +9,9 @@
     <ImageView
         android:id="@+id/list_item_image"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="300dp"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
-
-
         android:transitionName="@string/transition_image"
         android:src="@drawable/loading2"
         android:layout_gravity="center_horizontal" />
@@ -29,7 +27,7 @@
         android:layout_weight="1"
 
         android:fontFamily="sans-serif"
-        android:textSize="22sp"
+        android:textSize="20sp"
         android:paddingRight="16dp"
         android:paddingLeft="16dp" />
 
@@ -39,11 +37,11 @@
         android:layout_height="0dp"
         android:layout_gravity="right"
         android:layout_weight="1"
-        android:paddingBottom="16dp"
-
         android:fontFamily="sans-serif-light"
         android:paddingRight="16dp"
-        android:text=""
-        android:textSize="12sp" />
+        android:text="1 sec ago"
+        android:textSize="12sp"
+        android:layout_marginBottom="4dp"
+        />
 
 </LinearLayout>

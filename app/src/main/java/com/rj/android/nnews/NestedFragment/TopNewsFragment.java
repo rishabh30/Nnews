@@ -32,15 +32,15 @@ import com.rj.android.nnews.DetailActivity;
 import com.rj.android.nnews.MainActivity;
 import com.rj.android.nnews.MainFragment;
 import com.rj.android.nnews.R;
+import com.rj.android.nnews.Sync.SyncAdapter;
 import com.rj.android.nnews.Utility;
 import com.rj.android.nnews.data.Contract;
-import com.rj.android.nnews.Sync.SyncAdapter;
 
 
 public class TopNewsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
 
-    private static final String LOG_TAG = MainFragment.class.getSimpleName();
+    private static final String LOG_TAG = TopNewsFragment.class.getSimpleName();
     private static final int FORECAST_LOADER = 0;
     String getUrlString, getKeyName;
     boolean isRefresh = true;
@@ -115,14 +115,13 @@ public class TopNewsFragment extends Fragment implements LoaderManager.LoaderCal
 
                         // This method performs the actual data-refresh operation.
                         // The method calls setRefreshing(false) when it's finished.
-                        callResume();
+                        updateArticle();
                     }
                 }
         );
 
         main_list = (ListView) rootView.findViewById(com.rj.android.nnews.R.id.main_list);
 
-        callResume();
         View errorTextView;
         errorTextView = rootView.findViewById(R.id.ErrorInfo);
 
@@ -168,7 +167,6 @@ public class TopNewsFragment extends Fragment implements LoaderManager.LoaderCal
             }
         });
 
-
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
             main_list.setSelection(mPosition);
@@ -182,11 +180,9 @@ public class TopNewsFragment extends Fragment implements LoaderManager.LoaderCal
         if (mPosition != ListView.INVALID_POSITION) {
             outState.putInt(SELECTED_KEY, mPosition);
         }
-
         getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
         super.onSaveInstanceState(outState);
     }
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -209,7 +205,6 @@ public class TopNewsFragment extends Fragment implements LoaderManager.LoaderCal
         );
     }
 
-
     private void updateArticle() {
 
         Context context = getContext();
@@ -221,7 +216,7 @@ public class TopNewsFragment extends Fragment implements LoaderManager.LoaderCal
         editor.putString(urlKey, getUrlString);
         editor.putString(Ks, getKeyName);
         editor.commit();
-        SyncAdapter.syncImmediately(getActivity());
+        //SyncAdapter.syncImmediately(getActivity());
     }
 
     @Override
@@ -235,7 +230,6 @@ public class TopNewsFragment extends Fragment implements LoaderManager.LoaderCal
         Log.d(LOG_TAG, " onLoaderFinished: ");
         setRefereshLayout();
         madapter.swapCursor(data);
-
 
         if (mPosition != ListView.INVALID_POSITION && mTwoPane == true) {
             main_list.setSelection(mPosition);
@@ -258,19 +252,10 @@ public class TopNewsFragment extends Fragment implements LoaderManager.LoaderCal
         }
     }
 
-
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
-    }
-
-
-    public void callResume() {
-        Log.i(LOG_TAG,  "  CALL RESUME 1");
-        updateArticle();
-        onResume();
     }
 
     @Override
@@ -294,8 +279,6 @@ public class TopNewsFragment extends Fragment implements LoaderManager.LoaderCal
     private class MySyncStatusObserver implements SyncStatusObserver {
         @Override
         public void onStatusChanged(int which) {
-
-
             String MY_AUTHORITY = "com.rj.android.nnews";
             Account mAccount = new Account("Nnews", "android.rj.com");
             if (which == ContentResolver.SYNC_OBSERVER_TYPE_PENDING) {
@@ -319,5 +302,4 @@ public class TopNewsFragment extends Fragment implements LoaderManager.LoaderCal
             }
         }
     }
-
 }

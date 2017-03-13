@@ -38,8 +38,7 @@ import com.rj.android.nnews.Sync.SyncAdapter;
 
 public class MoviesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
-
-    private static final String LOG_TAG = MainFragment.class.getSimpleName();
+    private static final String LOG_TAG = MoviesFragment.class.getSimpleName();
     private static final int FORECAST_LOADER = 2;
     String getUrlString, getKeyName;
     boolean mTwoPane;
@@ -48,7 +47,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
     String SELECTED_KEY="POSITION";
     ListView main_list;
     ArticleListAdapterCompact madapter;
-    String[] textinfo = new String[15];
+
     String[] ArticleColumns = {
             Contract.Article._id,
             Contract.Article.TABLE_NAME + "." +Contract.Article.KEY_ID,
@@ -146,13 +145,11 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
 
                         // This method performs the actual data-refresh operation.
                         // The method calls setRefreshing(false) when it's finished.
-                        callResume();
+                        updateArticle();
                     }
                 }
         );
         main_list = (ListView) rootView.findViewById(com.rj.android.nnews.R.id.main_list);
-
-        callResume();
 
         View errorTextView;
         errorTextView = rootView.findViewById(R.id.ErrorInfo);
@@ -181,8 +178,6 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
                 if (MainActivity.mTwoPane) {
                     ((Callback) getParentFragment().getActivity()).onItemSelected();
                 } else {
-
-
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
                         Bundle bundle = ActivityOptions.makeSceneTransitionAnimation
@@ -210,7 +205,6 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
         return rootView;
     }
 
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.d(LOG_TAG, " ON Saved instance state: ");
@@ -220,7 +214,6 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
         }
         super.onSaveInstanceState(outState);
     }
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -267,12 +260,6 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
         super.onActivityCreated(savedInstanceState);
     }
 
-    public void callResume() {
-        Log.i(LOG_TAG,  "  CALL RESUME 3");
-        updateArticle();
-        onResume();
-    }
-
     void setRefereshLayout() {
         if (isRefresh == false) {
             mySwipeRefreshLayout.setRefreshing(false);
@@ -288,8 +275,29 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onResume() {
-        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+        Log.v(LOG_TAG," RESUME");
+
+        String KeyName = "movie_reviews";
+
+        Uri articleUri = Contract.Article.CONTENT_URI.buildUpon().appendPath(KeyName)
+                .build();
+
+
+        Log.d(LOG_TAG, " onCreateLoader: ");
+        Cursor cursor = getContext().getContentResolver().query(
+                articleUri,
+                ArticleColumns,
+                null,
+                null,
+                null
+        );
+        if(!cursor.moveToFirst())
+        {
+            updateArticle();
+        }
+
         super.onResume();
+        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
     }
 
     public interface Callback {

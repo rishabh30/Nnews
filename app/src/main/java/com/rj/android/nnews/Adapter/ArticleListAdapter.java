@@ -17,7 +17,6 @@ import com.squareup.picasso.Picasso;
 
 public class ArticleListAdapter extends CursorAdapter {
 
-
     private static final String LOG_TAG = ArticleListAdapter.class.getSimpleName();
     private final int MAIN_STORY = 0;
     private final int SIDE_STORY = 1;
@@ -26,7 +25,6 @@ public class ArticleListAdapter extends CursorAdapter {
     public ArticleListAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
-
 
     @Override
     public int getItemViewType(int position) {
@@ -101,7 +99,6 @@ public class ArticleListAdapter extends CursorAdapter {
     public void setUseMainLayout(boolean useMainLayout) {
         this.useMainLayout = useMainLayout;
     }
-
 
     public static class ViewHolder{
         TextView titleView ;

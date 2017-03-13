@@ -18,28 +18,36 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.rj.android.nnews.Adapter.ArticleListAdapter;
+import com.rj.android.nnews.Adapter.ArticleAdapter;
 import com.rj.android.nnews.DetailActivity;
 import com.rj.android.nnews.MainActivity;
 import com.rj.android.nnews.MainFragment;
 import com.rj.android.nnews.R;
+import com.rj.android.nnews.Sync.SyncAdapter;
 import com.rj.android.nnews.Utility;
 import com.rj.android.nnews.data.Contract;
-import com.rj.android.nnews.Sync.SyncAdapter;
 
-public class MostViwedFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class TopNewsFragmentRecycle extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final String LOG_TAG = MainFragment.class.getSimpleName();
+    private static final int FORECAST_LOADER = 0;
     String getUrlString, getKeyName;
+    boolean isRefresh = true;
+    boolean mTwoPane;
+    int mPosition = RecyclerView.NO_POSITION;
     String SELECTED_KEY = "POSITION";
+    private RecyclerView mRecycleView;
+    ArticleAdapter madapter;
+    String[] textinfo = new String[15];
     String[] ArticleColumns = {
             Contract.Article._id,
             Contract.Article.TABLE_NAME + "." + Contract.Article.KEY_ID,
@@ -53,24 +61,15 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
             Contract.Article.PHOTO_URL
     };
 
-    private static final String LOG_TAG = MostViwedFragment.class.getSimpleName();
-
-    private static final int FORECAST_LOADER = 1;
-
-    boolean mTwoPane;
-
-    boolean isRefresh = true;
-    int mPosition;
-
-    public static MostViwedFragment newInstance() {
-        MostViwedFragment fragmentFirst = new MostViwedFragment();
+    public static TopNewsFragmentRecycle newInstance() {
+        TopNewsFragmentRecycle fragmentFirst = new TopNewsFragmentRecycle();
 
         Bundle args = new Bundle();
 
         String saveUrl = "", saveKeyName = "";
 
-        saveUrl = "https://api.nytimes.com/svc/news/v3/content/all/all.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
-        saveKeyName = "newswire";
+        saveUrl = "https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
+        saveKeyName = "top_stories";
 
         args.putString("saveUrl", saveUrl);
         args.putString("saveKeyName", saveKeyName);
@@ -79,16 +78,12 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
         return fragmentFirst;
     }
 
-    ListView main_list;
-    ArticleListAdapter madapter;
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Log.v(LOG_TAG," onCreate");
         getUrlString = getArguments().getString("saveUrl", "");
         getKeyName = getArguments().getString("saveKeyName", "");
+
 
         ContentResolver.addStatusChangeListener(
                 ContentResolver.SYNC_OBSERVER_TYPE_PENDING
@@ -98,7 +93,6 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
                         MySyncStatusObserver()
 
         );
-
     }
 
     SwipeRefreshLayout mySwipeRefreshLayout;
@@ -107,11 +101,9 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.nested_fragment, container, false);
 
-        Log.v(LOG_TAG," onCreateView");
-        View rootView = inflater.inflate(R.layout.nesyed_fragment2, container, false);
-
-        mySwipeRefreshLayout =(SwipeRefreshLayout)rootView.findViewById(R.id.swiperefresh);
+        mySwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
         mySwipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -120,40 +112,36 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
 
                         // This method performs the actual data-refresh operation.
                         // The method calls setRefreshing(false) when it's finished.
-                       updateArticle();
+                        updateArticle();
                     }
                 }
         );
 
-        main_list = (ListView) rootView.findViewById(R.id.main_list);
+        mRecycleView = (RecyclerView) rootView.findViewById(R.id.main_list);
+        mRecycleView.setHasFixedSize(true);
+
         View errorTextView;
-        errorTextView =  rootView.findViewById(R.id.ErrorInfo);
-
-        madapter = new ArticleListAdapter(getActivity(), null, 0);
-        main_list.setEmptyView(errorTextView);
-        main_list.setAdapter(madapter);
-
-        main_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        errorTextView = rootView.findViewById(R.id.ErrorInfo);
+        madapter = new ArticleAdapter(getActivity(), new ArticleAdapter.ListItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onListItemClick(long id, ArticleAdapter.ViewHolder vh, ImageView imageView) {
 
-                mPosition = position;
-
-                Log.d(LOG_TAG, "CLICKED  position  " + position + " id  " + id);
 
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 int articleId = (int) id;
-                Log.d(LOG_TAG, "CLICKED  position  " + position + " id  " + id);
+
                 editor.putInt("ARTICLE_ID", articleId);
                 editor.commit();
 
-                ImageView sharedView = (ImageView) view.findViewById(R.id.list_item_image);
+                ImageView sharedView = (ImageView) imageView;
                 if (MainActivity.mTwoPane) {
                     ((Callback) getParentFragment().getActivity()).onItemSelected();
                 } else {
+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
+                        sharedView.setVisibility(View.VISIBLE);
                         Bundle bundle = ActivityOptions.makeSceneTransitionAnimation
                                 (getParentFragment().getActivity(),
                                         sharedView, sharedView.getTransitionName()
@@ -166,13 +154,56 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
                         startActivity(intent);
                     }
                 }
+
+                mPosition = vh.getAdapterPosition();
             }
-        });
+    },errorTextView);
+       // mRecycleView.setEmptyView(errorTextView);
+        mRecycleView.setLayoutManager((new LinearLayoutManager(getActivity())));
+        mRecycleView.setAdapter(madapter);
+
+//        mRecycleView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                mPosition = position;
+//
+//                Log.d(LOG_TAG, "CLICKED  position  " + position + " id  " + id);
+//
+//                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+//                SharedPreferences.Editor editor = sharedPreferences.edit();
+//                int articleId = (int) id;
+//                Log.d(LOG_TAG, "CLICKED  position  " + position + " id  " + id);
+//                editor.putInt("ARTICLE_ID", articleId);
+//                editor.commit();
+//
+//                ImageView sharedView = (ImageView) view.findViewById(R.id.list_item_image);
+//                if (MainActivity.mTwoPane) {
+//                    ((Callback) getParentFragment().getActivity()).onItemSelected();
+//                } else {
+//
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//
+//                        sharedView.setVisibility(View.VISIBLE);
+//                        Bundle bundle = ActivityOptions.makeSceneTransitionAnimation
+//                                (getParentFragment().getActivity(),
+//                                        sharedView, sharedView.getTransitionName()
+//                                )
+//                                .toBundle();
+//                        Intent intent = new Intent(getActivity(), DetailActivity.class);
+//                        startActivity(intent, bundle);
+//                    } else {
+//                        Intent intent = new Intent(getActivity(), DetailActivity.class);
+//                        startActivity(intent);
+//                    }
+//                }
+//            }
+//        });
 
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
-            main_list.setSelection(mPosition);
         }
+        madapter.setUseMainLayout(mTwoPane);
         return rootView;
     }
 
@@ -182,55 +213,20 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
         if (mPosition != ListView.INVALID_POSITION) {
             outState.putInt(SELECTED_KEY, mPosition);
         }
+
+        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
         super.onSaveInstanceState(outState);
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
-        Log.d(LOG_TAG, " onLoaderFinished: ");
-        setRefereshLayout();
-        madapter.swapCursor(data);
-
-        if (mPosition != ListView.INVALID_POSITION && mTwoPane == true) {
-            main_list.setSelection(mPosition);
-        }
-        setEmptyInfo();
-    }
-
-    private void setEmptyInfo() {
-
-        if(main_list.getCount() == 0) {
-            TextView errorTextView;
-            int message = R.string.no_info_available;
-            errorTextView = (TextView)getView().findViewById(R.id.ErrorInfo);
-            if(errorTextView!=null)
-            {
-                if(!Utility.isNetworkAvailable(getContext()))
-                {
-                    message = R.string.no_network;
-                }
-            }
-
-            errorTextView.setText(message);
-        }
-
-    }
-
-
-
-    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String sortOrder = Contract.Article.PUBLISH_DATE + " DESC LIMIT " + Utility.get_noi_list(getContext());
+        Log.d("cursor", "onCreate: ");
 
-        Log.v(LOG_TAG," onCreateLoader");
-
-
-        String KeyName = "newswire";
+        String KeyName = "top_stories";
 
         Uri articleUri = Contract.Article.CONTENT_URI.buildUpon().appendPath(KeyName)
                 .build();
-
 
         Log.d(LOG_TAG, " onCreateLoader: ");
         return new CursorLoader(
@@ -243,9 +239,8 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
         );
     }
 
-    private void updateArticle() {
 
-        Log.v(LOG_TAG," UpdateArticle");
+    private void updateArticle() {
 
         Context context = getContext();
         SharedPreferences SP = context.getSharedPreferences("UrlDetails", Context.MODE_PRIVATE);
@@ -261,18 +256,34 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
-        Log.v(LOG_TAG," onLoader Reset");
         madapter.swapCursor(null);
     }
 
     @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+        Log.d(LOG_TAG, " onLoaderFinished: ");
+        setRefereshLayout();
+        madapter.swapCursor(data);
+
+
+//        if (mPosition != ListView.INVALID_POSITION && mTwoPane == true) {
+//            mRecycleView.setSelection(mPosition);
+//        }
+//        setEmptyInfo();
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        Log.v(LOG_TAG," Activity Created ");
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+    }
 
     void setRefereshLayout() {
         if (isRefresh == false) {
@@ -282,36 +293,6 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
         }
     }
 
-    @Override
-    public void onStart() {
-
-        Log.v(LOG_TAG," START");
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        Log.v(LOG_TAG," RESUME");
-
-        String KeyName = "newswire";
-
-        Uri articleUri = Contract.Article.CONTENT_URI.buildUpon().appendPath(KeyName)
-                .build();
-
-        Log.d(LOG_TAG, " onCreateLoader: ");
-            Cursor cursor = getContext().getContentResolver().query(
-                articleUri,
-                ArticleColumns,
-                null,
-                null,
-                null
-        );
-        if(!cursor.moveToFirst()) {updateArticle();}
-
-        super.onResume();
-        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
-    }
-
     public interface Callback {
         void onItemSelected();
     }
@@ -319,6 +300,7 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
     private class MySyncStatusObserver implements SyncStatusObserver {
         @Override
         public void onStatusChanged(int which) {
+
 
             String MY_AUTHORITY = "com.rj.android.nnews";
             Account mAccount = new Account("Nnews", "android.rj.com");
@@ -332,14 +314,16 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
             } else if (which == ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE) {
                 // 'Active' state changed.
                 if (ContentResolver.isSyncActive(mAccount, MY_AUTHORITY)) {
-                    // There is now an active sync.zzz
-                    Log.i("Sync Adapter 2", "Start");
+                    // There is now an active sync.
+                    Log.i("Sync Adapter 1", "Start");
                 } else {
-                    Log.i("Sync Adapter 2", "End");
+                    Log.i("Sync Adapter 1", "End");
                     isRefresh = false;
+                    ;
                     // There is no longer an active sync.
                 }
             }
         }
     }
+
 }

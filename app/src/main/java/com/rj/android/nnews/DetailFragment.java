@@ -213,7 +213,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                     Intent i = new Intent(Intent.ACTION_VIEW);
                     i.setData(Uri.parse(articleUrl));
                     startActivity(i);
-
                 }
             });
 

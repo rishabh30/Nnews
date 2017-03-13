@@ -24,12 +24,13 @@ import android.view.MenuItem;
 import com.rj.android.nnews.NestedFragment.MostViwedFragment;
 import com.rj.android.nnews.NestedFragment.MoviesFragment;
 import com.rj.android.nnews.NestedFragment.TopNewsFragment;
+import com.rj.android.nnews.NestedFragment.TopNewsFragmentRecycle;
 import com.rj.android.nnews.Settings.SettingsActivity;
 import com.rj.android.nnews.Sync.SyncAdapter;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
-        , TopNewsFragment.Callback, MostViwedFragment.Callback, MoviesFragment.Callback{
+        , TopNewsFragmentRecycle.Callback, MostViwedFragment.Callback, MoviesFragment.Callback{
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     public static boolean mTwoPane;
@@ -98,6 +99,7 @@ public class MainActivity extends AppCompatActivity
         //navigationView.getMenu().getItem(1).setChecked(true);
         // account created and content is passed safely
         SyncAdapter.initializeSyncAdapter(this);
+        SyncAdapter.syncImmediately(this);
     }
 
     @Override

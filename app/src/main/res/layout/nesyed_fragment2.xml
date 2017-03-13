@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/fragmentNested2"
-    tools:context=".NestedFragment.MostViwedFragment">
+    tools:context=".NestedFragment.MostViwedFragment"
+    >
 
 
 
@@ -27,6 +28,8 @@
         android:layout_height="match_parent"
         android:id="@+id/ErrorInfo"
         android:textSize="30sp"
+
+        android:background="#0e748a"
         android:text="@string/no_info_available"
         android:padding="32dp"
         />

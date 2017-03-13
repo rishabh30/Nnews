@@ -1,0 +1,65 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/touch_selector"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_margin="4dp"
+        card_view:cardCornerRadius="4dp">
+
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          >
+          <ImageView
+              android:id="@+id/list_item_image"
+              android:layout_width="150dp"
+              android:layout_height="105dp"
+              android:layout_marginTop="15dp"
+              android:layout_marginLeft="4dp"
+              android:transitionName="@string/transition_image"
+              android:src="@drawable/loading2"
+              android:scaleType="centerCrop" />
+
+          <GridLayout
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_margin="5dp"
+              android:minHeight="140dp"
+              android:layout_weight="1"
+              android:orientation="vertical">
+
+              <TextView
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:fontFamily="sans-serif"
+                  android:id="@+id/list_item_title"
+                  android:textSize="18sp"
+                  android:layout_margin="4dp"
+                  android:minHeight="100dp"
+                  android:text="" />
+
+              <TextView
+                  android:id="@+id/friendlyday"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentBottom="true"
+                  android:layout_alignParentEnd="true"
+                  android:fontFamily="sans-serif-light"
+                  android:layout_alignParentRight="true"
+                  android:text=""
+                  android:layout_margin="4dp"
+                  android:textSize="12sp"
+                  android:layout_gravity="bottom|right" />
+
+          </GridLayout>
+      </LinearLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>

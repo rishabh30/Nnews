@@ -29,6 +29,7 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.Key;
 import com.rj.android.nnews.MainActivity;
 import com.rj.android.nnews.R;
 import com.rj.android.nnews.Utility;
@@ -182,13 +183,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 }while (cv.moveToNext());
             }
 
-
-
-
-
-
-
-
             long id = getContext().getContentResolver().delete(Contract.Article.CONTENT_URI
                     , Contract.Article.PUBLISH_DATE + " <= ?"
                     , new String[]{deleteDate});
@@ -263,6 +257,87 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
+    void secondSync(int i,String urlString ,String KeyName){
+
+        HttpURLConnection urlConnection = null;
+        BufferedReader bufferedReader = null;
+
+        String JsonData = "";
+        URL url=null;
+
+        try {
+
+            Log.d(LOG_TAG ,"  KEYName : "+KeyName +"  UrlString : "+urlString   );
+            url =new URL(urlString);
+            // url = new URL ("https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66");
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+
+            InputStream inputStream = urlConnection.getInputStream();
+            StringBuffer stringBuffer = new StringBuffer();
+            if (inputStream == null) {
+                return;
+            }
+
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuffer.append(line + '\n');
+            }
+
+            if (stringBuffer.length() == 0) {
+                JsonData = null;
+            }
+
+            JsonData = stringBuffer.toString();
+
+
+        } catch (IOException e) {
+            Log.e("DOwnLoad dATA eRROR", "Error ", e);
+            e.printStackTrace();
+
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+
+            if (bufferedReader != null) {
+                try {
+                    bufferedReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.e("PlaceholderFragment", "Error closing stream", e);
+                }
+            }
+        }
+
+        Log.d("JSON DATA", JsonData);
+        try {
+            long KeyId = addKey(KeyName, String.valueOf(url));
+
+            if(KeyName.matches("movie_reviews"))
+                getJsonStringArrayForMedia(JsonData,KeyId);
+            else if(KeyName.matches("search"))
+                getJsonStringArrayForSearch(JsonData,KeyId);
+            else
+                getJsonStringArray(JsonData,KeyId);
+
+        } catch (JSONException e) {
+            Log.e("Download Data ", "JSON ERROR");
+            e.printStackTrace();
+        }
+
+        switch(i) {
+            case 0:secondSync(1,"https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66", "top_stories");
+                break;
+            case 1:secondSync(2,"https://api.nytimes.com/svc/movies/v2/reviews/all.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66", "movie_reviews");
+                break;
+            case 2:break;
+        }
+
+        return;
+    }
     //Perform Syncing and get Json Data From Api
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
@@ -285,6 +360,17 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             String KeySaved = context.getString(R.string.keySaved);
             String urlString = sharedPreferences.getString(urlKey," ");
             KeyName = sharedPreferences.getString(KeySaved," ");
+
+            SharedPreferences sharedPreferences2 = getContext().getSharedPreferences("FirstTime", Context.MODE_PRIVATE);
+            int no = sharedPreferences2.getInt("a",0);
+            SharedPreferences.Editor editor = sharedPreferences2.edit();
+            editor.putInt("a", 1);
+            editor.commit();
+
+            if(no==0){
+                secondSync(0,"https://api.nytimes.com/svc/news/v3/content/all/all.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66","newswire");
+                return ;
+            }
 
             Log.d(LOG_TAG ,"  KEYName : "+KeyName +"  UrlString : "+urlString   );
             url =new URL(urlString);

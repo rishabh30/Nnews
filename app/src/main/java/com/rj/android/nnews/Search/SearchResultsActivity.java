@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import com.rj.android.nnews.R;
 
@@ -25,12 +26,10 @@ public class SearchResultsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search_results);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        Log.d(LOG_TAG,"In Search Activity");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        ActionBar actionBar = getSupportActionBar();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         handleIntent(getIntent());
     }
 
@@ -48,7 +47,6 @@ public class SearchResultsActivity extends AppCompatActivity {
             getUrlString = "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66&q=" + query;
             getKeyName = "search";
 
-            String tag = null;
             FragmentManager fm = getSupportFragmentManager();
             Fragment fragment = search_fragment.newInstance(1, query);
             FragmentTransaction ft = fm.beginTransaction();
