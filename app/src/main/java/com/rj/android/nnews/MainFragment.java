@@ -146,10 +146,8 @@ public class MainFragment extends Fragment  {
 
     class SamplePagerAdapter extends SmartFragmentStatePagerAdapter {
 
-
-
-        private  int NUM_ITEMS = 4;
-        String str[]={"HOME","Top Stories","Newswire","Movie Reviews"};
+        private  int NUM_ITEMS = 3;
+        String str[]={"Top Stories","Newswire","Movies"};
         public SamplePagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
         }
@@ -164,24 +162,20 @@ public class MainFragment extends Fragment  {
         @Override
         public Fragment getItem(int position) {
             switch (position) {
-                case 0:
-                    return HomeFagment.newInstance();
-                case 1: // Fragment # 0 - This will show FirstFragment
+                case 0: // Fragment # 0 - This will show FirstFragment
                     return TopNewsFragmentRecycle.newInstance();
-                case 2: // Fragment # 0 - This will show FirstFragment different title
+                case 1: // Fragment # 0 - This will show FirstFragment different title
                     return MostViwedFragment.newInstance();
-                case 3: // Fragment # 1 - This will show SecondFragment
+                case 2: // Fragment # 1 - This will show SecondFragment
                     return MoviesFragment.newInstance();
                 default:
                     return null;
             }
         }
-
         // Returns the page title for the top indicator
         @Override
         public CharSequence getPageTitle(int position) {
             return str[position];
         }
-
     }
 }

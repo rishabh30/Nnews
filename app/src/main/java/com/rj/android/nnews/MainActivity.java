@@ -161,20 +161,18 @@ public class MainActivity extends AppCompatActivity
         int pos = 0;
         String saveUrl = "", saveKeyName = "";
 
-        if (id == R.id.home) {
+       if (id == R.id.top_stories) {
             pos = 0;
-        } else if (id == R.id.top_stories) {
-            pos = 1;
             saveUrl = "https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
             saveKeyName = "top_stories";
         } else if (id == R.id.newswire) {
 
-            pos = 2;
+            pos = 1;
             saveUrl = "https://api.nytimes.com/svc/news/v3/content/iht/all.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
             saveKeyName = "newswire";
 
         } else if (id == R.id.movie_reviews) {
-            pos = 3;
+            pos = 2;
             saveUrl = "https://api.nytimes.com/svc/movies/v2/reviews/picks.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
             saveKeyName = "movie_reviews";
 

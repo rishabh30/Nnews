@@ -5,11 +5,6 @@
     <group
         android:id="@+id/menu_top"
         android:checkableBehavior="single">
-        <item
-            android:id="@+id/home"
-            android:icon="@drawable/notic"
-            android:title="Home" />
-        <!--  android:icon="@drawable/ic_menu_camera"-->
 
         <item
             android:id="@+id/top_stories"
