@@ -6,3 +6,14 @@
 .DS_Store
 /build
 /captures
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Log Files
+*.log
+
+# Android Studio Navigation editor temp files
+.navigation/
