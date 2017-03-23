@@ -66,11 +66,7 @@ public class ArticleListAdapter extends CursorAdapter {
             title="";
         String imageUrl;
         int viewType = getItemViewType(cursor.getPosition());
-        if (viewType == MAIN_STORY && !useMainLayout) {
             imageUrl = cursor.getString(cursor.getColumnIndex(Contract.Article.PHOTO_URL_HIGH));
-        } else {
-            imageUrl = cursor.getString(cursor.getColumnIndex(Contract.Article.PHOTO_URL));
-        }
 
         String date = cursor.getString(
                 cursor.getColumnIndex(Contract.Article.PUBLISH_DATE));

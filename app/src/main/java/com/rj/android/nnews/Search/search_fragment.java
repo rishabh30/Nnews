@@ -15,6 +15,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +26,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.rj.android.nnews.Adapter.ArticleListAdapterCompact;
+import com.rj.android.nnews.Adapter.ArticleAdapter;
+import com.rj.android.nnews.MainActivity;
+import com.rj.android.nnews.NestedFragment.TopNewsFragmentRecycle;
 import com.rj.android.nnews.data.Contract;
 import com.rj.android.nnews.DetailActivity;
 import com.rj.android.nnews.MainFragment;
@@ -64,9 +68,9 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
     boolean mTwoPane;
     int mPosition;
     String SELECTED_KEY="POSITION";
-    ListView main_list;
+    RecyclerView mRecycleView;
 
-    ArticleListAdapterCompact madapter;
+    ArticleAdapter madapter;
     String[] textinfo = new String[15];
     String[] ArticleColumns = {
             Contract.Article._id,
@@ -94,9 +98,7 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.nesyed_fragment3, container, false);
-
-        main_list = (ListView) rootView.findViewById(com.rj.android.nnews.R.id.main_list);
+        View rootView = inflater.inflate(R.layout.nested_fragment, container, false);
 
         mySwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
         mySwipeRefreshLayout.setOnRefreshListener(
@@ -107,59 +109,87 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
 
                         // This method performs the actual data-refresh operation.
                         // The method calls setRefreshing(false) when it's finished.
-                        callResume();
+                        updateArticle();
                     }
                 }
         );
-        madapter = new ArticleListAdapterCompact(getActivity(), null, 0);
+
+        mRecycleView = (RecyclerView) rootView.findViewById(R.id.main_list);
+        mRecycleView.setHasFixedSize(true);
+
         View errorTextView;
-        errorTextView =  rootView.findViewById(R.id.ErrorInfo);
-        main_list.setAdapter(madapter);
-        main_list.setEmptyView(errorTextView);
-        main_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        errorTextView = rootView.findViewById(R.id.ErrorInfo);
+        madapter = new ArticleAdapter(getActivity(), new ArticleAdapter.ListItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onListItemClick(long id, ArticleAdapter.ViewHolder vh, ImageView imageView) {
 
-                mPosition = position;
-
-                Log.d(LOG_TAG, "CLICKED  position  " + position + " id  " + id);
 
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 int articleId = (int) id;
-                Log.d(LOG_TAG, "CLICKED  position  " + position + " id  " + id);
+
                 editor.putInt("ARTICLE_ID", articleId);
                 editor.commit();
-                ImageView sharedView = (ImageView) view.findViewById(R.id.list_item_image);
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
-                    Bundle bundle = ActivityOptions.makeSceneTransitionAnimation
-                            (getActivity(),
-                                    sharedView, sharedView.getTransitionName()
-                            )
-                            .toBundle();
-                    Intent intent = new Intent(getActivity(), DetailActivity.class);
-                    startActivity(intent, bundle);
-                } else
-                {
-                    Intent intent = new Intent(getActivity(), DetailActivity.class);
-                    startActivity(intent);
+                ImageView sharedView = (ImageView) imageView;
+                if (MainActivity.mTwoPane) {
+                    ((TopNewsFragmentRecycle.Callback) getParentFragment().getActivity()).onItemSelected();
+                } else {
+                        Intent intent = new Intent(getActivity(), DetailActivity.class);
+                        startActivity(intent);
                 }
 
+                mPosition = vh.getAdapterPosition();
             }
-        });
+        },errorTextView);
+        // mRecycleView.setEmptyView(errorTextView);
+        mRecycleView.setLayoutManager((new GridLayoutManager(getActivity(),2)));
+        mRecycleView.setAdapter(madapter);
 
+//        mRecycleView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                mPosition = position;
+//
+//                Log.d(LOG_TAG, "CLICKED  position  " + position + " id  " + id);
+//
+//                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+//                SharedPreferences.Editor editor = sharedPreferences.edit();
+//                int articleId = (int) id;
+//                Log.d(LOG_TAG, "CLICKED  position  " + position + " id  " + id);
+//                editor.putInt("ARTICLE_ID", articleId);
+//                editor.commit();
+//
+//                ImageView sharedView = (ImageView) view.findViewById(R.id.list_item_image);
+//                if (MainActivity.mTwoPane) {
+//                    ((Callback) getParentFragment().getActivity()).onItemSelected();
+//                } else {
+//
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//
+//                        sharedView.setVisibility(View.VISIBLE);
+//                        Bundle bundle = ActivityOptions.makeSceneTransitionAnimation
+//                                (getParentFragment().getActivity(),
+//                                        sharedView, sharedView.getTransitionName()
+//                                )
+//                                .toBundle();
+//                        Intent intent = new Intent(getActivity(), DetailActivity.class);
+//                        startActivity(intent, bundle);
+//                    } else {
+//                        Intent intent = new Intent(getActivity(), DetailActivity.class);
+//                        startActivity(intent);
+//                    }
+//                }
+//            }
+//        });
 
-        if(savedInstanceState!=null&&savedInstanceState.containsKey(SELECTED_KEY))
-        {
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
-            main_list.setSelection(mPosition);
         }
+        madapter.setUseMainLayout(mTwoPane);
         return rootView;
     }
-
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.d(LOG_TAG, " ON Saved instance state: ");
@@ -201,28 +231,6 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
 
         madapter.swapCursor(data);
 
-
-        if(mPosition != ListView.INVALID_POSITION  && mTwoPane==true)
-        {
-            main_list.setSelection(mPosition);
-        }
-        setEmptyInfo();
-    }
-
-    private void setEmptyInfo() {
-
-        if (main_list.getCount() == 0) {
-            TextView errorTextView;
-            int message = R.string.no_info_available;
-            errorTextView = (TextView) getView().findViewById(R.id.ErrorInfo);
-            if (errorTextView != null) {
-                if (!Utility.isNetworkAvailable(getContext())) {
-                    message = R.string.no_network;
-                }
-            }
-
-            errorTextView.setText(message);
-        }
     }
 
     @Override

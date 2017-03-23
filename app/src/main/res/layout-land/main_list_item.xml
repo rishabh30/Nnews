@@ -35,7 +35,7 @@
             android:layout_gravity="center_vertical"
             android:text=""
             android:padding="32dp"
-
+            android:textStyle="bold"
             android:fontFamily="sans-serif"
             android:textColor="@color/black"
             android:textAppearance="?android:attr/textAppearanceLarge"

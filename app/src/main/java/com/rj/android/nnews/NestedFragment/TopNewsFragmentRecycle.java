@@ -18,6 +18,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -159,7 +160,7 @@ public class TopNewsFragmentRecycle extends Fragment implements LoaderManager.Lo
             }
     },errorTextView);
        // mRecycleView.setEmptyView(errorTextView);
-        mRecycleView.setLayoutManager((new LinearLayoutManager(getActivity())));
+        mRecycleView.setLayoutManager((new GridLayoutManager(getActivity(),2)));
         mRecycleView.setAdapter(madapter);
 
 //        mRecycleView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -291,6 +292,9 @@ public class TopNewsFragmentRecycle extends Fragment implements LoaderManager.Lo
             Log.i("REFRESH ", "END");
             isRefresh = true;
         }
+    }
+
+    public void goToSettings(View view) {
     }
 
     public interface Callback {

@@ -32,6 +32,7 @@
             android:fontFamily="sans-serif"
             android:id="@+id/list_item_title"
             android:textSize="18sp"
+            android:textStyle="bold"
             android:text="" />
 
         <TextView

@@ -11,21 +11,22 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|top"
         android:layout_marginLeft="2dp"
-        android:layout_marginTop="128dp"
+        android:layout_marginTop="100dp"
         android:gravity="center_horizontal"
         android:text="Nnews"
+        android:elevation="100dp"
         android:textSize="48sp"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#ffffff" />
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_gravity="center"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="6dp"
-        android:padding="12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="6dp"
+        android:padding="12dp"
+        android:elevation="30dp"
         android:src="@drawable/logo" />
 
 
@@ -37,7 +38,10 @@
         android:padding="16dp"
         android:gravity="center_horizontal"
         android:fontFamily="sans-serif"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:textStyle="bold"
         android:text="Bringing latest insight to global network news "
         android:textSize="18sp"
         android:textColor="#ffffff" />

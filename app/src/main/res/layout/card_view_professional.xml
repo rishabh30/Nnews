@@ -8,40 +8,39 @@
         android:id="@+id/card_view"
         android:layout_gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="250dp"
         android:layout_margin="4dp">
-
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             >
             <ImageView
                 android:id="@+id/list_item_image"
-                android:layout_width="150dp"
-                android:layout_height="105dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginLeft="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:layout_weight="10"
                 android:transitionName="@string/transition_image"
                 android:src="@drawable/loading2"
                 android:scaleType="centerCrop" />
 
             <GridLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
                 android:layout_margin="5dp"
-                android:minHeight="140dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:fontFamily="sans-serif font"
                     android:id="@+id/list_item_title"
-                    android:textSize="18sp"
-                    android:layout_margin="4dp"
-                    android:minHeight="100dp"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:maxLines="3"
+                    android:ellipsize="end"
                     android:text="" />
 
                 <TextView
@@ -53,8 +52,7 @@
                     android:fontFamily="sans-serif-light"
                     android:layout_alignParentRight="true"
                     android:text=""
-                    android:layout_margin="4dp"
-                    android:textSize="12sp"
+                    android:textSize="10sp"
                     android:layout_gravity="bottom|right" />
 
             </GridLayout>

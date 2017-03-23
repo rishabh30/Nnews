@@ -54,7 +54,7 @@ public class ArticleListAdapterCompact extends CursorAdapter {
 
         String title = cursor.getString(MainFragment.COL_ARTICLE_TITLE);
         String imageUrl;
-        imageUrl = cursor.getString(cursor.getColumnIndex(Contract.Article.PHOTO_URL));
+        imageUrl = cursor.getString(cursor.getColumnIndex(Contract.Article.PHOTO_URL_HIGH));
 
         String date = cursor.getString(
                 cursor.getColumnIndex(Contract.Article.PUBLISH_DATE));

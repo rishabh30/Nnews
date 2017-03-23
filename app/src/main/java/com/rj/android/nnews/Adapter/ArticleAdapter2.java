@@ -15,9 +15,9 @@ import com.rj.android.nnews.Utility;
 import com.rj.android.nnews.data.Contract;
 import com.squareup.picasso.Picasso;
 
-public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHolder> {
+public class ArticleAdapter2 extends RecyclerView.Adapter<ArticleAdapter2.ViewHolder> {
 
-    private static final String LOG_TAG = ArticleAdapter.class.getSimpleName();
+    private static final String LOG_TAG = ArticleAdapter2.class.getSimpleName();
     private final int MAIN_STORY = 0;
     private final int SIDE_STORY = 1;
     private boolean mUseMainLayout=true;
@@ -57,7 +57,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         }
     }
 
-    public ArticleAdapter(Context context,ListItemClickListener listener , View emptyView) {
+    public ArticleAdapter2(Context context, ListItemClickListener listener , View emptyView) {
         mContext = context ;
         mOnClickListener = listener ;
         mEmptyView = emptyView;

@@ -23,6 +23,8 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="hello how u doing "
         android:textColor="@color/black"
+
+        android:textStyle="bold"
         android:id="@+id/list_item_title"
         android:layout_weight="1"
 
