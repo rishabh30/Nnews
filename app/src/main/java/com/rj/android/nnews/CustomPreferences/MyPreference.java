@@ -48,7 +48,6 @@ public class MyPreference extends Preference {
                 getContext().getContentResolver().delete(Contract.Article.CONTENT_URI,null,null);
                 Toast.makeText(getContext(),"Cache cleared ",Toast.LENGTH_SHORT).show();
                 Glide.get(getContext()).clearMemory();
-                new UploadImageAsyncTask().execute();
                 SyncAdapter.syncImmediately( getContext());
                 notifyChanged();
 
@@ -64,23 +63,6 @@ public class MyPreference extends Preference {
         AlertDialog dialog = builder.create();
         dialog.show();
 
-    }
-
-    private class UploadImageAsyncTask extends AsyncTask<Void,Void,Void> {
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        Glide.get(getContext()).clearMemory();
-                    }
-                }
-            }).start();
-
-            return null;
-        }
     }
 
 }

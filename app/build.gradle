@@ -9,7 +9,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 25
         versionCode 1
-        versionName "1.0"
+        versionName "1.1.0"
     }
     buildTypes {
         release {
@@ -30,13 +30,10 @@ dependencies {
 }
 
 dependencies {
-    compile 'com.github.bumptech.glide:glide:3.5.2'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:support-v4:25.3.0'
 }
 dependencies {
-    compile 'com.android.support:support-v4:25.+'
-}
-dependencies {
-    compile 'com.android.support:support-v4:25.+'
+    compile 'com.android.support:support-v4:25.3.0'
 }

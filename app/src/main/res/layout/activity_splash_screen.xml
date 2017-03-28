@@ -23,7 +23,7 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="80dp"
+        android:layout_marginLeft="75dp"
         android:layout_marginTop="6dp"
         android:padding="12dp"
         android:elevation="30dp"
@@ -43,7 +43,7 @@
         android:layout_marginRight="20dp"
         android:textStyle="bold"
         android:text="Bringing latest insight to global network news "
-        android:textSize="18sp"
+        android:textSize="22sp"
         android:textColor="#ffffff" />
 
 </LinearLayout>

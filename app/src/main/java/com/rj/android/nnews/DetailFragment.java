@@ -25,8 +25,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rj.android.nnews.data.Contract;
+import com.squareup.picasso.Picasso;
 
-public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+ public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
     private static final int DETAIL_LOADER = 0;
@@ -198,7 +199,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                         .fitCenter()
                         .placeholder(R.drawable.progress_animation)
                         .centerCrop()
-                        .into(mImage);
+                        .into(mImage);/*
+                Picasso.with(getActivity())
+                        .load(imageUrl)
+                        .placeholder(R.drawable.progress_animation)
+                        .centerCrop()
+                        .into(mImage);*/
             }
 
             mHeading.setText(heading);
