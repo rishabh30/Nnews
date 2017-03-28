@@ -291,6 +291,7 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public void onResume() {
+        super.onResume();
         Log.v(LOG_TAG," RESUME");
 
         String KeyName = "newswire";
@@ -308,7 +309,6 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
         );
         if(!cursor.moveToFirst()) {updateArticle();}
 
-        super.onResume();
         getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
     }
 
