@@ -17,11 +17,6 @@ import java.util.Set;
 
 public class TestProvider extends AndroidTestCase {
     public static final String LOG_TAG = TestProvider.class.getSimpleName();
-
-    public void testDeleteDb() throws Throwable {
-        mContext.deleteDatabase(DbHelper.DATABASE_NAME);
-    }
-
     String KeyColumns[] = {
             Key_Type.KEY_ID, Key_Type.KEY_NAME, Key_Type.KEY_URL
     };
@@ -42,6 +37,9 @@ public class TestProvider extends AndroidTestCase {
         }
     }
 
+    public void testDeleteDb() throws Throwable {
+        mContext.deleteDatabase(DbHelper.DATABASE_NAME);
+    }
 
     public ContentValues getArticleValues() {
         int articleId = 1029;
@@ -77,24 +75,23 @@ public class TestProvider extends AndroidTestCase {
         return cv;
     }
 
-    public void  testGetType()
-    {
+    public void testGetType() {
         String type = mContext.getContentResolver().getType(Article.CONTENT_URI);
-        assertEquals(Article.CONTENT_TYPE,type);
+        assertEquals(Article.CONTENT_TYPE, type);
 
         String key_id = "1";
         long article_id = 100394;
         type = mContext.getContentResolver().getType(Article.buildArticleUri(1));
-        assertEquals(type,Article.CONTENT_TYPE);
+        assertEquals(type, Article.CONTENT_TYPE);
 
         type = mContext.getContentResolver().getType(Article.buildKeyWithStartDate(key_id, "2009933"));
-        assertEquals(type,Article.CONTENT_TYPE);
+        assertEquals(type, Article.CONTENT_TYPE);
 
         type = mContext.getContentResolver().getType(Key_Type.CONTENT_URI);
-        assertEquals(type,Key_Type.CONTENT_TYPE);
+        assertEquals(type, Key_Type.CONTENT_TYPE);
 
         type = mContext.getContentResolver().getType(Key_Type.buildKeyUri(1));
-        assertEquals(type,Key_Type.CONTENT_ITEM_TYPE);
+        assertEquals(type, Key_Type.CONTENT_ITEM_TYPE);
 
 /*
         type = mContext.getContentResolver().getType(Article.buildArticleWithIdUri(100394));
@@ -111,7 +108,7 @@ public class TestProvider extends AndroidTestCase {
         ContentValues cv = getKeyValues();
 
         long rowId;
-        Uri insertdb  = mContext.getContentResolver().insert(Key_Type.CONTENT_URI, cv);
+        Uri insertdb = mContext.getContentResolver().insert(Key_Type.CONTENT_URI, cv);
         rowId = ContentUris.parseId(insertdb);
         Log.d(LOG_TAG, ": New RowId : " + rowId);
         Log.d(LOG_TAG, ": BREAK ");
@@ -140,10 +137,10 @@ public class TestProvider extends AndroidTestCase {
             fail(" : NO VALUES RETURNED");
         }
         ContentValues contentValues = getArticleValues();
-        Uri insetdb= mContext.getContentResolver().insert(Article.CONTENT_URI, contentValues);
-        long ArticleRowId= ContentUris.parseId(insetdb);
+        Uri insetdb = mContext.getContentResolver().insert(Article.CONTENT_URI, contentValues);
+        long ArticleRowId = ContentUris.parseId(insetdb);
         Uri TestUri = Article.CONTENT_URI.buildUpon().appendQueryParameter(Key_Type.KEY_NAME, "mostViewed")
-                .appendQueryParameter(Article.PUBLISH_DATE,"2009933").build();
+                .appendQueryParameter(Article.PUBLISH_DATE, "2009933").build();
 
         Cursor cursor1 = mContext.getContentResolver().query(TestUri, null, null, null, null);
 

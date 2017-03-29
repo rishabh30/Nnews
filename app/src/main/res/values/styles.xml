@@ -45,9 +45,6 @@
     </style>
 
 
-
-
-
     <style name="ArticleTheme3" parent="ArticleTheme2">
 
         <item name="colorPrimary">@color/colorPrimary</item>

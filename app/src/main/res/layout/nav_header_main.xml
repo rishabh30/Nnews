@@ -7,23 +7,23 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
-        android:layout_marginTop="32dp"
         android:id="@+id/logo"
-        android:layout_weight="4"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_gravity="left"
+        android:layout_marginTop="32dp"
+        android:layout_weight="4"
         android:src="@drawable/logo" />
 
     <TextView
-        android:layout_weight="1"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="48dp"
+        android:layout_weight="1"
         android:fontFamily="Roboto Medium"
         android:text="Nnews"
-        android:layout_marginLeft="48dp"
-        android:textSize="24sp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:layout_marginBottom="10dp"/>
+        android:textSize="24sp" />
 
 </LinearLayout>

@@ -15,30 +15,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.rj.android.nnews.Adapter.ArticleListAdapter;
-import com.rj.android.nnews.NestedFragment.HomeFagment;
 import com.rj.android.nnews.NestedFragment.MostViwedFragment;
 import com.rj.android.nnews.NestedFragment.MoviesFragment;
-import com.rj.android.nnews.NestedFragment.TopNewsFragment;
 import com.rj.android.nnews.NestedFragment.TopNewsFragmentRecycle;
 import com.rj.android.nnews.Sync.SyncAdapter;
 import com.rj.android.nnews.view.SlidingTabLayout;
 import com.rj.android.nnews.view.SmartFragmentStatePagerAdapter;
 
-public class MainFragment extends Fragment  {
-
-    /**
-     * A custom {@link ViewPager} title strip which looks much like Tabs present in Android v4.0 and
-     * above, but is designed to give continuous feedback to the user when scrolling.
-     */
-    private SlidingTabLayout mSlidingTabLayout;
-
-    /**
-     * A {@link ViewPager} which will be used in conjunction with the {@link SlidingTabLayout} above.
-     */
-    private ViewPager mViewPager;
-
-
-    private static final String LOG_TAG = MainFragment.class.getSimpleName();
+public class MainFragment extends Fragment {
 
     public static final int COL_ARTICLE_ID = 0;
     public static final int COL_ARTICLE_KEY_ID = 1;
@@ -50,27 +34,33 @@ public class MainFragment extends Fragment  {
     public static final int COL_ARTICLE_PHOTO_URL_HIGH = 7;
     public static final int COL_ARTICLE_PUBLISH_DATE = 8;
     public static final int COL_ARTICLE_PHOTO_URL = 9;
+    private static final String LOG_TAG = MainFragment.class.getSimpleName();
     private static final int FORECAST_LOADER = 0;
-
     boolean mTwoPane;
-
     ArticleListAdapter madapter;
+    /**
+     * A custom {@link ViewPager} title strip which looks much like Tabs present in Android v4.0 and
+     * above, but is designed to give continuous feedback to the user when scrolling.
+     */
+    private SlidingTabLayout mSlidingTabLayout;
+    /**
+     * A {@link ViewPager} which will be used in conjunction with the {@link SlidingTabLayout} above.
+     */
+    private ViewPager mViewPager;
+
+    public MainFragment() {
+    }
 
     @Override
     public void onResume() {
         super.onResume();
     }
 
-    public void setTwoPane(boolean twoPane)
-    {
+    public void setTwoPane(boolean twoPane) {
         mTwoPane = twoPane;
-        if(madapter!=null)
-        {
+        if (madapter != null) {
             madapter.setUseMainLayout(mTwoPane);
         }
-    }
-
-    public MainFragment() {
     }
 
     @Override
@@ -97,8 +87,7 @@ public class MainFragment extends Fragment  {
         return super.onOptionsItemSelected(item);
     }
 
-    private void updateArticle()
-    {
+    private void updateArticle() {
         SyncAdapter.syncImmediately(getActivity());
     }
 
@@ -138,16 +127,16 @@ public class MainFragment extends Fragment  {
         return rootView;
     }
 
-     void setCurrentTab(int pos) {
+    void setCurrentTab(int pos) {
         mViewPager.setCurrentItem(pos);
     }
 
 
-
     class SamplePagerAdapter extends SmartFragmentStatePagerAdapter {
 
-        private  int NUM_ITEMS = 3;
-        String str[]={"Top Stories","Newswire","Movies"};
+        String str[] = {"Top Stories", "Newswire", "Movies"};
+        private int NUM_ITEMS = 3;
+
         public SamplePagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
         }
@@ -172,6 +161,7 @@ public class MainFragment extends Fragment  {
                     return null;
             }
         }
+
         // Returns the page title for the top indicator
         @Override
         public CharSequence getPageTitle(int position) {

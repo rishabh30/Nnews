@@ -14,22 +14,22 @@ import com.rj.android.nnews.Settings.SettingsActivity;
 public class DetailActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = DetailActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-          setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        getSupportActionBar() .setTitle(Html.fromHtml("<font color=\"@color/white\">" + "Story" + "</font>"));
+        getSupportActionBar().setTitle(Html.fromHtml("<font color=\"@color/white\">" + "Story" + "</font>"));
 
-        if(savedInstanceState==null&&MainActivity.mTwoPane!=true)
-        {
+        if (savedInstanceState == null && MainActivity.mTwoPane != true) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragmentDetail,new DetailFragment())
+                    .add(R.id.fragmentDetail, new DetailFragment())
                     .commit();
         }
     }

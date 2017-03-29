@@ -14,8 +14,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         super(Application.class);
     }
 
-    public static Test suite()
-    {
+    public static Test suite() {
         return new TestSuiteBuilder(ApplicationTest.class)
                 .includeAllPackagesUnderHere().build();
     }

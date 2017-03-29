@@ -19,7 +19,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,7 +45,6 @@ public class TopNewsFragmentRecycle extends Fragment implements LoaderManager.Lo
     boolean mTwoPane;
     int mPosition = RecyclerView.NO_POSITION;
     String SELECTED_KEY = "POSITION";
-    private RecyclerView mRecycleView;
     ArticleAdapter madapter;
     String[] textinfo = new String[15];
     String[] ArticleColumns = {
@@ -61,6 +59,8 @@ public class TopNewsFragmentRecycle extends Fragment implements LoaderManager.Lo
             Contract.Article.PUBLISH_DATE,
             Contract.Article.PHOTO_URL
     };
+    SwipeRefreshLayout mySwipeRefreshLayout;
+    private RecyclerView mRecycleView;
 
     public static TopNewsFragmentRecycle newInstance() {
         TopNewsFragmentRecycle fragmentFirst = new TopNewsFragmentRecycle();
@@ -95,8 +95,6 @@ public class TopNewsFragmentRecycle extends Fragment implements LoaderManager.Lo
 
         );
     }
-
-    SwipeRefreshLayout mySwipeRefreshLayout;
 
     @TargetApi(Build.VERSION_CODES.M)
     @Nullable
@@ -158,9 +156,9 @@ public class TopNewsFragmentRecycle extends Fragment implements LoaderManager.Lo
 
                 mPosition = vh.getAdapterPosition();
             }
-    },errorTextView);
-       // mRecycleView.setEmptyView(errorTextView);
-        mRecycleView.setLayoutManager((new GridLayoutManager(getActivity(),2)));
+        }, errorTextView);
+        // mRecycleView.setEmptyView(errorTextView);
+        mRecycleView.setLayoutManager((new GridLayoutManager(getActivity(), 2)));
         mRecycleView.setAdapter(madapter);
 
 //        mRecycleView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -28,8 +28,6 @@ public abstract class SmartFragmentStatePagerAdapter extends FragmentStatePagerA
     }
 
 
-
-
     // Unregister when the item is inactive
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.rj.android.nnews" >
+    package="com.rj.android.nnews">
 
     <!-- This permisiion is neccesary in order for Sunshine to perform network access -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,7 +17,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
 
 
         <activity
@@ -44,14 +44,14 @@
             android:configChanges="orientation|keyboard"
             android:label="@string/title_activity_detail"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/ArticleTheme2" >
+            android:theme="@style/ArticleTheme2">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
 
         <!-- SyncAdapter dummy authenticator service -->
-        <service android:name=".Sync.AuthenticatorService" >
+        <service android:name=".Sync.AuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -62,7 +62,7 @@
         </service>
         <service
             android:name=".Sync.SyncService"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
@@ -98,15 +98,16 @@
             android:name=".Settings.SettingsActivity"
             android:label="Settings"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/ArticleTheme4" >
+            android:theme="@style/ArticleTheme4">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".Splash_screen"
-            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+        <activity
+            android:name=".Splash_screen"
+            android:screenOrientation="portrait"
 
-            android:screenOrientation="portrait">
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

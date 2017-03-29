@@ -1,7 +1,6 @@
 package com.rj.android.nnews.Search;
 
 import android.annotation.TargetApi;
-import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,60 +20,33 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.rj.android.nnews.Adapter.ArticleAdapter;
-import com.rj.android.nnews.MainActivity;
-import com.rj.android.nnews.NestedFragment.TopNewsFragmentRecycle;
-import com.rj.android.nnews.data.Contract;
 import com.rj.android.nnews.DetailActivity;
+import com.rj.android.nnews.MainActivity;
 import com.rj.android.nnews.MainFragment;
+import com.rj.android.nnews.NestedFragment.TopNewsFragmentRecycle;
 import com.rj.android.nnews.R;
 import com.rj.android.nnews.Sync.SyncAdapter;
-import com.rj.android.nnews.Utility;
+import com.rj.android.nnews.data.Contract;
 
 
-public class search_fragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class search_fragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    public interface  Callback {
-        public void onItemSelected();
-    }
-
-    String getUrlString , getKeyName;
-
-    public static Fragment newInstance(int pos, String title) {
-        Fragment fragmentFirst = new search_fragment();
-
-        Bundle args = new Bundle();
-
-        String saveUrl =""  , saveKeyName ="" ;
-
-        saveUrl = "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66&q="+title;
-        saveKeyName = "search";
-
-        args.putString("saveUrl", saveUrl);
-        args.putString("saveKeyName", saveKeyName);
-
-        fragmentFirst.setArguments(args);
-        return fragmentFirst;
-    }
     private static final String LOG_TAG = MainFragment.class.getSimpleName();
-
     private static final int FORECAST_LOADER = 4;
-
+    String getUrlString, getKeyName;
     boolean mTwoPane;
     int mPosition;
-    String SELECTED_KEY="POSITION";
+    String SELECTED_KEY = "POSITION";
     RecyclerView mRecycleView;
-
     ArticleAdapter madapter;
     String[] textinfo = new String[15];
     String[] ArticleColumns = {
             Contract.Article._id,
-            Contract.Article.TABLE_NAME + "." +Contract.Article.KEY_ID,
+            Contract.Article.TABLE_NAME + "." + Contract.Article.KEY_ID,
             Contract.Article.TITLE,
             Contract.Article.ARTICLE_URL,
             Contract.Article.ABSTRACT,
@@ -84,15 +56,31 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
             Contract.Article.PUBLISH_DATE,
             Contract.Article.PHOTO_URL
     };
+    SwipeRefreshLayout mySwipeRefreshLayout;
+
+    public static Fragment newInstance(int pos, String title) {
+        Fragment fragmentFirst = new search_fragment();
+
+        Bundle args = new Bundle();
+
+        String saveUrl = "", saveKeyName = "";
+
+        saveUrl = "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66&q=" + title;
+        saveKeyName = "search";
+
+        args.putString("saveUrl", saveUrl);
+        args.putString("saveKeyName", saveKeyName);
+
+        fragmentFirst.setArguments(args);
+        return fragmentFirst;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getUrlString = getArguments().getString("saveUrl", "");
-        getKeyName = getArguments().getString("saveKeyName","");
+        getKeyName = getArguments().getString("saveKeyName", "");
     }
-
-    SwipeRefreshLayout mySwipeRefreshLayout;
 
     @TargetApi(Build.VERSION_CODES.M)
     @Nullable
@@ -135,15 +123,15 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
                 if (MainActivity.mTwoPane) {
                     ((TopNewsFragmentRecycle.Callback) getParentFragment().getActivity()).onItemSelected();
                 } else {
-                        Intent intent = new Intent(getActivity(), DetailActivity.class);
-                        startActivity(intent);
+                    Intent intent = new Intent(getActivity(), DetailActivity.class);
+                    startActivity(intent);
                 }
 
                 mPosition = vh.getAdapterPosition();
             }
-        },errorTextView);
+        }, errorTextView);
         // mRecycleView.setEmptyView(errorTextView);
-        mRecycleView.setLayoutManager((new GridLayoutManager(getActivity(),2)));
+        mRecycleView.setLayoutManager((new GridLayoutManager(getActivity(), 2)));
         mRecycleView.setAdapter(madapter);
 
 //        mRecycleView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -190,17 +178,16 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
         madapter.setUseMainLayout(mTwoPane);
         return rootView;
     }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.d(LOG_TAG, " ON Saved instance state: ");
-        if(mPosition!=ListView.INVALID_POSITION)
-        {
+        if (mPosition != ListView.INVALID_POSITION) {
             outState.putInt(SELECTED_KEY, mPosition);
         }
 
         super.onSaveInstanceState(outState);
     }
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -224,6 +211,7 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
                 null
         );
     }
+
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
@@ -245,9 +233,7 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
     }
 
-
-    private void updateArticle()
-    {
+    private void updateArticle() {
         Context context = getContext();
         SharedPreferences SP = context.getSharedPreferences("UrlDetails", Context.MODE_PRIVATE);
         String urlKey = context.getString(R.string.url);
@@ -260,13 +246,15 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
         SyncAdapter.syncImmediately(getActivity());
 
     }
+
     @Override
     public void onStart() {
         super.onStart();
     }
 
     public void callResume() {
-        updateArticle();onResume();
+        updateArticle();
+        onResume();
     }
 
     @Override
@@ -275,5 +263,9 @@ public class search_fragment extends Fragment implements LoaderManager.LoaderCal
         getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
 
         mySwipeRefreshLayout.setRefreshing(false);
+    }
+
+    public interface Callback {
+        public void onItemSelected();
     }
 }

@@ -23,14 +23,13 @@ import android.view.MenuItem;
 
 import com.rj.android.nnews.NestedFragment.MostViwedFragment;
 import com.rj.android.nnews.NestedFragment.MoviesFragment;
-import com.rj.android.nnews.NestedFragment.TopNewsFragment;
 import com.rj.android.nnews.NestedFragment.TopNewsFragmentRecycle;
 import com.rj.android.nnews.Settings.SettingsActivity;
 import com.rj.android.nnews.Sync.SyncAdapter;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
-        , TopNewsFragmentRecycle.Callback, MostViwedFragment.Callback, MoviesFragment.Callback{
+        , TopNewsFragmentRecycle.Callback, MostViwedFragment.Callback, MoviesFragment.Callback {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     public static boolean mTwoPane;
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setElevation(0);
-        getSupportActionBar() .setTitle(Html.fromHtml("<font color=\"@color/white\">" + "Nnews" + "</font>"));
+        getSupportActionBar().setTitle(Html.fromHtml("<font color=\"@color/white\">" + "Nnews" + "</font>"));
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -161,7 +160,7 @@ public class MainActivity extends AppCompatActivity
         int pos = 0;
         String saveUrl = "", saveKeyName = "";
 
-       if (id == R.id.top_stories) {
+        if (id == R.id.top_stories) {
             pos = 0;
             saveUrl = "https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
             saveKeyName = "top_stories";
@@ -183,7 +182,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.feedback) {
             Intent Email = new Intent(Intent.ACTION_SEND);
             Email.setType("text/email");
-            Email.putExtra(Intent.EXTRA_EMAIL, new String[] { "rishabhjainps2@gmail.com" });
+            Email.putExtra(Intent.EXTRA_EMAIL, new String[]{"rishabhjainps2@gmail.com"});
             Email.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
             Email.putExtra(Intent.EXTRA_TEXT, "Hello Rishabh ," + "");
             startActivity(Intent.createChooser(Email, "Send Feedback:"));

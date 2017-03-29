@@ -30,27 +30,26 @@ import android.widget.TextView;
 import com.rj.android.nnews.Adapter.ArticleListAdapterCompact;
 import com.rj.android.nnews.DetailActivity;
 import com.rj.android.nnews.MainActivity;
-import com.rj.android.nnews.MainFragment;
 import com.rj.android.nnews.R;
+import com.rj.android.nnews.Sync.SyncAdapter;
 import com.rj.android.nnews.Utility;
 import com.rj.android.nnews.data.Contract;
-import com.rj.android.nnews.Sync.SyncAdapter;
 
-public class MoviesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class MoviesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = MoviesFragment.class.getSimpleName();
     private static final int FORECAST_LOADER = 2;
     String getUrlString, getKeyName;
     boolean mTwoPane;
-    boolean isRefresh =true ;
+    boolean isRefresh = true;
     int mPosition;
-    String SELECTED_KEY="POSITION";
+    String SELECTED_KEY = "POSITION";
     ListView main_list;
     ArticleListAdapterCompact madapter;
 
     String[] ArticleColumns = {
             Contract.Article._id,
-            Contract.Article.TABLE_NAME + "." +Contract.Article.KEY_ID,
+            Contract.Article.TABLE_NAME + "." + Contract.Article.KEY_ID,
             Contract.Article.TITLE,
             Contract.Article.ARTICLE_URL,
             Contract.Article.ABSTRACT,
@@ -67,7 +66,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
 
         Bundle args = new Bundle();
 
-        String saveUrl =""  , saveKeyName ="" ;
+        String saveUrl = "", saveKeyName = "";
 
         saveUrl = "https://api.nytimes.com/svc/movies/v2/reviews/all.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66";
         saveKeyName = "movie_reviews";
@@ -112,14 +111,12 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
 
     private void setEmptyInfo() {
 
-        if(main_list.getCount() == 0) {
+        if (main_list.getCount() == 0) {
             TextView errorTextView;
             int message = R.string.no_info_available;
-            errorTextView = (TextView)getView().findViewById(R.id.ErrorInfo);
-            if(errorTextView!=null)
-            {
-                if(!Utility.isNetworkAvailable(getContext()))
-                {
+            errorTextView = (TextView) getView().findViewById(R.id.ErrorInfo);
+            if (errorTextView != null) {
+                if (!Utility.isNetworkAvailable(getContext())) {
                     message = R.string.no_network;
                 }
             }
@@ -136,7 +133,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.nesyed_fragment3, container, false);
 
-        mySwipeRefreshLayout =(SwipeRefreshLayout)rootView.findViewById(R.id.swiperefresh);
+        mySwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
         mySwipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -187,8 +184,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
                                 .toBundle();
                         Intent intent = new Intent(getActivity(), DetailActivity.class);
                         startActivity(intent, bundle);
-                    } else
-                    {
+                    } else {
                         Intent intent = new Intent(getActivity(), DetailActivity.class);
                         startActivity(intent);
                     }
@@ -197,8 +193,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
         });
 
 
-        if(savedInstanceState!=null&&savedInstanceState.containsKey(SELECTED_KEY))
-        {
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
             main_list.setSelection(mPosition);
         }
@@ -208,8 +203,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.d(LOG_TAG, " ON Saved instance state: ");
-        if(mPosition!=ListView.INVALID_POSITION)
-        {
+        if (mPosition != ListView.INVALID_POSITION) {
             outState.putInt(SELECTED_KEY, mPosition);
         }
         super.onSaveInstanceState(outState);
@@ -275,7 +269,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onResume() {
-        Log.v(LOG_TAG," RESUME");
+        Log.v(LOG_TAG, " RESUME");
 
         String KeyName = "movie_reviews";
 
@@ -291,8 +285,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
                 null,
                 null
         );
-        if(!cursor.moveToFirst())
-        {
+        if (!cursor.moveToFirst()) {
             updateArticle();
         }
 

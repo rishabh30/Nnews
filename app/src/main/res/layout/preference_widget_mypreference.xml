@@ -4,5 +4,5 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
     android:layout_marginRight="6sp"
-    android:focusable="false"
-    android:clickable="false" />
+    android:clickable="false"
+    android:focusable="false" />

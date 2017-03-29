@@ -12,28 +12,28 @@
         android:layout_width="157dp"
         android:layout_height="105dp"
         android:paddingLeft="16dp"
-        android:transitionName="@string/transition_image"
+        android:scaleType="centerCrop"
         android:src="@drawable/loading2"
-        android:scaleType="centerCrop" />
+        android:transitionName="@string/transition_image" />
 
     <GridLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:minHeight="105dp"
         android:layout_weight="1"
+        android:minHeight="105dp"
         android:orientation="vertical"
         android:paddingBottom="8dp">
 
         <TextView
+            android:id="@+id/list_item_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
-            android:id="@+id/list_item_title"
+            android:text=""
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:text="" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/friendlyday"
@@ -41,12 +41,12 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:fontFamily="sans-serif-light"
             android:layout_alignParentRight="true"
-            android:text=""
+            android:layout_gravity="bottom|right"
             android:layout_margin="4dp"
-            android:textSize="12sp"
-            android:layout_gravity="bottom|right" />
+            android:fontFamily="sans-serif-light"
+            android:text=""
+            android:textSize="12sp" />
 
     </GridLayout>
 </LinearLayout>

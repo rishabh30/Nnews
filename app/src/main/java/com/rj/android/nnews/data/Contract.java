@@ -11,39 +11,36 @@ import android.net.Uri;
 public class Contract {
 
 
-    private static final String LOG_TAG = Contract.class.getSimpleName();
-    // base interface is used for linkage in the 2 tables to be join
-
     public final static String CONTENT_AUTHORITY = "com.rj.android.nnews";
-    public final static Uri BASE_CONTENT_URI = Uri.parse("content://"+
-                        CONTENT_AUTHORITY);
+    // base interface is used for linkage in the 2 tables to be join
+    public final static Uri BASE_CONTENT_URI = Uri.parse("content://" +
+            CONTENT_AUTHORITY);
+    public final static String PATH_KEY = "key_type";
+    public final static String PATH_ARTICLE = "article";
+    ;
+    private static final String LOG_TAG = Contract.class.getSimpleName();
 
-    public final static String  PATH_KEY ="key_type";;
-    public final static String PATH_ARTICLE ="article";
-
-    public interface Base_Column{
+    public interface Base_Column {
         //act as link between two tables
         public static final String KEY_ID = "KEY_ID";
     }
 
     //for storing key type in the storage like Most Viewed , TopNews, Movies
-    public static final class Key_Type implements Base_Column
-    {
+    public static final class Key_Type implements Base_Column {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_KEY).build();
         public static final String CONTENT_TYPE =
-                "vnd.android.cursor.dir/" + CONTENT_AUTHORITY +"/" +
-                        PATH_KEY ;
+                "vnd.android.cursor.dir/" + CONTENT_AUTHORITY + "/" +
+                        PATH_KEY;
         public static final String CONTENT_ITEM_TYPE =
-                "vnd.android.cursor.item/" + CONTENT_AUTHORITY +"/" +
-                        PATH_KEY ;
+                "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" +
+                        PATH_KEY;
 
         public static final String TABLE_NAME = "key_type";
         public static final String KEY_NAME = "KEY_NAME";
         public static final String KEY_URL = "KEY_URL";
 
-        public static  Uri buildKeyUri(long id  )
-        {
-            return ContentUris.withAppendedId(CONTENT_URI,id);
+        public static Uri buildKeyUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
         public static long getKeyNameFromUri(Uri uri) {
@@ -52,16 +49,16 @@ public class Contract {
     }
 
     //stores article information for a particular news
-    public static final class Article implements Base_Column{
+    public static final class Article implements Base_Column {
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_ARTICLE).build();
 
         public static final String CONTENT_TYPE =
-                "vnd.android.cursor.dir/" + CONTENT_AUTHORITY +"/" +
-                        PATH_ARTICLE ;
+                "vnd.android.cursor.dir/" + CONTENT_AUTHORITY + "/" +
+                        PATH_ARTICLE;
         public static final String CONTENT_ITEM_TYPE =
-                "vnd.android.cursor.item/" + CONTENT_AUTHORITY +"/" +
-                        PATH_ARTICLE ;
+                "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" +
+                        PATH_ARTICLE;
 
 
         public static final String TABLE_NAME = "article";
@@ -87,19 +84,18 @@ public class Contract {
 
         public static final String PHOTO_HEADING = "PHOTO_HEADING";
 
-        public static  Uri buildArticleUri(int id)
-        {
-                    return    CONTENT_URI.buildUpon().appendPath(Long.toString(id)).build();
+        public static Uri buildArticleUri(int id) {
+            return CONTENT_URI.buildUpon().appendPath(Long.toString(id)).build();
         }
 
 
-        public static Uri buildKeyWithStartDate(String keyName , String startDate){
-            return  CONTENT_URI.buildUpon().appendPath(keyName)
+        public static Uri buildKeyWithStartDate(String keyName, String startDate) {
+            return CONTENT_URI.buildUpon().appendPath(keyName)
                     .appendPath(startDate).build();
         }
 
-        public static Uri buildUriWithKeyName(String keyName ){
-            return  CONTENT_URI.buildUpon().appendPath(keyName).build();
+        public static Uri buildUriWithKeyName(String keyName) {
+            return CONTENT_URI.buildUpon().appendPath(keyName).build();
         }
 
         public static String getStartDateFromUri(Uri uri) {

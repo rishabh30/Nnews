@@ -13,11 +13,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:adjustViewBounds="true"
-        android:transitionName="@string/transition_image"
-        android:scaleType="fitCenter"
         android:layout_weight="4"
-        android:src="@drawable/loading2" />
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/loading2"
+        android:transitionName="@string/transition_image" />
 
     <RelativeLayout
         android:layout_width="0dp"
@@ -33,13 +33,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text=""
-            android:padding="32dp"
-            android:textStyle="bold"
             android:fontFamily="sans-serif"
-            android:textColor="@color/black"
+            android:gravity="center_vertical"
+            android:padding="32dp"
+            android:text=""
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:gravity="center_vertical" />
+            android:textColor="@color/black"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/friendlyday"
@@ -48,9 +48,9 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_gravity="right"
-            android:paddingRight="10dp"
-
             android:fontFamily="sans-serif-light"
+
+            android:paddingRight="10dp"
             android:text=""
             android:textSize="12sp" />
 

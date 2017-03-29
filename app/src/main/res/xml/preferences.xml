@@ -1,27 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:style="http://schemas.android.com/apk/res-auto"
     android:theme="@style/ArticleTheme3">
-        <ListPreference
-            android:key="@string/noi_key"
-            android:title="@string/noi_title"
-            android:dialogTitle="@string/noi"
-            android:entries="@array/noi_entries"
-            android:summary="%s"
-            android:entryValues="@array/noi_entries_values"
-            android:defaultValue="@string/noi_default" />
-        <CheckBoxPreference
-            android:key="@string/key_notific"
-            android:title="@string/notific"
-            android:summaryOff="@string/notific_off"
-            android:summaryOn="@string/notific_on"
-            android:defaultValue="true" />
+    <ListPreference
+        android:defaultValue="@string/noi_default"
+        android:dialogTitle="@string/noi"
+        android:entries="@array/noi_entries"
+        android:entryValues="@array/noi_entries_values"
+        android:key="@string/noi_key"
+        android:summary="%s"
+        android:title="@string/noi_title" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/key_notific"
+        android:summaryOff="@string/notific_off"
+        android:summaryOn="@string/notific_on"
+        android:title="@string/notific" />
 
     <com.rj.android.nnews.CustomPreferences.MyPreference
-        android:key="clear_key"
-        android:title="Clear Cache"
         android:defaultValue="true"
-        />
+        android:key="clear_key"
+        android:title="Clear Cache" />
 
 
 </PreferenceScreen>

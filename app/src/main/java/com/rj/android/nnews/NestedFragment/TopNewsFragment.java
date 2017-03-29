@@ -30,9 +30,7 @@ import android.widget.TextView;
 import com.rj.android.nnews.Adapter.ArticleListAdapter;
 import com.rj.android.nnews.DetailActivity;
 import com.rj.android.nnews.MainActivity;
-import com.rj.android.nnews.MainFragment;
 import com.rj.android.nnews.R;
-import com.rj.android.nnews.Sync.SyncAdapter;
 import com.rj.android.nnews.Utility;
 import com.rj.android.nnews.data.Contract;
 
@@ -62,6 +60,7 @@ public class TopNewsFragment extends Fragment implements LoaderManager.LoaderCal
             Contract.Article.PUBLISH_DATE,
             Contract.Article.PHOTO_URL
     };
+    SwipeRefreshLayout mySwipeRefreshLayout;
 
     public static TopNewsFragment newInstance() {
         TopNewsFragment fragmentFirst = new TopNewsFragment();
@@ -97,8 +96,6 @@ public class TopNewsFragment extends Fragment implements LoaderManager.LoaderCal
 
         );
     }
-
-    SwipeRefreshLayout mySwipeRefreshLayout;
 
     @TargetApi(Build.VERSION_CODES.M)
     @Nullable

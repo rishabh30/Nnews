@@ -30,14 +30,15 @@ import android.widget.TextView;
 import com.rj.android.nnews.Adapter.ArticleListAdapter;
 import com.rj.android.nnews.DetailActivity;
 import com.rj.android.nnews.MainActivity;
-import com.rj.android.nnews.MainFragment;
 import com.rj.android.nnews.R;
+import com.rj.android.nnews.Sync.SyncAdapter;
 import com.rj.android.nnews.Utility;
 import com.rj.android.nnews.data.Contract;
-import com.rj.android.nnews.Sync.SyncAdapter;
 
 public class MostViwedFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final String LOG_TAG = MostViwedFragment.class.getSimpleName();
+    private static final int FORECAST_LOADER = 1;
     String getUrlString, getKeyName;
     String SELECTED_KEY = "POSITION";
     String[] ArticleColumns = {
@@ -52,15 +53,13 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
             Contract.Article.PUBLISH_DATE,
             Contract.Article.PHOTO_URL
     };
-
-    private static final String LOG_TAG = MostViwedFragment.class.getSimpleName();
-
-    private static final int FORECAST_LOADER = 1;
-
     boolean mTwoPane;
 
     boolean isRefresh = true;
     int mPosition;
+    ListView main_list;
+    ArticleListAdapter madapter;
+    SwipeRefreshLayout mySwipeRefreshLayout;
 
     public static MostViwedFragment newInstance() {
         MostViwedFragment fragmentFirst = new MostViwedFragment();
@@ -79,14 +78,11 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
         return fragmentFirst;
     }
 
-    ListView main_list;
-    ArticleListAdapter madapter;
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.v(LOG_TAG," onCreate");
+        Log.v(LOG_TAG, " onCreate");
         getUrlString = getArguments().getString("saveUrl", "");
         getKeyName = getArguments().getString("saveKeyName", "");
 
@@ -101,17 +97,15 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
 
     }
 
-    SwipeRefreshLayout mySwipeRefreshLayout;
-
     @TargetApi(Build.VERSION_CODES.M)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        Log.v(LOG_TAG," onCreateView");
+        Log.v(LOG_TAG, " onCreateView");
         View rootView = inflater.inflate(R.layout.nesyed_fragment2, container, false);
 
-        mySwipeRefreshLayout =(SwipeRefreshLayout)rootView.findViewById(R.id.swiperefresh);
+        mySwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
         mySwipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -120,14 +114,14 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
 
                         // This method performs the actual data-refresh operation.
                         // The method calls setRefreshing(false) when it's finished.
-                       updateArticle();
+                        updateArticle();
                     }
                 }
         );
 
         main_list = (ListView) rootView.findViewById(R.id.main_list);
         View errorTextView;
-        errorTextView =  rootView.findViewById(R.id.ErrorInfo);
+        errorTextView = rootView.findViewById(R.id.ErrorInfo);
 
         madapter = new ArticleListAdapter(getActivity(), null, 0);
         main_list.setEmptyView(errorTextView);
@@ -200,14 +194,12 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
 
     private void setEmptyInfo() {
 
-        if(main_list.getCount() == 0) {
+        if (main_list.getCount() == 0) {
             TextView errorTextView;
             int message = R.string.no_info_available;
-            errorTextView = (TextView)getView().findViewById(R.id.ErrorInfo);
-            if(errorTextView!=null)
-            {
-                if(!Utility.isNetworkAvailable(getContext()))
-                {
+            errorTextView = (TextView) getView().findViewById(R.id.ErrorInfo);
+            if (errorTextView != null) {
+                if (!Utility.isNetworkAvailable(getContext())) {
                     message = R.string.no_network;
                 }
             }
@@ -218,12 +210,11 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
     }
 
 
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String sortOrder = Contract.Article.PUBLISH_DATE + " DESC LIMIT " + Utility.get_noi_list(getContext());
 
-        Log.v(LOG_TAG," onCreateLoader");
+        Log.v(LOG_TAG, " onCreateLoader");
 
 
         String KeyName = "newswire";
@@ -245,7 +236,7 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
 
     private void updateArticle() {
 
-        Log.v(LOG_TAG," UpdateArticle");
+        Log.v(LOG_TAG, " UpdateArticle");
 
         Context context = getContext();
         SharedPreferences SP = context.getSharedPreferences("UrlDetails", Context.MODE_PRIVATE);
@@ -262,13 +253,13 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
-        Log.v(LOG_TAG," onLoader Reset");
+        Log.v(LOG_TAG, " onLoader Reset");
         madapter.swapCursor(null);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        Log.v(LOG_TAG," Activity Created ");
+        Log.v(LOG_TAG, " Activity Created ");
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
@@ -285,14 +276,14 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onStart() {
 
-        Log.v(LOG_TAG," START");
+        Log.v(LOG_TAG, " START");
         super.onStart();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.v(LOG_TAG," RESUME");
+        Log.v(LOG_TAG, " RESUME");
 
         String KeyName = "newswire";
 
@@ -300,14 +291,16 @@ public class MostViwedFragment extends Fragment implements LoaderManager.LoaderC
                 .build();
 
         Log.d(LOG_TAG, " onCreateLoader: ");
-            Cursor cursor = getContext().getContentResolver().query(
+        Cursor cursor = getContext().getContentResolver().query(
                 articleUri,
                 ArticleColumns,
                 null,
                 null,
                 null
         );
-        if(!cursor.moveToFirst()) {updateArticle();}
+        if (!cursor.moveToFirst()) {
+            updateArticle();
+        }
 
         getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
     }

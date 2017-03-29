@@ -10,7 +10,7 @@ import android.util.AttributeSet;
 
 public class customPreferenceClear extends DialogPreference {
 
-    Boolean DEFAULT_VALUE=false;
+    Boolean DEFAULT_VALUE = false;
     boolean mCurrentValue;
 
     public customPreferenceClear(Context context, AttributeSet attrs) {
@@ -83,27 +83,6 @@ public class customPreferenceClear extends DialogPreference {
     }
 
     private static class SavedState extends BaseSavedState {
-        // Member that holds the setting's value
-        // Change this data type to match the type saved by your Preference
-        Boolean value;
-
-        public SavedState(Parcelable superState) {
-            super(superState);
-        }
-
-        public SavedState(Parcel source) {
-            super(source);
-            // Get the current preference's value
-            value = (boolean)(source.readByte()!=0);  // Change this to read the appropriate data type
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-            // Write the preference's value
-            dest.writeByte((byte)(value ? 1:0));  // Change this to write the appropriate data type
-        }
-
         // Standard creator object using an instance of this class
         public static final Parcelable.Creator<SavedState> CREATOR =
                 new Parcelable.Creator<SavedState>() {
@@ -116,6 +95,26 @@ public class customPreferenceClear extends DialogPreference {
                         return new SavedState[size];
                     }
                 };
+        // Member that holds the setting's value
+        // Change this data type to match the type saved by your Preference
+        Boolean value;
+
+        public SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        public SavedState(Parcel source) {
+            super(source);
+            // Get the current preference's value
+            value = (boolean) (source.readByte() != 0);  // Change this to read the appropriate data type
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            // Write the preference's value
+            dest.writeByte((byte) (value ? 1 : 0));  // Change this to write the appropriate data type
+        }
     }
 
 }

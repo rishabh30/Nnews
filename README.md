@@ -33,8 +33,12 @@ from database with the help of cursor loaders , RecycleView and ListView .
   <img src="https://github.com/rishabh30/Nnews/blob/master/ScreenShots/Detail2.png" width="200"/>
 </p>
 
+<h3>To be implemented :</h3>
+<ul>
+  <li> SnackBar  - To take user to setting if offline</li>
+</ul>
+
+
  <strong>  Nnews Apk : [Download Link](https://github.com/rishabh30/Nnews/raw/master/Nnews.apk ) </strong>
  
- 
- 
- <h3> Developer By:RISHABH JAIN </h3> 
+ <h3> Developed By:RISHABH JAIN </h3> 

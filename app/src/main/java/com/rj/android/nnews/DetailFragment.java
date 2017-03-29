@@ -1,4 +1,4 @@
- package com.rj.android.nnews;
+package com.rj.android.nnews;
 
 import android.content.ContentUris;
 import android.content.Context;
@@ -25,9 +25,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rj.android.nnews.data.Contract;
-import com.squareup.picasso.Picasso;
 
- public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
     private static final int DETAIL_LOADER = 0;
@@ -40,13 +39,13 @@ import com.squareup.picasso.Picasso;
     public TextView mAbstract;
     public TextView mSource;
     public TextView mNYTimes;
-    Cursor oldData=null;
+    Cursor oldData = null;
 
     String mMessage = null;
 
     String[] ArticleColumns = {
             Contract.Article._id,
-            Contract.Article.TABLE_NAME + "." +Contract.Article.KEY_ID,
+            Contract.Article.TABLE_NAME + "." + Contract.Article.KEY_ID,
             Contract.Article.TITLE,
             Contract.Article.ARTICLE_URL,
             Contract.Article.ABSTRACT,
@@ -71,16 +70,15 @@ import com.squareup.picasso.Picasso;
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu , MenuInflater inflater) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.fragment_detail, menu);
         MenuItem menuItem = menu.findItem(R.id.action_share);
 
         ShareActionProvider mShareActionProvider
-                =  (ShareActionProvider)MenuItemCompat.getActionProvider(menuItem);
+                = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
 
-        if(mShareActionProvider!=null)
-        {
+        if (mShareActionProvider != null) {
             mShareActionProvider.setShareIntent(createShareIntent());
         }
     }
@@ -90,32 +88,32 @@ import com.squareup.picasso.Picasso;
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View rootView =  inflater.inflate(com.rj.android.nnews.R.layout.fragment_detail, container, false);
+        View rootView = inflater.inflate(com.rj.android.nnews.R.layout.fragment_detail, container, false);
 
-        mImage = (ImageView)rootView.findViewById(R.id.detail_image);
-        mHeading= (TextView)rootView.findViewById(R.id.detail_photo_heading);
-        mDate= (TextView)rootView.findViewById(R.id.detail_date);
+        mImage = (ImageView) rootView.findViewById(R.id.detail_image);
+        mHeading = (TextView) rootView.findViewById(R.id.detail_photo_heading);
+        mDate = (TextView) rootView.findViewById(R.id.detail_date);
 
-        mTitle= (TextView)rootView.findViewById(R.id.detail_title);
-        mAbstract= (TextView)rootView.findViewById(R.id.detail_abstract);
-        mSource= (TextView)rootView.findViewById(R.id.detail_source);
-        mNYTimes= (TextView)rootView.findViewById(R.id.NYTimes);
-        return  rootView;
+        mTitle = (TextView) rootView.findViewById(R.id.detail_title);
+        mAbstract = (TextView) rootView.findViewById(R.id.detail_abstract);
+        mSource = (TextView) rootView.findViewById(R.id.detail_source);
+        mNYTimes = (TextView) rootView.findViewById(R.id.NYTimes);
+        return rootView;
 
     }
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
 
-        Log.v(LOG_TAG , "on Loader Created");
+        Log.v(LOG_TAG, "on Loader Created");
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
         int articleId = sharedPreferences.getInt("ARTICLE_ID", 1);
 
         String sortOrder = Contract.Article.PUBLISH_DATE + " DESC ";
         Log.d(LOG_TAG, "onCreate: ");
-        Uri articleUri = ContentUris.withAppendedId(Contract.Article.CONTENT_URI , articleId);
-        Log.d(LOG_TAG, "CLICKED  position  " + articleId +   " id  "+id);
+        Uri articleUri = ContentUris.withAppendedId(Contract.Article.CONTENT_URI, articleId);
+        Log.d(LOG_TAG, "CLICKED  position  " + articleId + " id  " + id);
         Log.d(LOG_TAG, "onCreateLoader: ");
         Log.v(LOG_TAG, articleUri.toString());
         return new CursorLoader(
@@ -131,7 +129,7 @@ import com.squareup.picasso.Picasso;
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(DETAIL_LOADER,null,this);
+        getLoaderManager().initLoader(DETAIL_LOADER, null, this);
         onCreateLoader(DETAIL_LOADER, null);
     }
 
@@ -145,26 +143,22 @@ import com.squareup.picasso.Picasso;
     @Override
     public void onLoadFinished(Loader loader, Cursor data) {
         Log.v(LOG_TAG, "on Loader Finished");
-       if(!data.moveToFirst())
-        {
+        if (!data.moveToFirst()) {
             oldData = data;
-        }
-        else if (oldData!=null)
-        {
-            data =oldData;
+        } else if (oldData != null) {
+            data = oldData;
         }
 
-        if (data.moveToFirst())
-        {
+        if (data.moveToFirst()) {
 
             String imageUrl = data.getString(
                     data.getColumnIndex(Contract.Article.PHOTO_URL_HIGH));
-            String heading= data.getString(
+            String heading = data.getString(
                     data.getColumnIndex(Contract.Article.PHOTO_HEADING));
-            if(heading=="null")
-                heading="";
-            String date  = data.getString(
-                data.getColumnIndex(Contract.Article.PUBLISH_DATE));
+            if (heading == "null")
+                heading = "";
+            String date = data.getString(
+                    data.getColumnIndex(Contract.Article.PUBLISH_DATE));
 
             try {
                 date = Utility.getDatabaseDate(date);
@@ -173,26 +167,24 @@ import com.squareup.picasso.Picasso;
                 date = null;
             }
 
-            String Title= data.getString(
-                data.getColumnIndex(Contract.Article.TITLE));
-            String abs= data.getString(
-                data.getColumnIndex(Contract.Article.ABSTRACT));
-            String Source= data.getString(
-                data.getColumnIndex(Contract.Article.SOURCE));
+            String Title = data.getString(
+                    data.getColumnIndex(Contract.Article.TITLE));
+            String abs = data.getString(
+                    data.getColumnIndex(Contract.Article.ABSTRACT));
+            String Source = data.getString(
+                    data.getColumnIndex(Contract.Article.SOURCE));
 
-            if(Title=="null")
-                Title="";
+            if (Title == "null")
+                Title = "";
 
             final String articleUrl = data.getString(
                     data.getColumnIndex(Contract.Article.ARTICLE_URL)
             );
             mImage.setVisibility(View.VISIBLE);
             mMessage = Title + " - " + articleUrl;
-            if(imageUrl.matches("no"))
-            {
+            if (imageUrl.matches("no")) {
                 mImage.setImageResource(R.drawable.noblogo);
-            }
-            else {
+            } else {
 
                 Glide.with(getActivity())
                         .load(imageUrl)
@@ -222,8 +214,8 @@ import com.squareup.picasso.Picasso;
                 }
             });
 
-        }else {
-            Log.v(LOG_TAG," NO DATA");
+        } else {
+            Log.v(LOG_TAG, " NO DATA");
         }
     }
 
@@ -231,12 +223,11 @@ import com.squareup.picasso.Picasso;
     public void onLoaderReset(Loader loader) {
     }
 
-    private Intent createShareIntent()
-    {
+    private Intent createShareIntent() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT ,  mMessage);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, mMessage);
         return shareIntent;
     }
 }

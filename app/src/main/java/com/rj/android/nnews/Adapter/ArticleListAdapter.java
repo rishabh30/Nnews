@@ -9,10 +9,10 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.rj.android.nnews.data.Contract;
 import com.rj.android.nnews.MainFragment;
 import com.rj.android.nnews.R;
 import com.rj.android.nnews.Utility;
+import com.rj.android.nnews.data.Contract;
 import com.squareup.picasso.Picasso;
 
 public class ArticleListAdapter extends CursorAdapter {
@@ -28,7 +28,7 @@ public class ArticleListAdapter extends CursorAdapter {
 
     @Override
     public int getItemViewType(int position) {
-      return (position==0) ? MAIN_STORY : SIDE_STORY ;
+        return (position == 0) ? MAIN_STORY : SIDE_STORY;
     }
 
     @Override
@@ -42,15 +42,13 @@ public class ArticleListAdapter extends CursorAdapter {
         int viewType = getItemViewType(cursor.getPosition());
         int layoutId = -1;
 
-        if(viewType ==MAIN_STORY && !useMainLayout)
-        {
+        if (viewType == MAIN_STORY && !useMainLayout) {
             layoutId = R.layout.main_list_item;
-        }else
-        {
+        } else {
             layoutId = R.layout.list_item_layout;
         }
 
-        View view = LayoutInflater.from(context).inflate(layoutId  ,parent,false);
+        View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         view.setTag(viewHolder);
         return view;
@@ -62,11 +60,11 @@ public class ArticleListAdapter extends CursorAdapter {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         String title = cursor.getString(MainFragment.COL_ARTICLE_TITLE);
-        if(title=="null")
-            title="";
+        if (title == "null")
+            title = "";
         String imageUrl;
         int viewType = getItemViewType(cursor.getPosition());
-            imageUrl = cursor.getString(cursor.getColumnIndex(Contract.Article.PHOTO_URL_HIGH));
+        imageUrl = cursor.getString(cursor.getColumnIndex(Contract.Article.PHOTO_URL_HIGH));
 
         String date = cursor.getString(
                 cursor.getColumnIndex(Contract.Article.PUBLISH_DATE));
@@ -96,13 +94,12 @@ public class ArticleListAdapter extends CursorAdapter {
         this.useMainLayout = useMainLayout;
     }
 
-    public static class ViewHolder{
-        TextView titleView ;
+    public static class ViewHolder {
+        TextView titleView;
         TextView friendlyday;
-        ImageView imageView ;
+        ImageView imageView;
 
-        public ViewHolder(View view)
-        {
+        public ViewHolder(View view) {
             titleView = (TextView) view.findViewById(R.id.list_item_title);
             friendlyday = (TextView) view.findViewById(R.id.friendlyday);
             imageView = (ImageView) view.findViewById(R.id.list_item_image);

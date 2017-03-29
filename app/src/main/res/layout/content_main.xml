@@ -11,9 +11,9 @@
 
     <fragment
         android:id="@+id/myfragment"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
         android:name="com.rj.android.nnews.MainFragment"
-        tools:layout="@layout/fragment_main"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout="@layout/fragment_main" />
 
 </LinearLayout>

@@ -24,13 +24,17 @@ public class ArticleProvider extends ContentProvider {
     private static final int ARTICLE_WITH_ID = 303;//ITEM
 
 
-    private  static final UriMatcher sUriMatcher = buildUriMatcher();
-
-    private DbHelper mOpenHelper;
-
+    private static final UriMatcher sUriMatcher = buildUriMatcher();
+    private static final String sArticleSelectionByKey =
+            Contract.Key_Type.TABLE_NAME +
+                    "." + Contract.Key_Type.KEY_NAME + " = ? ";
+    private static final String sArticleSelectionByKeyAndDate =
+            Contract.Key_Type.TABLE_NAME + "." + Contract.Key_Type.KEY_NAME + " = ? AND " +
+                    Contract.Article.PUBLISH_DATE + " >= ? ";
     private static SQLiteQueryBuilder sArticleByKeyNameQueryBuilder;
+
     static {
-        sArticleByKeyNameQueryBuilder =new SQLiteQueryBuilder();
+        sArticleByKeyNameQueryBuilder = new SQLiteQueryBuilder();
         sArticleByKeyNameQueryBuilder.setTables(
                 Contract.Key_Type.TABLE_NAME + " INNER JOIN " +
                         Contract.Article.TABLE_NAME + " ON " +
@@ -40,48 +44,38 @@ public class ArticleProvider extends ContentProvider {
 
     }
 
-    private static final String sArticleSelectionByKey =
-            Contract.Key_Type.TABLE_NAME +
-                    "." + Contract.Key_Type.KEY_NAME + " = ? ";
+    private DbHelper mOpenHelper;
 
-    private static final String sArticleSelectionByKeyAndDate =
-            Contract.Key_Type.TABLE_NAME + "." + Contract.Key_Type.KEY_NAME + " = ? AND " +
-                    Contract.Article.PUBLISH_DATE +" >= ? ";
-
-    private static UriMatcher buildUriMatcher()
-    {
+    private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = Contract.CONTENT_AUTHORITY;
 
-        matcher.addURI(authority,Contract.PATH_KEY,KEY);
-        matcher.addURI(authority,Contract.PATH_KEY +"/*",KEY_ID);
+        matcher.addURI(authority, Contract.PATH_KEY, KEY);
+        matcher.addURI(authority, Contract.PATH_KEY + "/*", KEY_ID);
 
-        matcher.addURI(authority,Contract.PATH_ARTICLE , ARTICLE);
-        matcher.addURI(authority,Contract.PATH_ARTICLE + "/#" ,ARTICLE_WITH_ID);
-        matcher.addURI(authority,Contract.PATH_ARTICLE + "/*" , ARTICLE_WITH_KEY);
-        matcher.addURI(authority,Contract.PATH_ARTICLE + "/*/*" ,ARTICLE_WITH_KEY_AND_DATE);
+        matcher.addURI(authority, Contract.PATH_ARTICLE, ARTICLE);
+        matcher.addURI(authority, Contract.PATH_ARTICLE + "/#", ARTICLE_WITH_ID);
+        matcher.addURI(authority, Contract.PATH_ARTICLE + "/*", ARTICLE_WITH_KEY);
+        matcher.addURI(authority, Contract.PATH_ARTICLE + "/*/*", ARTICLE_WITH_KEY_AND_DATE);
 
 
         return matcher;
     }
 
     // Select Articles according to Key Name and StartDate if present
-    private Cursor getArticleByKeyName(Uri uri , String[] projection , String sortOrder)
-    {
+    private Cursor getArticleByKeyName(Uri uri, String[] projection, String sortOrder) {
         String KeyName = Contract.Article.getKeyNameFromUri(uri);
         String startDate = Contract.Article.getStartDateFromUri(uri);
 
         String[] selectionArgs;
-        String selection ;
-        if(startDate == null)
-        {
-            Log.d(LOG_TAG," START DATE NULL ");
+        String selection;
+        if (startDate == null) {
+            Log.d(LOG_TAG, " START DATE NULL ");
             selection = sArticleSelectionByKey;
             selectionArgs = new String[]{KeyName};
-        }else
-        {
-            Log.d(LOG_TAG," START DATE ");
-            selectionArgs=new String []{KeyName,startDate};
+        } else {
+            Log.d(LOG_TAG, " START DATE ");
+            selectionArgs = new String[]{KeyName, startDate};
             selection = sArticleSelectionByKeyAndDate;
         }
         return sArticleByKeyNameQueryBuilder.query(mOpenHelper.getWritableDatabase(),
@@ -95,16 +89,15 @@ public class ArticleProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-       mOpenHelper = new DbHelper(getContext());
+        mOpenHelper = new DbHelper(getContext());
         return true;
     }
 
     @Nullable
     @Override
     public String getType(Uri uri) {
-        final  int match = sUriMatcher.match(uri);
-        switch (match)
-        {
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
             case KEY:
                 return Contract.Key_Type.CONTENT_TYPE;
             case KEY_ID:
@@ -120,9 +113,8 @@ public class ArticleProvider extends ContentProvider {
                 return Contract.Article.CONTENT_TYPE;
 
 
-
             default:
-                throw new UnsupportedOperationException("Unknown uri : "+ uri );
+                throw new UnsupportedOperationException("Unknown uri : " + uri);
         }
     }
 
@@ -130,14 +122,12 @@ public class ArticleProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-       Cursor retCursor;
+        Cursor retCursor;
         Log.d(LOG_TAG, uri.toString());
-        switch (sUriMatcher.match(uri))
-        {
-            case ARTICLE:
-            {
+        switch (sUriMatcher.match(uri)) {
+            case ARTICLE: {
                 Log.d(LOG_TAG, "ARTICLE");
-                retCursor=mOpenHelper.getReadableDatabase().query(
+                retCursor = mOpenHelper.getReadableDatabase().query(
                         Contract.Article.TABLE_NAME,
                         projection,
                         selection,
@@ -151,10 +141,10 @@ public class ArticleProvider extends ContentProvider {
 
             case ARTICLE_WITH_ID: {
                 Log.d(LOG_TAG, " ARTICLE WITH ID " + ContentUris.parseId(uri));
-                retCursor=mOpenHelper.getReadableDatabase().query(
+                retCursor = mOpenHelper.getReadableDatabase().query(
                         Contract.Article.TABLE_NAME,
                         projection,
-                        Contract.Article._id + " = '" + uri.getLastPathSegment() +" ' ",
+                        Contract.Article._id + " = '" + uri.getLastPathSegment() + " ' ",
                         null,
                         null,
                         null,
@@ -163,21 +153,19 @@ public class ArticleProvider extends ContentProvider {
                 break;
             }
 
-            case ARTICLE_WITH_KEY:
-            {       Log.d(LOG_TAG, "ARTICLE WITH key");
-                retCursor=getArticleByKeyName(uri,projection,sortOrder);
+            case ARTICLE_WITH_KEY: {
+                Log.d(LOG_TAG, "ARTICLE WITH key");
+                retCursor = getArticleByKeyName(uri, projection, sortOrder);
                 break;
             }
-            case ARTICLE_WITH_KEY_AND_DATE:
-            {
+            case ARTICLE_WITH_KEY_AND_DATE: {
                 Log.d(LOG_TAG, "ARTICLE WITH ID");
-                retCursor=getArticleByKeyName(uri,projection,sortOrder);
+                retCursor = getArticleByKeyName(uri, projection, sortOrder);
                 break;
             }
-            case KEY:
-            {
+            case KEY: {
                 //for a list of keys
-                retCursor=mOpenHelper.getReadableDatabase().query(
+                retCursor = mOpenHelper.getReadableDatabase().query(
                         Contract.Key_Type.TABLE_NAME,
                         projection,
                         selection,
@@ -188,12 +176,11 @@ public class ArticleProvider extends ContentProvider {
                 );
                 break;
             }
-            case KEY_ID:
-            {       //for a specific key id
-                retCursor=mOpenHelper.getReadableDatabase().query(
+            case KEY_ID: {       //for a specific key id
+                retCursor = mOpenHelper.getReadableDatabase().query(
                         Contract.Key_Type.TABLE_NAME,
                         projection,
-                        Contract.Key_Type.KEY_ID + " = '" + ContentUris.parseId(uri)+" ' ",
+                        Contract.Key_Type.KEY_ID + " = '" + ContentUris.parseId(uri) + " ' ",
                         null,
                         null,
                         null,
@@ -202,11 +189,11 @@ public class ArticleProvider extends ContentProvider {
                 break;
             }
             default:
-                throw new UnsupportedOperationException("Unknown uri : "+ uri );
+                throw new UnsupportedOperationException("Unknown uri : " + uri);
 
         }
-        retCursor.setNotificationUri(getContext().getContentResolver(),uri);
-        return  retCursor;
+        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return retCursor;
     }
 
 
@@ -216,40 +203,32 @@ public class ArticleProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
-        Uri returnUri=null;
+        Uri returnUri = null;
 
-        switch(match)
-        {
-            case KEY : {
-                long id = db.insert(Contract.Key_Type.TABLE_NAME,null,values);
-                if(id>0)
-                {
+        switch (match) {
+            case KEY: {
+                long id = db.insert(Contract.Key_Type.TABLE_NAME, null, values);
+                if (id > 0) {
                     returnUri = Contract.Key_Type.buildKeyUri(id);
-                }
-                else
-                {
-                    throw new android.database.SQLException("Failed to insert rows "+ uri);
+                } else {
+                    throw new android.database.SQLException("Failed to insert rows " + uri);
                 }
                 break;
             }
-            case ARTICLE:
-            {
-                long id = db.insert(Contract.Article.TABLE_NAME,null,values);
-                if(id>0)
-                {
-                    returnUri = Contract.Article.buildArticleUri((int)id);
-                }
-                else
-                {
-                    throw new android.database.SQLException("Failed to insert rows "+ uri);
+            case ARTICLE: {
+                long id = db.insert(Contract.Article.TABLE_NAME, null, values);
+                if (id > 0) {
+                    returnUri = Contract.Article.buildArticleUri((int) id);
+                } else {
+                    throw new android.database.SQLException("Failed to insert rows " + uri);
                 }
                 break;
             }
             default:
-                throw  new UnsupportedOperationException("Unkonown Uri : "+uri);
+                throw new UnsupportedOperationException("Unkonown Uri : " + uri);
 
         }
-        getContext().getContentResolver().notifyChange(uri,null);
+        getContext().getContentResolver().notifyChange(uri, null);
         return returnUri;
     }
 
@@ -258,24 +237,22 @@ public class ArticleProvider extends ContentProvider {
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
-        int rowDeleted ;
-        switch (match)
-        {
-            case KEY :
-                rowDeleted = db.delete(Contract.Key_Type.TABLE_NAME,selection,selectionArgs);
+        int rowDeleted;
+        switch (match) {
+            case KEY:
+                rowDeleted = db.delete(Contract.Key_Type.TABLE_NAME, selection, selectionArgs);
                 break;
             case ARTICLE:
-                rowDeleted = db.delete(Contract.Article.TABLE_NAME,selection,selectionArgs);
+                rowDeleted = db.delete(Contract.Article.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
-                throw new UnsupportedOperationException("Unknown Uri : "+ uri);
+                throw new UnsupportedOperationException("Unknown Uri : " + uri);
         }
 
-        if(null == selection || rowDeleted!=0 )
-        {
-            getContext().getContentResolver().notifyChange(uri,null);
+        if (null == selection || rowDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
         }
-        return  rowDeleted;
+        return rowDeleted;
     }
 
     // TO Update on basics of selectionArgs
@@ -283,52 +260,47 @@ public class ArticleProvider extends ContentProvider {
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
-        int rowUpdated ;
-        switch (match)
-        {
-            case KEY :
-                rowUpdated = db.update(Contract.Key_Type.TABLE_NAME,values,selection,selectionArgs);
+        int rowUpdated;
+        switch (match) {
+            case KEY:
+                rowUpdated = db.update(Contract.Key_Type.TABLE_NAME, values, selection, selectionArgs);
                 break;
             case ARTICLE:
-                rowUpdated = db.update(Contract.Article.TABLE_NAME,values,selection,selectionArgs);
+                rowUpdated = db.update(Contract.Article.TABLE_NAME, values, selection, selectionArgs);
                 break;
             default:
-                throw new UnsupportedOperationException("Unknown Uri : "+ uri);
+                throw new UnsupportedOperationException("Unknown Uri : " + uri);
         }
 
-        if(rowUpdated!=0 )
-        {
-            getContext().getContentResolver().notifyChange(uri,null);
+        if (rowUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
         }
-        return  rowUpdated;
+        return rowUpdated;
     }
 
     // To Insert Multiple Rows Efficiently
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
 
-        final SQLiteDatabase db =mOpenHelper.getWritableDatabase();
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
-        switch(match)
-        {
+        switch (match) {
             case ARTICLE:
                 db.beginTransaction();
                 int returnCount = 0;
-                try{
-                    for(ContentValues value : values)
-                    {
-                        long _id = db.insert(Contract.Article.TABLE_NAME,null,value);
-                        if(_id!=-1)
-                        {
+                try {
+                    for (ContentValues value : values) {
+                        long _id = db.insert(Contract.Article.TABLE_NAME, null, value);
+                        if (_id != -1) {
                             returnCount++;
                         }
                     }
                     db.setTransactionSuccessful();
-                }finally {
+                } finally {
                     db.endTransaction();
                 }
-                getContext().getContentResolver().notifyChange(uri,null);
-                return  returnCount;
+                getContext().getContentResolver().notifyChange(uri, null);
+                return returnCount;
             default:
                 return super.bulkInsert(uri, values);
         }

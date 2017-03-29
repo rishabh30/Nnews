@@ -29,7 +29,6 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.Key;
 import com.rj.android.nnews.MainActivity;
 import com.rj.android.nnews.R;
 import com.rj.android.nnews.Utility;
@@ -50,27 +49,10 @@ import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
-    public final String LOG_TAG = SyncAdapter.class.getSimpleName();
-
-
-
     // Interval at which to sync with the weather, in seconds.
     // 60 seconds (1 minute) * 180 = 3 hours
-    public static final int SYNC_INTERVAL = 60 * 180 *3 ;
-    public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
-    private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
-    private static final int NOTIFICATION_ID = 1934;
-
-
-    String[] ArticleColumns = {
-            Contract.Article._id,
-            Contract.Article.TABLE_NAME + "." +Contract.Article.KEY_ID,
-            Contract.Article.TITLE,
-            Contract.Article.ARTICLE_URL,
-            Contract.Article.PHOTO_URL,
-            Contract.Article.PUBLISH_DATE,
-            Contract.Article.PHOTO_URL_HIGH
-    };
+    public static final int SYNC_INTERVAL = 60 * 180 * 3;
+    public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
     public static final int COL_ARTICLE_ID = 0;
     public static final int COL_ARTICLE_KEY_ID = 1;
     public static final int COL_ARTICLE_TITLE = 2;
@@ -78,11 +60,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public static final int COL_ARTICLE_PHOTO_URL = 4;
     public static final int COL_ARTICLE_PUBLISH_DATE = 5;
     public static final int COL_ARTICLE_PHOTO_URL_HIGH = 6;
-
-
-    ArrayAdapter madapter;
-    String[] textinfo = new String[15];
-
     public static final String RESULTS = "results";
     public static final String TITLE = "title";
     public static final String ABSTRACT = "abstract";
@@ -90,22 +67,123 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public static final String SOURCE = "byline";
     public static final String ID = "id";
     public static final String ARITCLE_URL = "url";
-
-
     public static final String MEDIA = "media";
     public static final String MULTIMEDIA_ARRAY = "multimedia";
     public static final String PHOTO_CAPTION = "caption";
     public static final String PHOTO_URL = "url";
+    private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
+    private static final int NOTIFICATION_ID = 1934;
+    public final String LOG_TAG = SyncAdapter.class.getSimpleName();
+    String[] ArticleColumns = {
+            Contract.Article._id,
+            Contract.Article.TABLE_NAME + "." + Contract.Article.KEY_ID,
+            Contract.Article.TITLE,
+            Contract.Article.ARTICLE_URL,
+            Contract.Article.PHOTO_URL,
+            Contract.Article.PUBLISH_DATE,
+            Contract.Article.PHOTO_URL_HIGH
+    };
+    ArrayAdapter madapter;
+    String[] textinfo = new String[15];
 
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
     }
 
+    /**
+     * Helper method to have the sync adapter sync immediately
+     *
+     * @param context The context used to access the account service
+     */
+    public static void syncImmediately(Context context) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        ContentResolver.requestSync(getSyncAccount(context),
+                context.getString(R.string.content_authority), bundle);
+    }
 
+    /**
+     * Helper method to get the fake account to be used with SyncAdapter, or make a new one
+     * if the fake account doesn't exist yet.  If we make a new account, we call the
+     * onAccountCreated method so we can initialize things.
+     *
+     * @param context The context used to access the account service
+     * @return a fake account.
+     */
+    public static Account getSyncAccount(Context context) {
+        // Get an instance of the Android account manager
+        AccountManager accountManager =
+                (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
+
+        // Create the account type and default account
+        Account newAccount = new Account(
+                context.getString(R.string.app_name), context.getString(R.string.sync_account_type));
+
+        // If the password doesn't exist, the account doesn't exist
+        if (null == accountManager.getPassword(newAccount)) {
+
+        /*
+         * Add the account and account type, no password or user data
+         * If successful, return the Account object, otherwise report an error.
+         */
+            if (!accountManager.addAccountExplicitly(newAccount, "", null)) {
+                return null;
+            }
+            /*
+             * If you don't set android:syncable="true" in
+             * in your <provider> element in the manifest,
+             * then call ContentResolver.setIsSyncable(account, AUTHORITY, 1)
+             * here.
+             */
+
+            onAccountCreated(newAccount, context);
+        }
+        return newAccount;
+    }
+
+    /**
+     * Helper method to schedule the sync adapter periodic execution
+     */
+    public static void configurePeriodicSync(Context context, int syncInterval, int flexTime) {
+        Account account = getSyncAccount(context);
+        String authority = context.getString(R.string.content_authority);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            // we can enable inexact timers in our periodic sync
+            SyncRequest request = new SyncRequest.Builder().
+                    syncPeriodic(syncInterval, flexTime).
+                    setSyncAdapter(account, authority).
+                    setExtras(new Bundle()).build();
+            ContentResolver.requestSync(request);
+        } else {
+            ContentResolver.addPeriodicSync(account,
+                    authority, new Bundle(), syncInterval);
+        }
+    }
+
+    private static void onAccountCreated(Account newAccount, Context context) {
+        /*
+         * Since we've created an account
+         */
+        SyncAdapter.configurePeriodicSync(context, SYNC_INTERVAL, SYNC_FLEXTIME);
+
+        /*
+         * Without calling setSyncAutomatically, our periodic sync will not be enabled.
+         */
+        ContentResolver.setSyncAutomatically(newAccount, context.getString(R.string.content_authority), true);
+
+        /*
+         * Finally, let's do a sync to get things started
+         */
+        syncImmediately(context);
+    }
+
+    public static void initializeSyncAdapter(Context context) {
+        getSyncAccount(context);
+    }
 
     //Adding keyName in personal Sql Database
-    private  long addKey(String KeyName , String url )
-    {
+    private long addKey(String KeyName, String url) {
         Log.v(LOG_TAG, "INSERTING " + KeyName);
         Cursor cursor = getContext().getContentResolver().query(
                 Contract.Key_Type.CONTENT_URI,
@@ -115,21 +193,18 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 null
         );
 
-        if(cursor.moveToFirst())
-        {
-            Log.v(LOG_TAG,"FOUND IN DATABASE  " );
+        if (cursor.moveToFirst()) {
+            Log.v(LOG_TAG, "FOUND IN DATABASE  ");
             int KeyIdIndex = cursor.getColumnIndex(Contract.Key_Type.KEY_ID);
-            long temp =  cursor.getLong(KeyIdIndex);
+            long temp = cursor.getLong(KeyIdIndex);
             cursor.close();
             return temp;
-        }
-        else
-        {
+        } else {
             Log.v(LOG_TAG, "DIDN'T  FOUND IN DATABASE  INSERTING ....");
             ContentValues cv = new ContentValues();
-            cv.put(Contract.Key_Type.KEY_NAME,KeyName);
+            cv.put(Contract.Key_Type.KEY_NAME, KeyName);
             cv.put(Contract.Key_Type.KEY_URL, url);
-            Uri KeyInsertUri = getContext().getContentResolver().insert(Contract.Key_Type.CONTENT_URI,cv);
+            Uri KeyInsertUri = getContext().getContentResolver().insert(Contract.Key_Type.CONTENT_URI, cv);
             cursor.close();
             Cursor cr = getContext().getContentResolver().query(
                     Contract.Key_Type.CONTENT_URI,
@@ -139,29 +214,26 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                     null
             );
             Log.v(LOG_TAG, "FOUND IN DATABASE  ");
-            if(cr.moveToFirst()) {
+            if (cr.moveToFirst()) {
                 int KeyIdIndex = cr.getColumnIndex(Contract.Key_Type.KEY_ID);
                 if (KeyIdIndex != -1)
                     return cr.getInt(KeyIdIndex);
-            }
-            else
+            } else
                 return 0;
         }
-        return  0;
+        return 0;
 
     }
 
     // Notify User on Daily Purpose
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    private void notifyWeather()
-    {
+    private void notifyWeather() {
         Context context = getContext();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String lastNotificationKey = context.getString(R.string.pref_last_notification);
         long lastSync = prefs.getLong(lastNotificationKey, 0);
         Boolean notific_enabled = Utility.get_notification_status(context);
-        if (System.currentTimeMillis() - lastSync >= DAY_IN_MILLIS && notific_enabled )
-        {
+        if (System.currentTimeMillis() - lastSync >= DAY_IN_MILLIS && notific_enabled) {
 
 
             String deleteDate = Utility.getDeleteDate();
@@ -169,18 +241,17 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                     ArticleColumns
                     , Contract.Article.PUBLISH_DATE + " <= ?"
                     , new String[]{deleteDate}
-                    ,null);
+                    , null);
 
-            if(cv.moveToFirst())
-            {
-                do{
+            if (cv.moveToFirst()) {
+                do {
                     String url_low = cv.getString(COL_ARTICLE_PHOTO_URL);
                     String url_high = cv.getString(COL_ARTICLE_PHOTO_URL_HIGH);
 
                     Picasso.with(context).invalidate(url_low);
                     Picasso.with(context).invalidate(url_high);
 
-                }while (cv.moveToNext());
+                } while (cv.moveToNext());
             }
 
             long id = getContext().getContentResolver().delete(Contract.Article.CONTENT_URI
@@ -192,17 +263,16 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             String sortOrder = Contract.Article.PUBLISH_DATE + " DESC ";
 
 
-            String Key_Name ="top_stories";
+            String Key_Name = "top_stories";
             Uri uri = Contract.Article.buildUriWithKeyName(Key_Name);
 
             Cursor cursor = context.getContentResolver()
                     .query(uri, ArticleColumns, null, null, sortOrder);
 
 
-            if(cursor.moveToFirst())
-            {
+            if (cursor.moveToFirst()) {
 
-                String title =context.getString(R.string.app_name);
+                String title = context.getString(R.string.app_name);
                 String imageUrl = cursor.getString(COL_ARTICLE_PHOTO_URL);
                 String contextTitle = cursor.getString(COL_ARTICLE_TITLE);
                 String publish_Date = cursor.getString(COL_ARTICLE_PUBLISH_DATE);
@@ -210,10 +280,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 Resources resources = context.getResources();
                 Bitmap Icon = BitmapFactory.decodeResource(resources, notifi_photo);
                 try {
-                     Icon = Glide.with(context)
+                    Icon = Glide.with(context)
                             .load(imageUrl)
                             .asBitmap()
-                            .into(100,100)
+                            .into(100, 100)
                             .get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -221,7 +291,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                     e.printStackTrace();
                 }
 
-                int color =getContext().getResources().getColor(R.color.blue);
+                int color = getContext().getResources().getColor(R.color.blue);
 
                 NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder(getContext())
@@ -233,7 +303,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 
                 mBuilder.setAutoCancel(true);
-                Intent resultIntent = new Intent (context, MainActivity.class);
+                Intent resultIntent = new Intent(context, MainActivity.class);
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
                 stackBuilder.addNextIntent(resultIntent);
 
@@ -257,18 +327,18 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    void secondSync(int i,String urlString ,String KeyName){
+    void secondSync(int i, String urlString, String KeyName) {
 
         HttpURLConnection urlConnection = null;
         BufferedReader bufferedReader = null;
 
         String JsonData = "";
-        URL url=null;
+        URL url = null;
 
         try {
 
-            Log.d(LOG_TAG ,"  KEYName : "+KeyName +"  UrlString : "+urlString   );
-            url =new URL(urlString);
+            Log.d(LOG_TAG, "  KEYName : " + KeyName + "  UrlString : " + urlString);
+            url = new URL(urlString);
             // url = new URL ("https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66");
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
@@ -316,41 +386,45 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         try {
             long KeyId = addKey(KeyName, String.valueOf(url));
 
-            if(KeyName.matches("movie_reviews"))
-                getJsonStringArrayForMedia(JsonData,KeyId);
-            else if(KeyName.matches("search"))
-                getJsonStringArrayForSearch(JsonData,KeyId);
+            if (KeyName.matches("movie_reviews"))
+                getJsonStringArrayForMedia(JsonData, KeyId);
+            else if (KeyName.matches("search"))
+                getJsonStringArrayForSearch(JsonData, KeyId);
             else
-                getJsonStringArray(JsonData,KeyId);
+                getJsonStringArray(JsonData, KeyId);
 
         } catch (JSONException e) {
             Log.e("Download Data ", "JSON ERROR");
             e.printStackTrace();
         }
 
-        switch(i) {
-            case 0:secondSync(1,"https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66", "top_stories");
+        switch (i) {
+            case 0:
+                secondSync(1, "https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66", "top_stories");
                 break;
-            case 1:secondSync(2,"https://api.nytimes.com/svc/movies/v2/reviews/all.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66", "movie_reviews");
+            case 1:
+                secondSync(2, "https://api.nytimes.com/svc/movies/v2/reviews/all.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66", "movie_reviews");
                 break;
-            case 2:break;
+            case 2:
+                break;
         }
 
         return;
     }
+
     //Perform Syncing and get Json Data From Api
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         Log.d(LOG_TAG, "Starting sync");
 
 
-        String KeyName="Most-Viewed";
+        String KeyName = "Most-Viewed";
 
         HttpURLConnection urlConnection = null;
         BufferedReader bufferedReader = null;
 
         String JsonData = "";
-        URL url=null;
+        URL url = null;
 
         try {
 
@@ -358,23 +432,23 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             SharedPreferences sharedPreferences = getContext().getSharedPreferences("UrlDetails", Context.MODE_PRIVATE);
             String urlKey = context.getString(R.string.url);
             String KeySaved = context.getString(R.string.keySaved);
-            String urlString = sharedPreferences.getString(urlKey," ");
-            KeyName = sharedPreferences.getString(KeySaved," ");
+            String urlString = sharedPreferences.getString(urlKey, " ");
+            KeyName = sharedPreferences.getString(KeySaved, " ");
 
             SharedPreferences sharedPreferences2 = getContext().getSharedPreferences("FirstTime", Context.MODE_PRIVATE);
-            int no = sharedPreferences2.getInt("a",0);
+            int no = sharedPreferences2.getInt("a", 0);
             SharedPreferences.Editor editor = sharedPreferences2.edit();
             editor.putInt("a", 1);
             editor.commit();
 
-            if(no==0){
-                secondSync(0,"https://api.nytimes.com/svc/news/v3/content/all/all.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66","newswire");
-                return ;
+            if (no == 0) {
+                secondSync(0, "https://api.nytimes.com/svc/news/v3/content/all/all.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66", "newswire");
+                return;
             }
 
-            Log.d(LOG_TAG ,"  KEYName : "+KeyName +"  UrlString : "+urlString   );
-            url =new URL(urlString);
-           // url = new URL ("https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66");
+            Log.d(LOG_TAG, "  KEYName : " + KeyName + "  UrlString : " + urlString);
+            url = new URL(urlString);
+            // url = new URL ("https://api.nytimes.com/svc/topstories/v2/world.json?api-key=b7e41169ccbf43e7b05bb69b2dadfb66");
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
@@ -421,12 +495,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         try {
             long KeyId = addKey(KeyName, String.valueOf(url));
 
-            if(KeyName.matches("movie_reviews"))
-                getJsonStringArrayForMedia(JsonData,KeyId);
-            else if(KeyName.matches("search"))
-                getJsonStringArrayForSearch(JsonData,KeyId);
+            if (KeyName.matches("movie_reviews"))
+                getJsonStringArrayForMedia(JsonData, KeyId);
+            else if (KeyName.matches("search"))
+                getJsonStringArrayForSearch(JsonData, KeyId);
             else
-            getJsonStringArray(JsonData,KeyId);
+                getJsonStringArray(JsonData, KeyId);
 
         } catch (JSONException e) {
             Log.e("Download Data ", "JSON ERROR");
@@ -455,30 +529,30 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             String source = object.getString("byline");
 
 
-                    JSONObject multimedia;
-                    multimedia = object.getJSONObject("multimedia");
+            JSONObject multimedia;
+            multimedia = object.getJSONObject("multimedia");
 
-                    String imageUrlHigh = multimedia.getString("src");
-                    String imageUrl = multimedia.getString("src");
-                    String caption = object.getString("headline");
+            String imageUrlHigh = multimedia.getString("src");
+            String imageUrl = multimedia.getString("src");
+            String caption = object.getString("headline");
 
-                    //      String id = object.getString(ID);
-                    String aritcle_url = object.getJSONObject("link").getString("url");
+            //      String id = object.getString(ID);
+            String aritcle_url = object.getJSONObject("link").getString("url");
 
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(Contract.Article.KEY_ID, KeyId);
-                    //      contentValues.put(Contract.Article.ID, id);
-                    contentValues.put(Contract.Article.TITLE, title);
-                    contentValues.put(Contract.Article.ARTICLE_URL, aritcle_url);
-                    contentValues.put(Contract.Article.ABSTRACT, Abstract);
-                    contentValues.put(Contract.Article.SOURCE, source);
-                    contentValues.put(Contract.Article.PHOTO_HEADING, caption);
-                    contentValues.put(Contract.Article.PHOTO_URL, imageUrl);
-                    contentValues.put(Contract.Article.PHOTO_URL_HIGH, imageUrlHigh);
-                    contentValues.put(Contract.Article.PUBLISH_DATE, p_date);
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(Contract.Article.KEY_ID, KeyId);
+            //      contentValues.put(Contract.Article.ID, id);
+            contentValues.put(Contract.Article.TITLE, title);
+            contentValues.put(Contract.Article.ARTICLE_URL, aritcle_url);
+            contentValues.put(Contract.Article.ABSTRACT, Abstract);
+            contentValues.put(Contract.Article.SOURCE, source);
+            contentValues.put(Contract.Article.PHOTO_HEADING, caption);
+            contentValues.put(Contract.Article.PHOTO_URL, imageUrl);
+            contentValues.put(Contract.Article.PHOTO_URL_HIGH, imageUrlHigh);
+            contentValues.put(Contract.Article.PUBLISH_DATE, p_date);
 
 
-                    cVVector.add(contentValues);
+            cVVector.add(contentValues);
         }
 
         if (cVVector.size() > 0) {
@@ -492,12 +566,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     }
 
-
     /**
      * Convert raw JSON Data into parsed Data and insert into personal DB
      * Works for TOP STORIES AND NEWSWIRE API
      */
-    private String[] getJsonStringArray(String jsonData,long KeyId) throws JSONException {
+    private String[] getJsonStringArray(String jsonData, long KeyId) throws JSONException {
 
 
         JSONObject reader = new JSONObject(jsonData);
@@ -514,20 +587,20 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
             String Abstract = object.getString(ABSTRACT);
             String p_date = object.getString(P_DATE);
-            p_date= Utility.getFriendlyDate(p_date);
+            p_date = Utility.getFriendlyDate(p_date);
             String source = object.getString(SOURCE);
 
-            Object metad  = object.get(MULTIMEDIA_ARRAY);
-            if(metad instanceof JSONArray) {
+            Object metad = object.get(MULTIMEDIA_ARRAY);
+            if (metad instanceof JSONArray) {
 
 
                 JSONArray metadata = object.getJSONArray(MULTIMEDIA_ARRAY);
                 if (metadata.length() > 3) {
                     JSONObject multimedia;
                     if (metadata.length() > 4)
-                     multimedia = metadata.getJSONObject(4);
+                        multimedia = metadata.getJSONObject(4);
                     else
-                    multimedia = metadata.getJSONObject(3);
+                        multimedia = metadata.getJSONObject(3);
                     String imageUrlHigh = multimedia.getString(PHOTO_URL);
                     String imageUrl = metadata.getJSONObject(1).getString(PHOTO_URL);
                     String caption = multimedia.getString(PHOTO_CAPTION);
@@ -563,7 +636,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             Log.v(LOG_TAG, "inserted " + rowsInserted + " rows of weather data");
 
 
-
             notifyWeather();
         }
 
@@ -571,13 +643,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         return resultStrs;
 
 
-
     }
-
 
     /**
      * Convert raw JSON Data into parsed Data and show search Result to User
-     *  Works for SEARCH API
+     * Works for SEARCH API
      */
     private void getJsonStringArrayForSearch(String jsonData, long KeyId) throws JSONException {
 
@@ -585,8 +655,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 , Contract.Article.KEY_ID + " = ?"
                 , new String[]{String.valueOf(KeyId)});
         Log.v(LOG_TAG, "delete " + id + " rows of weather data");
-
-
 
 
         JSONObject reader = new JSONObject(jsonData);
@@ -600,7 +668,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             String Abstract = object.getString("lead_paragraph");
             String p_date = object.getString("pub_date");
             Object sourceObject = object.get("byline");
-            String source="";
+            String source = "";
 
             String imageUrlHigh = "no";
             String imageUrl = "no";
@@ -608,13 +676,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             Object multimedia;
             multimedia = object.get("multimedia");
 
-            if(multimedia instanceof JSONArray  ) {
+            if (multimedia instanceof JSONArray) {
 
                 JSONArray metadata = object.getJSONArray("multimedia");
-                if(((JSONArray) multimedia).length()>1) {
+                if (((JSONArray) multimedia).length() > 1) {
 
-                    imageUrlHigh ="https://static01.nyt.com/"+ metadata.getJSONObject(1).getString("url");
-                    imageUrl = "https://static01.nyt.com/" +metadata.getJSONObject(0).getString("url");
+                    imageUrlHigh = "https://static01.nyt.com/" + metadata.getJSONObject(1).getString("url");
+                    imageUrl = "https://static01.nyt.com/" + metadata.getJSONObject(0).getString("url");
                 }
             }
             String caption = object.getJSONObject("headline").getString("main");
@@ -649,103 +717,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             Log.v(LOG_TAG, "inserted " + rowsInserted + " rows of weather data");
 
 
-
         }
 
-    }
-
-
-    /**
-     * Helper method to have the sync adapter sync immediately
-     * @param context The context used to access the account service
-     */
-    public static void syncImmediately(Context context) {
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        ContentResolver.requestSync(getSyncAccount(context),
-                context.getString(R.string.content_authority), bundle);
-    }
-
-    /**
-     * Helper method to get the fake account to be used with SyncAdapter, or make a new one
-     * if the fake account doesn't exist yet.  If we make a new account, we call the
-     * onAccountCreated method so we can initialize things.
-     *
-     * @param context The context used to access the account service
-     * @return a fake account.
-     */
-    public static Account getSyncAccount(Context context) {
-        // Get an instance of the Android account manager
-        AccountManager accountManager =
-                (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
-
-        // Create the account type and default account
-        Account newAccount = new Account(
-                context.getString(R.string.app_name), context.getString(R.string.sync_account_type));
-
-        // If the password doesn't exist, the account doesn't exist
-        if ( null == accountManager.getPassword(newAccount) ) {
-
-        /*
-         * Add the account and account type, no password or user data
-         * If successful, return the Account object, otherwise report an error.
-         */
-            if (!accountManager.addAccountExplicitly(newAccount, "", null)) {
-                return null;
-            }
-            /*
-             * If you don't set android:syncable="true" in
-             * in your <provider> element in the manifest,
-             * then call ContentResolver.setIsSyncable(account, AUTHORITY, 1)
-             * here.
-             */
-
-            onAccountCreated(newAccount, context);
-        }
-        return newAccount;
-    }
-
-    /**
-     * Helper method to schedule the sync adapter periodic execution
-     */
-    public static void configurePeriodicSync(Context context, int syncInterval, int flexTime) {
-        Account account = getSyncAccount(context);
-        String authority = context.getString(R.string.content_authority);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            // we can enable inexact timers in our periodic sync
-            SyncRequest request = new SyncRequest.Builder().
-                    syncPeriodic(syncInterval, flexTime).
-                    setSyncAdapter(account, authority).
-                    setExtras(new Bundle()).build();
-            ContentResolver.requestSync(request);
-        } else {
-            ContentResolver.addPeriodicSync(account,
-                    authority, new Bundle(), syncInterval);
-        }
-    }
-
-
-    private static void onAccountCreated(Account newAccount, Context context) {
-        /*
-         * Since we've created an account
-         */
-        SyncAdapter.configurePeriodicSync(context, SYNC_INTERVAL, SYNC_FLEXTIME);
-
-        /*
-         * Without calling setSyncAutomatically, our periodic sync will not be enabled.
-         */
-        ContentResolver.setSyncAutomatically(newAccount, context.getString(R.string.content_authority), true);
-
-        /*
-         * Finally, let's do a sync to get things started
-         */
-        syncImmediately(context);
-    }
-
-
-    public static void initializeSyncAdapter(Context context) {
-        getSyncAccount(context);
     }
 
 }

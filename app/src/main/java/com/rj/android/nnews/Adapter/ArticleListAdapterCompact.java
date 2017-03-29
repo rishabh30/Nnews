@@ -9,10 +9,10 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.rj.android.nnews.data.Contract;
 import com.rj.android.nnews.MainFragment;
 import com.rj.android.nnews.R;
 import com.rj.android.nnews.Utility;
+import com.rj.android.nnews.data.Contract;
 import com.squareup.picasso.Picasso;
 
 public class ArticleListAdapterCompact extends CursorAdapter {
@@ -27,7 +27,7 @@ public class ArticleListAdapterCompact extends CursorAdapter {
 
     @Override
     public int getItemViewType(int position) {
-      return SIDE_STORY ;
+        return SIDE_STORY;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ArticleListAdapterCompact extends CursorAdapter {
         int layoutId = -1;
         layoutId = R.layout.list_item_layout;
 
-        View view = LayoutInflater.from(context).inflate(layoutId  ,parent,false);
+        View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         view.setTag(viewHolder);
         return view;
@@ -85,17 +85,16 @@ public class ArticleListAdapterCompact extends CursorAdapter {
         this.useMainLayout = useMainLayout;
     }
 
-    public static class ViewHolder{
-        TextView titleView ;
-        ImageView imageView ;
+    public static class ViewHolder {
+        TextView titleView;
+        ImageView imageView;
         TextView friendlyday;
 
-        public ViewHolder(View view)
-        {
+        public ViewHolder(View view) {
 
             friendlyday = (TextView) view.findViewById(R.id.friendlyday);
-             titleView = (TextView)view.findViewById(R.id.list_item_title);
-             imageView = (ImageView)view.findViewById(R.id.list_item_image);
+            titleView = (TextView) view.findViewById(R.id.list_item_title);
+            imageView = (ImageView) view.findViewById(R.id.list_item_image);
         }
     }
 }
